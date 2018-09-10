@@ -34,6 +34,8 @@ public class MySqlSessionFactoryBean extends SqlSessionFactoryBean {
 		field.setAccessible(true);
 		field.set(configuration, mapperRegistry);
 		
+		//手工构建sessionfactory
+		
 		
 	  }
 

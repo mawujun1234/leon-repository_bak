@@ -36,7 +36,7 @@ public class MyMapperProxy<T> extends MapperProxy<T> {
 	
 	private HibernateDao<Object,Serializable> hibernateDao=null;
 	
-	private MybatisRepository mybatisRepository;
+	//private MybatisRepository mybatisRepository;
 	private String namespace;
 	
 	//Set<String> hibernateMethods=new HashSet<String>();
