@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.akucun.delivery.orm.dao.BaseActivityMapper" >
+<!-- START::: 系统自动生成，请勿修改  -->
+	<sql id="BaseColumns">
+	id  ,requestid  ,`pingtaifuwufei` as `pingtaifuwufei` ,`BD_name` as `BDName` ,`huodongmoshi` as `huodongmoshi` ,`huodongbiaoqian` as `huodongbiaoqian` ,`sync2suppliertimes` as `sync2suppliertimes` ,`sync2supplierdate` as `sync2supplierdate` ,`sync2supplier` as `sync2supplier` ,`youfeimoban` as `youfeimoban` ,`charge_rule` as `chargeRule` ,`zuiduoketuihuoshuliang` as `zuiduoketuihuoshuliang` ,`fahuodizhi` as `fahuodizhi` ,`isvirtual` as `isvirtual` ,`skureleaseflag` as `skureleaseflag` ,`BdName` as `BdName` ,`BdPhone` as `BdPhone` ,`realAddressAble` as `realAddressAble` ,`isPrintPdt` as `isPrintPdt` ,`logistics` as `logistics` ,`forwardviplevel` as `forwardviplevel` ,`deliveryovertime` as `deliveryovertime` ,`packagecount` as `packagecount` ,`realpackagecount` as `realpackagecount` ,`delivertime` as `delivertime` ,`jiedanshijian` as `jiedanshijian` ,`syncshijian` as `syncshijian` ,`ordernum` as `ordernum` ,`productnum` as `productnum` ,`syncstatu` as `syncstatu` ,`deliverstatu` as `deliverstatu` ,`deliverbegintime` as `deliverbegintime` ,`deliverendtime` as `deliverendtime` ,`deliverordernum` as `deliverordernum` ,`nodeliverordernum` as `nodeliverordernum` ,`syncflag` as `syncflag` ,`delivermodel` as `delivermodel` ,`buymodel` as `buymodel` ,`splitrole` as `splitrole` ,`splitnum` as `splitnum` ,`dzhongliang` as `dzhongliang` ,`dtiji` as `dtiji` ,`boxtiji` as `boxtiji` ,`waiqing` as `waiqing` ,`bdstaff` as `bdstaff` ,`tuisongzhuangtai` as `tuisongzhuangtai` ,`akspcode` as `akspcode` ,`akumpcode` as `akumpcode` ,`flag` as `flag` ,`corpid` as `corpid` ,`createtime` as `createtime` ,`creater` as `creater` ,`norefund` as `norefund` ,`name` as `name` ,`miaoshu` as `miaoshu` ,`begintime` as `begintime` ,`endtime` as `endtime` ,`aftersaletime` as `aftersaletime` ,`statu` as `statu` ,`yugaoneirong` as `yugaoneirong` ,`yugaotupian` as `yugaotupian` ,`postagefree` as `postagefree` ,`liveno` as `liveno` ,`needpush` as `needpush` ,`pushtime` as `pushtime` ,`pushflag` as `pushflag` ,`content` as `content` ,`pinpaiID` as `pinpaiID` ,`begintimeshuzi` as `begintimeshuzi` ,`endtimeshuzi` as `endtimeshuzi` ,`aftersaletimeshuzi` as `aftersaletimeshuzi` ,`substatu` as `substatu` ,`downloadurl` as `downloadurl` ,`localfile` as `localfile` ,`livenonum` as `livenonum` ,`lastxuhao` as `lastxuhao` ,`visiblerange` as `visiblerange` ,`condition` as `condition` ,`viplevel` as `viplevel` ,`currentstatu` as `currentstatu` ,`currenttaskid` as `currenttaskid` ,`visibility` as `visibility` ,`cartovertime` as `cartovertime` ,`forwardenable` as `forwardenable` ,`aftersaleday` as `aftersaleday` ,`barcodeconfig` as `barcodeconfig` 	</sql>
+	<sql id="BaseFields">
+	id  ,requestid  ,`pingtaifuwufei` ,`BD_name` ,`huodongmoshi` ,`huodongbiaoqian` ,`sync2suppliertimes` ,`sync2supplierdate` ,`sync2supplier` ,`youfeimoban` ,`charge_rule` ,`zuiduoketuihuoshuliang` ,`fahuodizhi` ,`isvirtual` ,`skureleaseflag` ,`BdName` ,`BdPhone` ,`realAddressAble` ,`isPrintPdt` ,`logistics` ,`forwardviplevel` ,`deliveryovertime` ,`packagecount` ,`realpackagecount` ,`delivertime` ,`jiedanshijian` ,`syncshijian` ,`ordernum` ,`productnum` ,`syncstatu` ,`deliverstatu` ,`deliverbegintime` ,`deliverendtime` ,`deliverordernum` ,`nodeliverordernum` ,`syncflag` ,`delivermodel` ,`buymodel` ,`splitrole` ,`splitnum` ,`dzhongliang` ,`dtiji` ,`boxtiji` ,`waiqing` ,`bdstaff` ,`tuisongzhuangtai` ,`akspcode` ,`akumpcode` ,`flag` ,`corpid` ,`createtime` ,`creater` ,`norefund` ,`name` ,`miaoshu` ,`begintime` ,`endtime` ,`aftersaletime` ,`statu` ,`yugaoneirong` ,`yugaotupian` ,`postagefree` ,`liveno` ,`needpush` ,`pushtime` ,`pushflag` ,`content` ,`pinpaiID` ,`begintimeshuzi` ,`endtimeshuzi` ,`aftersaletimeshuzi` ,`substatu` ,`downloadurl` ,`localfile` ,`livenonum` ,`lastxuhao` ,`visiblerange` ,`condition` ,`viplevel` ,`currentstatu` ,`currenttaskid` ,`visibility` ,`cartovertime` ,`forwardenable` ,`aftersaleday` ,`barcodeconfig` 	</sql>
+	
+		<sql id="WhereColumns">
+		<where>
+		<if test="id != null ">id = #{id}</if>
+				<if test="pingtaifuwufei != null">
+		 and `pingtaifuwufei` = #{pingtaifuwufei}
+		</if>
+				<if test="BDName != null">
+		 and `BD_name` = #{BDName}
+		</if>
+				<if test="huodongmoshi != null">
+		 and `huodongmoshi` = #{huodongmoshi}
+		</if>
+				<if test="huodongbiaoqian != null">
+		 and `huodongbiaoqian` = #{huodongbiaoqian}
+		</if>
+				<if test="sync2suppliertimes != null">
+		 and `sync2suppliertimes` = #{sync2suppliertimes}
+		</if>
+				<if test="sync2supplierdate != null">
+		 and `sync2supplierdate` = #{sync2supplierdate}
+		</if>
+				<if test="sync2supplier != null">
+		 and `sync2supplier` = #{sync2supplier}
+		</if>
+				<if test="youfeimoban != null">
+		 and `youfeimoban` = #{youfeimoban}
+		</if>
+				<if test="chargeRule != null">
+		 and `charge_rule` = #{chargeRule}
+		</if>
+				<if test="zuiduoketuihuoshuliang != null">
+		 and `zuiduoketuihuoshuliang` = #{zuiduoketuihuoshuliang}
+		</if>
+				<if test="fahuodizhi != null">
+		 and `fahuodizhi` = #{fahuodizhi}
+		</if>
+				<if test="isvirtual != null">
+		 and `isvirtual` = #{isvirtual}
+		</if>
+				<if test="skureleaseflag != null">
+		 and `skureleaseflag` = #{skureleaseflag}
+		</if>
+				<if test="BdName != null">
+		 and `BdName` = #{BdName}
+		</if>
+				<if test="BdPhone != null">
+		 and `BdPhone` = #{BdPhone}
+		</if>
+				<if test="realAddressAble != null">
+		 and `realAddressAble` = #{realAddressAble}
+		</if>
+				<if test="isPrintPdt != null">
+		 and `isPrintPdt` = #{isPrintPdt}
+		</if>
+				<if test="logistics != null">
+		 and `logistics` = #{logistics}
+		</if>
+				<if test="forwardviplevel != null">
+		 and `forwardviplevel` = #{forwardviplevel}
+		</if>
+				<if test="deliveryovertime != null">
+		 and `deliveryovertime` = #{deliveryovertime}
+		</if>
+				<if test="packagecount != null">
+		 and `packagecount` = #{packagecount}
+		</if>
+				<if test="realpackagecount != null">
+		 and `realpackagecount` = #{realpackagecount}
+		</if>
+				<if test="delivertime != null">
+		 and `delivertime` = #{delivertime}
+		</if>
+				<if test="jiedanshijian != null">
+		 and `jiedanshijian` = #{jiedanshijian}
+		</if>
+				<if test="syncshijian != null">
+		 and `syncshijian` = #{syncshijian}
+		</if>
+				<if test="ordernum != null">
+		 and `ordernum` = #{ordernum}
+		</if>
+				<if test="productnum != null">
+		 and `productnum` = #{productnum}
+		</if>
+				<if test="syncstatu != null">
+		 and `syncstatu` = #{syncstatu}
+		</if>
+				<if test="deliverstatu != null">
+		 and `deliverstatu` = #{deliverstatu}
+		</if>
+				<if test="deliverbegintime != null">
+		 and `deliverbegintime` = #{deliverbegintime}
+		</if>
+				<if test="deliverendtime != null">
+		 and `deliverendtime` = #{deliverendtime}
+		</if>
+				<if test="deliverordernum != null">
+		 and `deliverordernum` = #{deliverordernum}
+		</if>
+				<if test="nodeliverordernum != null">
+		 and `nodeliverordernum` = #{nodeliverordernum}
+		</if>
+				<if test="syncflag != null">
+		 and `syncflag` = #{syncflag}
+		</if>
+				<if test="delivermodel != null">
+		 and `delivermodel` = #{delivermodel}
+		</if>
+				<if test="buymodel != null">
+		 and `buymodel` = #{buymodel}
+		</if>
+				<if test="splitrole != null">
+		 and `splitrole` = #{splitrole}
+		</if>
+				<if test="splitnum != null">
+		 and `splitnum` = #{splitnum}
+		</if>
+				<if test="dzhongliang != null">
+		 and `dzhongliang` = #{dzhongliang}
+		</if>
+				<if test="dtiji != null">
+		 and `dtiji` = #{dtiji}
+		</if>
+				<if test="boxtiji != null">
+		 and `boxtiji` = #{boxtiji}
+		</if>
+				<if test="waiqing != null">
+		 and `waiqing` = #{waiqing}
+		</if>
+				<if test="bdstaff != null">
+		 and `bdstaff` = #{bdstaff}
+		</if>
+				<if test="tuisongzhuangtai != null">
+		 and `tuisongzhuangtai` = #{tuisongzhuangtai}
+		</if>
+				<if test="akspcode != null">
+		 and `akspcode` = #{akspcode}
+		</if>
+				<if test="akumpcode != null">
+		 and `akumpcode` = #{akumpcode}
+		</if>
+				<if test="flag != null">
+		 and `flag` = #{flag}
+		</if>
+				<if test="corpid != null">
+		 and `corpid` = #{corpid}
+		</if>
+				<if test="createtime != null">
+		 and `createtime` = #{createtime}
+		</if>
+				<if test="creater != null">
+		 and `creater` = #{creater}
+		</if>
+				<if test="norefund != null">
+		 and `norefund` = #{norefund}
+		</if>
+				<if test="name != null">
+		 and `name` = #{name}
+		</if>
+				<if test="miaoshu != null">
+		 and `miaoshu` = #{miaoshu}
+		</if>
+				<if test="begintime != null">
+		 and `begintime` = #{begintime}
+		</if>
+				<if test="endtime != null">
+		 and `endtime` = #{endtime}
+		</if>
+				<if test="aftersaletime != null">
+		 and `aftersaletime` = #{aftersaletime}
+		</if>
+				<if test="statu != null">
+		 and `statu` = #{statu}
+		</if>
+				<if test="yugaoneirong != null">
+		 and `yugaoneirong` = #{yugaoneirong}
+		</if>
+				<if test="yugaotupian != null">
+		 and `yugaotupian` = #{yugaotupian}
+		</if>
+				<if test="postagefree != null">
+		 and `postagefree` = #{postagefree}
+		</if>
+				<if test="liveno != null">
+		 and `liveno` = #{liveno}
+		</if>
+				<if test="needpush != null">
+		 and `needpush` = #{needpush}
+		</if>
+				<if test="pushtime != null">
+		 and `pushtime` = #{pushtime}
+		</if>
+				<if test="pushflag != null">
+		 and `pushflag` = #{pushflag}
+		</if>
+				<if test="content != null">
+		 and `content` = #{content}
+		</if>
+				<if test="pinpaiID != null">
+		 and `pinpaiID` = #{pinpaiID}
+		</if>
+				<if test="begintimeshuzi != null">
+		 and `begintimeshuzi` = #{begintimeshuzi}
+		</if>
+				<if test="endtimeshuzi != null">
+		 and `endtimeshuzi` = #{endtimeshuzi}
+		</if>
+				<if test="aftersaletimeshuzi != null">
+		 and `aftersaletimeshuzi` = #{aftersaletimeshuzi}
+		</if>
+				<if test="substatu != null">
+		 and `substatu` = #{substatu}
+		</if>
+				<if test="downloadurl != null">
+		 and `downloadurl` = #{downloadurl}
+		</if>
+				<if test="localfile != null">
+		 and `localfile` = #{localfile}
+		</if>
+				<if test="livenonum != null">
+		 and `livenonum` = #{livenonum}
+		</if>
+				<if test="lastxuhao != null">
+		 and `lastxuhao` = #{lastxuhao}
+		</if>
+				<if test="visiblerange != null">
+		 and `visiblerange` = #{visiblerange}
+		</if>
+				<if test="condition != null">
+		 and `condition` = #{condition}
+		</if>
+				<if test="viplevel != null">
+		 and `viplevel` = #{viplevel}
+		</if>
+				<if test="currentstatu != null">
+		 and `currentstatu` = #{currentstatu}
+		</if>
+				<if test="currenttaskid != null">
+		 and `currenttaskid` = #{currenttaskid}
+		</if>
+				<if test="visibility != null">
+		 and `visibility` = #{visibility}
+		</if>
+				<if test="cartovertime != null">
+		 and `cartovertime` = #{cartovertime}
+		</if>
+				<if test="forwardenable != null">
+		 and `forwardenable` = #{forwardenable}
+		</if>
+				<if test="aftersaleday != null">
+		 and `aftersaleday` = #{aftersaleday}
+		</if>
+				<if test="barcodeconfig != null">
+		 and `barcodeconfig` = #{barcodeconfig}
+		</if>
+				</where>
+	</sql>
+	
+  <sql id="getById">
+  	select <include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.BaseColumns"/> from sc_activity where id = #{id}
+  </sql>
+
+  <sql id="getByMap">
+  	select <include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.BaseColumns"/> from sc_activity 
+  	<include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.WhereColumns"/> LIMIT 0,1
+  </sql>
+
+  <sql id="getListByMap">
+  	select <include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.BaseColumns"/> from sc_activity 
+  	<include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.WhereColumns"/>
+  </sql>
+
+  <sql id="getPageListByMap">
+  	select <include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.BaseColumns"/> from sc_activity  
+  	<include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.WhereColumns"/>
+  </sql>
+  
+  <sql id="getCounts">
+  	select count(id) from sc_activity
+  	 <include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.WhereColumns"/>
+  </sql>
+  
+  <sql id="save">
+  	INSERT into sc_activity(<include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.BaseFields"/>) 
+  	VALUES( #{id},#{requestid}
+  		,#{pingtaifuwufei} ,#{BDName} ,#{huodongmoshi} ,#{huodongbiaoqian} ,#{sync2suppliertimes} ,#{sync2supplierdate} ,#{sync2supplier} ,#{youfeimoban} ,#{chargeRule} ,#{zuiduoketuihuoshuliang} ,#{fahuodizhi} ,#{isvirtual} ,#{skureleaseflag} ,#{BdName} ,#{BdPhone} ,#{realAddressAble} ,#{isPrintPdt} ,#{logistics} ,#{forwardviplevel} ,#{deliveryovertime} ,#{packagecount} ,#{realpackagecount} ,#{delivertime} ,#{jiedanshijian} ,#{syncshijian} ,#{ordernum} ,#{productnum} ,#{syncstatu} ,#{deliverstatu} ,#{deliverbegintime} ,#{deliverendtime} ,#{deliverordernum} ,#{nodeliverordernum} ,#{syncflag} ,#{delivermodel} ,#{buymodel} ,#{splitrole} ,#{splitnum} ,#{dzhongliang} ,#{dtiji} ,#{boxtiji} ,#{waiqing} ,#{bdstaff} ,#{tuisongzhuangtai} ,#{akspcode} ,#{akumpcode} ,#{flag} ,#{corpid} ,#{createtime} ,#{creater} ,#{norefund} ,#{name} ,#{miaoshu} ,#{begintime} ,#{endtime} ,#{aftersaletime} ,#{statu} ,#{yugaoneirong} ,#{yugaotupian} ,#{postagefree} ,#{liveno} ,#{needpush} ,#{pushtime} ,#{pushflag} ,#{content} ,#{pinpaiID} ,#{begintimeshuzi} ,#{endtimeshuzi} ,#{aftersaletimeshuzi} ,#{substatu} ,#{downloadurl} ,#{localfile} ,#{livenonum} ,#{lastxuhao} ,#{visiblerange} ,#{condition} ,#{viplevel} ,#{currentstatu} ,#{currenttaskid} ,#{visibility} ,#{cartovertime} ,#{forwardenable} ,#{aftersaleday} ,#{barcodeconfig}   	)
+  </sql>
+  
+  <sql id="update">
+  	UPDATE sc_activity set requestid=#{requestid}
+				<if test="pingtaifuwufei != null"> ,`pingtaifuwufei` = #{pingtaifuwufei} </if>
+				<if test="BDName != null"> ,`BD_name` = #{BDName} </if>
+				<if test="huodongmoshi != null"> ,`huodongmoshi` = #{huodongmoshi} </if>
+				<if test="huodongbiaoqian != null"> ,`huodongbiaoqian` = #{huodongbiaoqian} </if>
+				<if test="sync2suppliertimes != null"> ,`sync2suppliertimes` = #{sync2suppliertimes} </if>
+				<if test="sync2supplierdate != null"> ,`sync2supplierdate` = #{sync2supplierdate} </if>
+				<if test="sync2supplier != null"> ,`sync2supplier` = #{sync2supplier} </if>
+				<if test="youfeimoban != null"> ,`youfeimoban` = #{youfeimoban} </if>
+				<if test="chargeRule != null"> ,`charge_rule` = #{chargeRule} </if>
+				<if test="zuiduoketuihuoshuliang != null"> ,`zuiduoketuihuoshuliang` = #{zuiduoketuihuoshuliang} </if>
+				<if test="fahuodizhi != null"> ,`fahuodizhi` = #{fahuodizhi} </if>
+				<if test="isvirtual != null"> ,`isvirtual` = #{isvirtual} </if>
+				<if test="skureleaseflag != null"> ,`skureleaseflag` = #{skureleaseflag} </if>
+				<if test="BdName != null"> ,`BdName` = #{BdName} </if>
+				<if test="BdPhone != null"> ,`BdPhone` = #{BdPhone} </if>
+				<if test="realAddressAble != null"> ,`realAddressAble` = #{realAddressAble} </if>
+				<if test="isPrintPdt != null"> ,`isPrintPdt` = #{isPrintPdt} </if>
+				<if test="logistics != null"> ,`logistics` = #{logistics} </if>
+				<if test="forwardviplevel != null"> ,`forwardviplevel` = #{forwardviplevel} </if>
+				<if test="deliveryovertime != null"> ,`deliveryovertime` = #{deliveryovertime} </if>
+				<if test="packagecount != null"> ,`packagecount` = #{packagecount} </if>
+				<if test="realpackagecount != null"> ,`realpackagecount` = #{realpackagecount} </if>
+				<if test="delivertime != null"> ,`delivertime` = #{delivertime} </if>
+				<if test="jiedanshijian != null"> ,`jiedanshijian` = #{jiedanshijian} </if>
+				<if test="syncshijian != null"> ,`syncshijian` = #{syncshijian} </if>
+				<if test="ordernum != null"> ,`ordernum` = #{ordernum} </if>
+				<if test="productnum != null"> ,`productnum` = #{productnum} </if>
+				<if test="syncstatu != null"> ,`syncstatu` = #{syncstatu} </if>
+				<if test="deliverstatu != null"> ,`deliverstatu` = #{deliverstatu} </if>
+				<if test="deliverbegintime != null"> ,`deliverbegintime` = #{deliverbegintime} </if>
+				<if test="deliverendtime != null"> ,`deliverendtime` = #{deliverendtime} </if>
+				<if test="deliverordernum != null"> ,`deliverordernum` = #{deliverordernum} </if>
+				<if test="nodeliverordernum != null"> ,`nodeliverordernum` = #{nodeliverordernum} </if>
+				<if test="syncflag != null"> ,`syncflag` = #{syncflag} </if>
+				<if test="delivermodel != null"> ,`delivermodel` = #{delivermodel} </if>
+				<if test="buymodel != null"> ,`buymodel` = #{buymodel} </if>
+				<if test="splitrole != null"> ,`splitrole` = #{splitrole} </if>
+				<if test="splitnum != null"> ,`splitnum` = #{splitnum} </if>
+				<if test="dzhongliang != null"> ,`dzhongliang` = #{dzhongliang} </if>
+				<if test="dtiji != null"> ,`dtiji` = #{dtiji} </if>
+				<if test="boxtiji != null"> ,`boxtiji` = #{boxtiji} </if>
+				<if test="waiqing != null"> ,`waiqing` = #{waiqing} </if>
+				<if test="bdstaff != null"> ,`bdstaff` = #{bdstaff} </if>
+				<if test="tuisongzhuangtai != null"> ,`tuisongzhuangtai` = #{tuisongzhuangtai} </if>
+				<if test="akspcode != null"> ,`akspcode` = #{akspcode} </if>
+				<if test="akumpcode != null"> ,`akumpcode` = #{akumpcode} </if>
+				<if test="flag != null"> ,`flag` = #{flag} </if>
+				<if test="corpid != null"> ,`corpid` = #{corpid} </if>
+				<if test="createtime != null"> ,`createtime` = #{createtime} </if>
+				<if test="creater != null"> ,`creater` = #{creater} </if>
+				<if test="norefund != null"> ,`norefund` = #{norefund} </if>
+				<if test="name != null"> ,`name` = #{name} </if>
+				<if test="miaoshu != null"> ,`miaoshu` = #{miaoshu} </if>
+				<if test="begintime != null"> ,`begintime` = #{begintime} </if>
+				<if test="endtime != null"> ,`endtime` = #{endtime} </if>
+				<if test="aftersaletime != null"> ,`aftersaletime` = #{aftersaletime} </if>
+				<if test="statu != null"> ,`statu` = #{statu} </if>
+				<if test="yugaoneirong != null"> ,`yugaoneirong` = #{yugaoneirong} </if>
+				<if test="yugaotupian != null"> ,`yugaotupian` = #{yugaotupian} </if>
+				<if test="postagefree != null"> ,`postagefree` = #{postagefree} </if>
+				<if test="liveno != null"> ,`liveno` = #{liveno} </if>
+				<if test="needpush != null"> ,`needpush` = #{needpush} </if>
+				<if test="pushtime != null"> ,`pushtime` = #{pushtime} </if>
+				<if test="pushflag != null"> ,`pushflag` = #{pushflag} </if>
+				<if test="content != null"> ,`content` = #{content} </if>
+				<if test="pinpaiID != null"> ,`pinpaiID` = #{pinpaiID} </if>
+				<if test="begintimeshuzi != null"> ,`begintimeshuzi` = #{begintimeshuzi} </if>
+				<if test="endtimeshuzi != null"> ,`endtimeshuzi` = #{endtimeshuzi} </if>
+				<if test="aftersaletimeshuzi != null"> ,`aftersaletimeshuzi` = #{aftersaletimeshuzi} </if>
+				<if test="substatu != null"> ,`substatu` = #{substatu} </if>
+				<if test="downloadurl != null"> ,`downloadurl` = #{downloadurl} </if>
+				<if test="localfile != null"> ,`localfile` = #{localfile} </if>
+				<if test="livenonum != null"> ,`livenonum` = #{livenonum} </if>
+				<if test="lastxuhao != null"> ,`lastxuhao` = #{lastxuhao} </if>
+				<if test="visiblerange != null"> ,`visiblerange` = #{visiblerange} </if>
+				<if test="condition != null"> ,`condition` = #{condition} </if>
+				<if test="viplevel != null"> ,`viplevel` = #{viplevel} </if>
+				<if test="currentstatu != null"> ,`currentstatu` = #{currentstatu} </if>
+				<if test="currenttaskid != null"> ,`currenttaskid` = #{currenttaskid} </if>
+				<if test="visibility != null"> ,`visibility` = #{visibility} </if>
+				<if test="cartovertime != null"> ,`cartovertime` = #{cartovertime} </if>
+				<if test="forwardenable != null"> ,`forwardenable` = #{forwardenable} </if>
+				<if test="aftersaleday != null"> ,`aftersaleday` = #{aftersaleday} </if>
+				<if test="barcodeconfig != null"> ,`barcodeconfig` = #{barcodeconfig} </if>
+		  	WHERE id = #{id}
+  </sql>
+	
+  <sql id="remove">
+	DELETE from  sc_activity
+	<if test="_parameter.size() == 0">
+		WHERE 1=2
+	</if> 
+	<include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.WhereColumns"/>
+  </sql>
+
+  <sql id="removeById">
+	DELETE from  sc_activity where id = #{value}
+  </sql>
+  
+  <sql id="removeByIds">
+	DELETE from sc_activity WHERE id in  
+	<foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+	#{item}
+	</foreach> 
+  </sql>
+
+  <sql id="removeByMap">
+	DELETE FROM sc_activity
+	<if test="_parameter.size() == 0">
+		WHERE 1=2
+	</if> 
+	<include refid="com.akucun.delivery.orm.dao.BaseActivityMapper.WhereColumns"/>
+  </sql>
+<!-- END::: 系统自动生成，请勿修改  -->
+</mapper>
