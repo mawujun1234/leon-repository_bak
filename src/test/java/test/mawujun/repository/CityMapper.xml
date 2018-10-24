@@ -3,9 +3,57 @@
 
 <mapper namespace="test.mawujun.repository.CityMapper">
     <!-- START::: 系统自动生成，请勿修改  -->
-    <select id="get" resultType="city" parameterType="java.lang.String">
-        select * from t_city where id=#{id}
+    <select id="getById" resultType="city" parameterType="java.lang.String">
+        <include refid="test.mawujun.repository.BaseCityMapper.getById"></include>
     </select>
+
+    <select id="getByMap" resultType="city" parameterType="java.util.Map">
+        <include refid="test.mawujun.repository.BaseCityMapper.getByMap"></include>
+    </select>
+
+    <select id="getListByMap" resultType="city" parameterType="java.util.Map">
+        <include refid="test.mawujun.repository.BaseCityMapper.getListByMap"></include>
+    </select>
+
+    <select id="getPageListByMap" resultType="city" parameterType="java.util.Map">
+        <include refid="test.mawujun.repository.BaseCityMapper.getPageListByMap"></include>
+    </select>
+
+    <select id="getCounts" resultType="java.lang.Long" parameterType="java.util.Map">
+        <include refid="test.mawujun.repository.BaseCityMapper.getCounts"></include>
+    </select>
+
+    <insert id="create" keyProperty="id" parameterType="city">
+        <!-- <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            select IFNULL(#{id}, replace(UUID(),'-','') );
+        </selectKey> -->
+        <include refid="test.mawujun.repository.BaseCityMapper.create"></include>
+    </insert>
+
+    <update id="update" parameterType="city">
+        <include refid="test.mawujun.repository.BaseCityMapper.update"></include>
+    </update>
+    <update id="updateByMap" parameterType="map">
+        <include refid="test.mawujun.repository.BaseCityMapper.update"></include>
+    </update>
+
+    <delete id="remove" parameterType="city">
+        <include refid="test.mawujun.repository.BaseCityMapper.remove"></include>
+    </delete>
+
+    <delete id="removeById" parameterType="java.lang.String">
+        <include refid="test.mawujun.repository.BaseCityMapper.removeById"></include>
+    </delete>
+
+    <delete id="removeByIds">
+        <include refid="test.mawujun.repository.BaseCityMapper.removeByIds"></include>
+    </delete>
+
+    <delete id="removeByMap" parameterType="java.util.Map">
+        <include refid="test.mawujun.repository.BaseCityMapper.removeByMap"></include>
+    </delete>
+    <!--  END::: 系统自动生成，请勿修改  -->
+    <!-- TODO：自定义的接口写在下面 -->
 </mapper>
 
  

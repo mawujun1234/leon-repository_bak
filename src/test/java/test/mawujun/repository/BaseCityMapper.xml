@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="test.mawujun.repository.BaseCityMapper">
+	<!-- START::: 系统自动生成，请勿修改  -->
 	<sql id="BaseColumns">
 		id as id,name as name,age as age,price as price,createDate
 		as createDate,sex as sex
@@ -16,26 +17,26 @@
 				id = #{id}
 			</if>
 			<if test=" name!= null">
-				 name= #{name}
+				and name= #{name}
 			</if>
 			<if test=" age!= null">
-				 age= #{age}
+				and age= #{age}
 			</if>
 			<if test=" price!= null">
-				 price= #{price}
+				and price= #{price}
 			</if>
 			<if test=" createDate!= null">
-				 createDate= #{createDate}
+				and createDate= #{createDate}
 			</if>
 			<if test=" sex!= null">
-				 sex= #{sex}
+				and sex= #{sex}
 			</if>
 		</where>
 	</sql>
 
 	<sql id="getById">
 		select
-		<includerefid="test.mawujun.repository.BaseCityMapper.BaseColumns" />
+		<includerefid = test.mawujun.repository.BaseCityMapper.BaseColumns " />
 		from t_city where id = #{id}
 	</sql>
 
@@ -49,29 +50,24 @@
 
 	<sql id="getListByMap">
 		select
-		<include
-			refid="test.mawujun.repository.BaseCityMapper.BaseColumns" />
+		<include refid="test.mawujun.repository.BaseCityMapper.BaseColumns" />
 		from t_city
-		<include
-			refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
+		<include refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
 	</sql>
 
 	<sql id="getPageListByMap">
 		select
-		<include
-			refid="test.mawujun.repository.BaseCityMapper.BaseColumns" />
+		<include refid="test.mawujun.repository.BaseCityMapper.BaseColumns" />
 		from t_city
-		<include
-			refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
+		<include refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
 	</sql>
 
 	<sql id="getCounts">
 		select count(id) from t_city
-		<include
-			refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
+		<include refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
 	</sql>
 
-	<sql id="save">
+	<sql id="create">
 		INSERT into t_city(
 		<include refid="test.mawujun.repository.BaseCityMapper.BaseFields" />
 		)
@@ -79,42 +75,44 @@
 	</sql>
 
 	<sql id="update">
-		UPDATE t_city set 
-		<if test=" name!= null"> , name= #{name} </if>
-		<if test=" age!= null"> , age= #{age} </if>
-		<if test=" price!= null"> , price= #{price} </if>
-		<if test=" createDate!= null"> ,createDate = #{createDate} </if>
-		<if test=" sex!= null"> , sex= #{sex} </if>
+		UPDATE t_city
+		<set>
+			<if test=" name!= null">name= #{name}, </if>
+			<if test=" age!= null"> age= #{age}, </if>
+			<if test=" price!= null">price= #{price}, </if>
+			<if test=" createDate!= null"> createDate = #{createDate}, </if>
+			<if test=" sex!= null">sex= #{sex}, </if>
+		</set>
 		WHERE id = #{id}
 	</sql>
 
 	<sql id="remove">
 		DELETE from t_city
-		<if test="_parameter.size() == 0">
+		<if test="_parameter==null or _parameter.size() == 0">
 			WHERE 1=2
 		</if>
 		<include refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
 	</sql>
 
 	<sql id="removeById">
-		DELETE from t_city where id = #{value}
+		DELETE from t_city where id = #{id}
 	</sql>
 
 	<sql id="removeByIds">
 		DELETE from t_city WHERE id in
-		<foreach collection="array" index="index" item="item" open="("
-			separator="," close=")">
+		<foreach collection="array" index="index" item="item" open="(" separator="," close=")">
 			#{item}
 		</foreach>
 	</sql>
 
 	<sql id="removeByMap">
 		DELETE FROM t_city
-		<if test="_parameter.size() == 0">
+		<if test="_parameter==null or _parameter.size() == 0">
 			WHERE 1=2
 		</if>
 		<include refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
 	</sql>
+	<!-- START::: 系统自动生成，请勿修改  -->
 </mapper>
 
  

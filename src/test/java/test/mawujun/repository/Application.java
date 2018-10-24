@@ -2,6 +2,7 @@ package test.mawujun.repository;
 
 
 import java.sql.SQLException;
+import java.util.Date;
 
 import javax.sql.DataSource;
 
@@ -35,7 +36,13 @@ public class Application  implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("===================开始使用mybatis进行查询了:");
-		System.out.println("mybatis:"+this.cityMapper.get("1111"));
+		//System.out.println("mybatis:"+this.cityMapper.get("1111"));
+		City city=new City();
+		city.setName("宁波");
+		city.setPrice(10.253);
+		city.setAge(50);
+		city.setSex(Sex.Man);
+		city.setCreateDate(new Date());
 
 	}
 }
