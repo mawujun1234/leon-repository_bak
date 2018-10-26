@@ -24,9 +24,9 @@
     </select>
 
     <insert id="create" keyProperty="id" parameterType="city">
-        <!-- <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
-            select IFNULL(#{id}, replace(UUID(),'-','') );
-        </selectKey> -->
+        <selectKey resultType="java.lang.String" order="BEFORE" keyProperty="id">
+            select IFNULL(#{id}, UUID());
+        </selectKey> 
         <include refid="test.mawujun.repository.BaseCityMapper.create"></include>
     </insert>
 

@@ -2,8 +2,10 @@ package test.mawujun.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.mawujun.repository.mybatis.IRepository;
+
 @Mapper
-public interface CityMapper {
+public interface CityMapper extends IRepository<City,String>{
 	public City get(String id);
 
 }
