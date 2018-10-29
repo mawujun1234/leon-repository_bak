@@ -6,20 +6,38 @@
     <select id="getById" resultType="city" parameterType="java.lang.String">
         <include refid="test.mawujun.repository.BaseCityMapper.getById"></include>
     </select>
-
     <select id="getByMap" resultType="city" parameterType="java.util.Map">
         <include refid="test.mawujun.repository.BaseCityMapper.getByMap"></include>
     </select>
+    <select id="getByEntity" resultType="city" parameterType="city">
+        <include refid="test.mawujun.repository.BaseCityMapper.getByMap"></include>
+    </select>
+    
+    <select id="getMapById" resultType="beanmap" parameterType="java.lang.String">
+        <include refid="test.mawujun.repository.BaseCityMapper.getById"></include>
+    </select>
+    <select id="getMapByMap" resultType="beanmap" parameterType="java.util.Map">
+        <include refid="test.mawujun.repository.BaseCityMapper.getByMap"></include>
+    </select>
+    <select id="getMapByEntity" resultType="beanmap" parameterType="city">
+        <include refid="test.mawujun.repository.BaseCityMapper.getByMap"></include>
+    </select>
 
-    <select id="getListByMap" resultType="city" parameterType="java.util.Map">
+    <select id="listByMap" resultType="city" parameterType="java.util.Map">
+        <include refid="test.mawujun.repository.BaseCityMapper.getListByMap"></include>
+    </select>
+    <select id="listByEntity" resultType="city" parameterType="city">
         <include refid="test.mawujun.repository.BaseCityMapper.getListByMap"></include>
     </select>
 
-    <select id="getPageListByMap" resultType="city" parameterType="java.util.Map">
-        <include refid="test.mawujun.repository.BaseCityMapper.getPageListByMap"></include>
+    <select id="listPageByMap" resultType="city" parameterType="java.util.Map">
+        <include refid="test.mawujun.repository.BaseCityMapper.listPageByMap"></include>
     </select>
 
-    <select id="getCounts" resultType="java.lang.Long" parameterType="java.util.Map">
+    <select id="getCounts" resultType="int" parameterType="java.util.Map">
+        <include refid="test.mawujun.repository.BaseCityMapper.getCounts"></include>
+    </select>
+    <select id="getCountsByEntity" resultType="int" parameterType="city">
         <include refid="test.mawujun.repository.BaseCityMapper.getCounts"></include>
     </select>
 
@@ -52,6 +70,26 @@
     <delete id="removeByMap" parameterType="java.util.Map">
         <include refid="test.mawujun.repository.BaseCityMapper.removeByMap"></include>
     </delete>
+    
+    <!-- 如果是使用自增id的话，就不需要这种方式了，直接使用自增的就可以，并且id属性不需要设置了 -->
+    <insert id="createBatch" keyProperty="id" parameterType="list"> 
+    	INSERT into t_city(
+			<include refid="test.mawujun.repository.BaseCityMapper.BaseFields" />
+		)
+		SELECT IFNULL(#{id}, UUID()), A.* from (
+         <foreach collection="list" item="item" index="index" separator="union all">
+         SELECT 
+           #{item.name},#{item.age},#{item.price},#{item.createDate},#{item.sex}
+         FROM DUAL
+         </foreach> ) A
+    </insert>
+    http://www.mybatis.org/mybatis-3/zh/sqlmap-xml.html
+    <update id="updateBatch" parameterType="list">
+	    <foreach collection="list" item="item" index="index" separator=";">
+	    	<include refid="test.mawujun.repository.BaseCityMapper.update1"><property name="alias" value="item"/></include>
+	    </foreach>
+    </update>
+    
     <!--  END::: 系统自动生成，请勿修改  -->
     <!-- TODO：自定义的接口写在下面 -->
 </mapper>

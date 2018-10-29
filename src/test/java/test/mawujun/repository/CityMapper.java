@@ -6,6 +6,6 @@ import com.mawujun.repository.mybatis.IRepository;
 
 @Mapper
 public interface CityMapper extends IRepository<City,String>{
-	public City get(String id);
+
 
 }

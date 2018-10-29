@@ -54,7 +54,7 @@
 		<include refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
 	</sql>
 
-	<sql id="getPageListByMap">
+	<sql id="listPageByMap">
 		select
 		<include refid="test.mawujun.repository.BaseCityMapper.BaseColumns" />
 		from t_city
@@ -84,10 +84,21 @@
 		</set>
 		WHERE id = #{id}
 	</sql>
+	<sql id="update1">
+		UPDATE t_city
+		<set>
+			<if test=" alias.name!= null">name= #{alias.name}, </if>
+			<if test=" alias.age!= null"> age= #{alias.age}, </if>
+			<if test=" alias.price!= null">price= #{alias.price}, </if>
+			<if test=" alias.createDate!= null"> create_date = #{alias.createDate}, </if>
+			<if test=" alias.sex!= null">sex= #{alias.sex}, </if>
+		</set>
+		WHERE id = #{id}
+	</sql>
 
 	<sql id="remove">
-		DELETE from t_city
-		<if test="_parameter==null or _parameter.size() == 0">
+		DELETE from t_city	 
+		<if test="_parameter==null">
 			WHERE 1=2
 		</if>
 		<include refid="test.mawujun.repository.BaseCityMapper.WhereColumns" />
@@ -106,6 +117,7 @@
 
 	<sql id="removeByMap">
 		DELETE FROM t_city
+		
 		<if test="_parameter==null or _parameter.size() == 0">
 			WHERE 1=2
 		</if>
