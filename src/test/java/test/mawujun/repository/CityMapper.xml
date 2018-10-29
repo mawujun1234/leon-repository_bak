@@ -83,7 +83,6 @@
          FROM DUAL
          </foreach> ) A
     </insert>
-    http://www.mybatis.org/mybatis-3/zh/sqlmap-xml.html
     <update id="updateBatch" parameterType="list">
 	    <foreach collection="list" item="item" index="index" separator=";">
 	    	<include refid="test.mawujun.repository.BaseCityMapper.update1"><property name="alias" value="item"/></include>
