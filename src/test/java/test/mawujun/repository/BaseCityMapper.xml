@@ -84,17 +84,6 @@
 		</set>
 		WHERE id = #{id}
 	</sql>
-	<sql id="update1">
-		UPDATE t_city
-		<set>
-			<if test=" alias.name!= null">name= #{alias.name}, </if>
-			<if test=" alias.age!= null"> age= #{alias.age}, </if>
-			<if test=" alias.price!= null">price= #{alias.price}, </if>
-			<if test=" alias.createDate!= null"> create_date = #{alias.createDate}, </if>
-			<if test=" alias.sex!= null">sex= #{alias.sex}, </if>
-		</set>
-		WHERE id = #{id}
-	</sql>
 
 	<sql id="remove">
 		DELETE from t_city	 

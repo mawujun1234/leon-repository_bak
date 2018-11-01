@@ -3,8 +3,10 @@ package com.mawujun.repository.mybatis;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.PagerInfo;
+import com.mawujun.repository.utils.PageInfo;
 
 public interface IRepository<T,ID> {
 	public T getById(ID id);
@@ -47,15 +49,46 @@ public interface IRepository<T,ID> {
 	 * @return
 	 */
 	public List<T> listByEntity(T params);
+	/**
+	 * 要分页就全部使用这种模式，参数是PageInfo，封装了sql要用的参数和分页信息，
+	 * 返回值也是PageInfo
+	 * @param params
+	 * @return
+	 */
+	public PageInfo<T> listPageByMap(PageInfo<T> params);
 	
 
 	
 	public int create(T t);
-	
+//	public int createBatch(List<T> list);
+//	public int createBatch(T... list);
+	/**
+	 * 更新id为t.id的对象
+	 * @param t
+	 * @return
+	 */
 	public int update(T t);
+	/**
+	 * 更新id为list中的t.id的对象
+	 * @param t
+	 * @return
+	 */
+	public int updateBatch(List<T> list);
+	/**
+	 * 更新id为array中的t.id的对象
+	 * @param t
+	 * @return
+	 */
+	public int updateBatch(T... list);
+	/**
+	 * 更新id为params.id的对象
+	 * @param t
+	 * @return
+	 */
 	public int updateByMap(Map<String,Object> params);
 	
 	/**
+	 * 和T一样的属性值的对象都会被删除
 	 * 不要传入一个没有任何值的实体对象，这样会清空整个表的数据
 	 * @param t
 	 * @return
@@ -66,7 +99,7 @@ public interface IRepository<T,ID> {
 	public int removeById(ID id);
 	public int removeByIds(ID... ids);
 	
-	public int createBatch(List<T> list);
+	
 	
 	/**
 	 * 参数为null，就统计所有的记录
@@ -82,7 +115,7 @@ public interface IRepository<T,ID> {
 	public int getCountsByEntity(T t);
 	
 	
-	public PagerInfo<T> getPagerByMap(PagerInfo pagerInfo);
+	public PageInfo<T> getPagerByMap(PageInfo pagerInfo);
 	
 	
 	

@@ -30,7 +30,7 @@
         <include refid="test.mawujun.repository.BaseCityMapper.getListByMap"></include>
     </select>
 
-    <select id="listPageByMap" resultType="city" parameterType="java.util.Map">
+    <select id="listPageByMap" resultType="city" >
         <include refid="test.mawujun.repository.BaseCityMapper.listPageByMap"></include>
     </select>
 
@@ -47,9 +47,26 @@
         </selectKey> 
         <include refid="test.mawujun.repository.BaseCityMapper.create"></include>
     </insert>
-
+    <!-- 如果是使用自增id的话，就不需要这种方式了，直接使用自增的就可以，并且id属性不需要设置了
+    <insert id="createBatch" keyProperty="id" parameterType="list"> 
+    	INSERT into t_city(
+			<include refid="test.mawujun.repository.BaseCityMapper.BaseFields" />
+		)
+		SELECT IFNULL(#{id}, UUID()), A.* from (
+         <foreach collection="list" item="item" index="index" separator="union all">
+         SELECT 
+           #{item.name},#{item.age},#{item.price},#{item.createDate},#{item.sex}
+         FROM DUAL
+         </foreach> ) A
+    </insert>
+ -->
     <update id="update" parameterType="city">
         <include refid="test.mawujun.repository.BaseCityMapper.update"></include>
+    </update>
+    <update id="updateBatch" parameterType="list">
+	    <foreach collection="list" item="item" index="index" separator=";">
+	    	<include refid="test.mawujun.repository.BaseCityMapper.update"></include>
+	    </foreach>
     </update>
     <update id="updateByMap" parameterType="map">
         <include refid="test.mawujun.repository.BaseCityMapper.update"></include>
@@ -71,23 +88,8 @@
         <include refid="test.mawujun.repository.BaseCityMapper.removeByMap"></include>
     </delete>
     
-    <!-- 如果是使用自增id的话，就不需要这种方式了，直接使用自增的就可以，并且id属性不需要设置了 -->
-    <insert id="createBatch" keyProperty="id" parameterType="list"> 
-    	INSERT into t_city(
-			<include refid="test.mawujun.repository.BaseCityMapper.BaseFields" />
-		)
-		SELECT IFNULL(#{id}, UUID()), A.* from (
-         <foreach collection="list" item="item" index="index" separator="union all">
-         SELECT 
-           #{item.name},#{item.age},#{item.price},#{item.createDate},#{item.sex}
-         FROM DUAL
-         </foreach> ) A
-    </insert>
-    <update id="updateBatch" parameterType="list">
-	    <foreach collection="list" item="item" index="index" separator=";">
-	    	<include refid="test.mawujun.repository.BaseCityMapper.update1"><property name="alias" value="item"/></include>
-	    </foreach>
-    </update>
+    
+    
     
     <!--  END::: 系统自动生成，请勿修改  -->
     <!-- TODO：自定义的接口写在下面 -->
