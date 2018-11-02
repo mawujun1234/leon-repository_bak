@@ -90,6 +90,9 @@ public class PageInfoInterceptor implements Interceptor {
             //查询总数,必须放在前面
             Long count = count(executor, ms, args[1], rowBounds, resultHandler, boundSql,pageinfo);
             pageinfo.setTotal(count.intValue());
+            if(count==0) {
+            	return pageinfo;
+            }
             
             //List list=(List)invocation.proceed();
             List list = ExecutorUtil.pageQuery(dialect, executor,

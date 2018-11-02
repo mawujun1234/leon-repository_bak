@@ -32,9 +32,9 @@ public class H2Dialect extends AbstractDialect {
 	@Override
 	public String getPageSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds, CacheKey pageKey) {
 		String sql = boundSql.getSql();
-		StringBuilder sqlBuilder = new StringBuilder(sql.length() + 14);
+		StringBuilder sqlBuilder = new StringBuilder();
 		sqlBuilder.append(sql);
-		sqlBuilder.append(" LIMIT ? offset ? ");
+		sqlBuilder.append(" limit ? offset ? ");
 		return sqlBuilder.toString();
 	}
     
