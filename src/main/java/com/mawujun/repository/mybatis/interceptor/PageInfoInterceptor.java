@@ -20,8 +20,8 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.Dialect;
-import com.mawujun.repository.mybatis.dialect.H2Dialect;
 import com.mawujun.repository.utils.PageInfo;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -32,18 +32,23 @@ import com.mawujun.repository.utils.PageInfo;
         }
 )
 public class PageInfoInterceptor implements Interceptor {
-    private volatile Dialect dialect=new H2Dialect();
+    private volatile Dialect dialect;
     //private String countSuffix = MSUtils.countSuffix;
     //protected Cache<String, MappedStatement> msCountMap = null;
-    private String default_dialect_class = "com.github.pagehelper.PageHelper";
+    //private String default_dialect_class = "com.github.pagehelper.PageHelper";
     
+    private AutoDialect autoDialect=new AutoDialect();
     protected static Map<String, MappedStatement> msCountMap = new HashMap<String, MappedStatement>();
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
+    	
         //try {
             Object[] args = invocation.getArgs();
             MappedStatement ms = (MappedStatement) args[0];
+            if(dialect==null) {
+            	dialect=autoDialect.getDialect(ms);
+        	}
             Object parameter = args[1];
             
             //判断是否分页

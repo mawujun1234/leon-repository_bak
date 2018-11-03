@@ -42,8 +42,8 @@ public class H2Dialect extends AbstractDialect {
 		paramMap.put(PAGEPARAMETER_FIRST, rowBounds.getLimit());
 		paramMap.put(PAGEPARAMETER_SECOND, rowBounds.getOffset());
 		// 处理pageKey
-		pageKey.update(rowBounds.getOffset());
-		pageKey.update(rowBounds.getLimit());
+		//pageKey.update(rowBounds.getOffset());
+		//pageKey.update(rowBounds.getLimit());
 		// 处理参数配置
 		if (boundSql.getParameterMappings() != null) {
 			List<ParameterMapping> newParameterMappings = new ArrayList<ParameterMapping>(boundSql.getParameterMappings());

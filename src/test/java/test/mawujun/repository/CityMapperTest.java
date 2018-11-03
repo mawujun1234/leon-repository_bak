@@ -409,16 +409,20 @@ public class CityMapperTest {
 		PageInfo<City> params=new PageInfo<City>();
 		params.setCountColumn("id");
 		PageInfo<City> pageinfo=cityMapper.listPageByMap(params);
-		Assert.assertEquals("成功返回", params.getMessage());
-		Assert.assertEquals("成功返回", pageinfo.getMessage());
+		Assert.assertEquals(pageinfo, params);
 		Assert.assertEquals(2, params.getTotal());
 		Assert.assertEquals(2, params.getRootSize());
 
+		params=new PageInfo<City>();
 		params.setLimit(1);
 		pageinfo=cityMapper.listPageByMap(params);
-		Assert.assertEquals("成功返回", params.getMessage());
-		Assert.assertEquals("成功返回", pageinfo.getMessage());
 		Assert.assertEquals(2, params.getTotal());
+		Assert.assertEquals(1, params.getRootSize());
+		
+		params=new PageInfo<City>();
+		params.addParam("name", "宁波");
+		pageinfo=cityMapper.listPageByMap(params);
+		Assert.assertEquals(1, params.getTotal());
 		Assert.assertEquals(1, params.getRootSize());
 		
 	}

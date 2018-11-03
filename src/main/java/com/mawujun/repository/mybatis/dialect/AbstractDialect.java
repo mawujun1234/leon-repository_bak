@@ -73,6 +73,16 @@ public abstract class AbstractDialect implements Dialect {
 		}
 		return processPageParameter1(ms, paramMap, rowBounds, boundSql, pageKey);
 	}
+	
+    protected void handleParameter(BoundSql boundSql, MappedStatement ms){
+        if (boundSql.getParameterMappings() != null) {
+            List<ParameterMapping> newParameterMappings = new ArrayList<ParameterMapping>(boundSql.getParameterMappings());
+            newParameterMappings.add(new ParameterMapping.Builder(ms.getConfiguration(), PAGEPARAMETER_FIRST, Integer.class).build());
+            newParameterMappings.add(new ParameterMapping.Builder(ms.getConfiguration(), PAGEPARAMETER_SECOND, Integer.class).build());
+            MetaObject metaObject = MetaObjectUtil.forObject(boundSql);
+            metaObject.setValue("parameterMappings", newParameterMappings);
+        }
+    }
 
 	public abstract Object processPageParameter1(MappedStatement ms, Map<String, Object> paramMap, RowBounds rowBounds, BoundSql boundSql, CacheKey pageKey);
 

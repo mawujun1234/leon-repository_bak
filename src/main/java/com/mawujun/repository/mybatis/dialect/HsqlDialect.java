@@ -14,19 +14,24 @@ import org.apache.ibatis.session.RowBounds;
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
 
 /**
+ * Dialect for HSQLDB
  * @author mwj
  */
-public class PostgreSQLDialect extends AbstractDialect{
-	
+public class HsqlDialect extends AbstractDialect{
 
 	@Override
 	public String getPageSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds,
 			CacheKey pageKey) {
 		String sql = boundSql.getSql();
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append(sql);
-		sqlBuilder.append(" limit ? offset ? ");
-		return sqlBuilder.toString();
+		StringBuilder sqlBuilder = new StringBuilder(sql.length() + 20);
+        sqlBuilder.append(sql);
+        //if (page.getPageSize() > 0) {
+            sqlBuilder.append(" LIMIT ? OFFSET ? ");
+        //}
+       //if (page.getStartRow() > 0) {
+       //     sqlBuilder.append("  ");
+       // }
+        return sqlBuilder.toString();
 	}
 
 	@Override
@@ -50,5 +55,23 @@ public class PostgreSQLDialect extends AbstractDialect{
 			metaObject.setValue("parameterMappings", newParameterMappings);
 		}
 		return paramMap;
+		
 	}
+
+//	public boolean supportsLimit() {
+//		return true;
+//	}
+//
+//	public boolean supportsLimitOffset() {
+//		return true;
+//	}
+//
+//	public String getLimitString(String sql, int offset,String offsetPlaceholder, int limit, String limitPlaceholder) {
+//		boolean hasOffset = offset>0;
+//		return new StringBuffer( sql.length() + 10 )
+//		.append( sql )
+//		.insert( sql.toLowerCase().indexOf( "select" ) + 6, hasOffset ? " limit "+offsetPlaceholder+" "+limitPlaceholder : " top "+limitPlaceholder )
+//		.toString();
+//	}
+//    
 }
