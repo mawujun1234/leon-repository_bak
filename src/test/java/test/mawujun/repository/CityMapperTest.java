@@ -414,6 +414,12 @@ public class CityMapperTest {
 		Assert.assertEquals(2, params.getTotal());
 		Assert.assertEquals(2, params.getRootSize());
 
+		params.setLimit(1);
+		pageinfo=cityMapper.listPageByMap(params);
+		Assert.assertEquals("成功返回", params.getMessage());
+		Assert.assertEquals("成功返回", pageinfo.getMessage());
+		Assert.assertEquals(2, params.getTotal());
+		Assert.assertEquals(1, params.getRootSize());
 		
 	}
 

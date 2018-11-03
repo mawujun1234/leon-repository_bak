@@ -74,27 +74,7 @@ public abstract class AbstractDialect implements Dialect {
 		return processPageParameter1(ms, paramMap, rowBounds, boundSql, pageKey);
 	}
 
-	// @Override
-	public Object processPageParameter1(MappedStatement ms, Map<String, Object> paramMap, RowBounds rowBounds, BoundSql boundSql, CacheKey pageKey) {
-		paramMap.put(PAGEPARAMETER_FIRST, rowBounds.getOffset());
-		paramMap.put(PAGEPARAMETER_SECOND, rowBounds.getLimit());
-		// 处理pageKey
-		pageKey.update(rowBounds.getOffset());
-		pageKey.update(rowBounds.getLimit());
-		// 处理参数配置
-		if (boundSql.getParameterMappings() != null) {
-			List<ParameterMapping> newParameterMappings = new ArrayList<ParameterMapping>(boundSql.getParameterMappings());
-//	            if (page.getStartRow() == 0) {
-//	                newParameterMappings.add(new ParameterMapping.Builder(ms.getConfiguration(), PAGEPARAMETER_SECOND, Integer.class).build());
-//	            } else {
-			newParameterMappings.add(new ParameterMapping.Builder(ms.getConfiguration(), PAGEPARAMETER_FIRST, Integer.class).build());
-			newParameterMappings.add(new ParameterMapping.Builder(ms.getConfiguration(), PAGEPARAMETER_SECOND, Integer.class).build());
-//	            }
-			MetaObject metaObject = MetaObjectUtil.forObject(boundSql);
-			metaObject.setValue("parameterMappings", newParameterMappings);
-		}
-		return paramMap;
-	}
+	public abstract Object processPageParameter1(MappedStatement ms, Map<String, Object> paramMap, RowBounds rowBounds, BoundSql boundSql, CacheKey pageKey);
 
 
 
