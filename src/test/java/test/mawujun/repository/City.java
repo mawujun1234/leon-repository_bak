@@ -11,10 +11,28 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.ibatis.type.Alias;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mawujun.repository.identity.UUIDEntityValidate;
 
+/**
+ * 1：时间映射,@Temporal注解
+ *  CreationTimestamp创建时的默认值，UpdateTimestamp在更新的时候会生成默认值
+ * 2：枚举映射,@Enumerated
+ * 3：生成默认值的注解：
+ * 
+	@org.hibernate.annotations.ColumnDefault("1.00")
+	@org.hibernate.annotations.Generated(
+	org.hibernate.annotations.GenerationTime.INSERT
+	)
+ * 4：二进制和大型值类型映射，使用@Lob注解，可注解的类型包括
+ *  byte[],Byte[]--VARBINARY;String--CLOB,java.sql.Clob--CLOB,java.sql.Blob--BLOB,java.io.Serializable--VARBINARY
+ *  
+ * @author Administrator
+ *
+ */
 @Alias("city")
 @Entity
 @Table(name="t_city")
@@ -34,6 +52,8 @@ public class City extends UUIDEntityValidate{
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+	//@CreationTimestamp
+	//@UpdateTimestamp
 	private Date createDate;
 	
 	@Enumerated(EnumType.STRING)
