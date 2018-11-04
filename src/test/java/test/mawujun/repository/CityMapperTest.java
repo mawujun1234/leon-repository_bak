@@ -1,8 +1,11 @@
 package test.mawujun.repository;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.metamodel.ManagedType;
+import javax.persistence.metamodel.Metamodel;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -13,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.PageInfo;
-import com.mawujun.repository.utils.Params;
 
 
 
@@ -424,6 +425,7 @@ public class CityMapperTest {
 		pageinfo=cityMapper.listPageByMap(params);
 		Assert.assertEquals(1, params.getTotal());
 		Assert.assertEquals(1, params.getRootSize());
+		
 		
 	}
 
