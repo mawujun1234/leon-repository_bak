@@ -60,8 +60,8 @@ public interface IRepository<T,ID> {
 
 	
 	public int create(T t);
-//	public int createBatch(List<T> list);
-//	public int createBatch(T... list);
+	public int createBatch(List<T> list);
+	public int createBatch(T... list);
 	/**
 	 * 更新id为t.id的对象
 	 * @param t

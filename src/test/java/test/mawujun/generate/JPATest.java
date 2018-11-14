@@ -45,7 +45,7 @@ public class JPATest {
 		assertEquals(nameAttribute.getJavaType(), String.class);
 		assertEquals(nameAttribute.getPersistentAttributeType(), Attribute.PersistentAttributeType.BASIC);
 		assertFalse(nameAttribute.isOptional()); // NOT NULL
-		nameAttribute.
+		//nameAttribute.
 		
 		
 

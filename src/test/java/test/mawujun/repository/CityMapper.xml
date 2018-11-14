@@ -47,6 +47,16 @@
         </selectKey> 
         <include refid="test.mawujun.repository.BaseCityMapper.create"></include>
     </insert>
+    
+    <insert id="createBatch" keyProperty="id" parameterType="list"> 
+    	INSERT into t_city(
+			<include refid="test.mawujun.repository.BaseCityMapper.BaseFields" />
+		)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+		 	( IFNULL(#{item.id}, UUID()),#{item.name},#{item.age},#{item.price},#{item.createDate},#{item.sex})
+		</foreach>
+    </insert>
     <!-- 如果是使用自增id的话，就不需要这种方式了，直接使用自增的就可以，并且id属性不需要设置了
     <insert id="createBatch" keyProperty="id" parameterType="list"> 
     	INSERT into t_city(
