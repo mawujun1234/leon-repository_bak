@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
@@ -32,7 +33,7 @@ public abstract class UUIDEntity  implements IdEntity<String>,Serializable{
 	//@GenericGenerator(name = "system-uuid", strategy = "org.hibernate.id.UUIDGenerator")
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid")
-	@Column(length=36,updatable=false,unique=true)
+	@Column(length=36)
 	protected String id;
 
 	//@org.hibernate.annotations.AccessType("property")

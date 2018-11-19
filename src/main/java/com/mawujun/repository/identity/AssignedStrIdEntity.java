@@ -1,5 +1,7 @@
 package com.mawujun.repository.identity;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -8,8 +10,9 @@ import javax.persistence.MappedSuperclass;
  *
  */
 @MappedSuperclass
-public abstract class UserIdEntity implements IdEntity<String> {
-	
+public abstract class AssignedStrIdEntity implements IdEntity<String> {
+	@Id
+	@Column(length=36)
 	private String id;
 
 	@Override

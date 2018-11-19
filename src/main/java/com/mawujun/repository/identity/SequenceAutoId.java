@@ -16,7 +16,7 @@ import javax.persistence.SequenceGenerator;
  *
  */
 @MappedSuperclass
-public class OracleAutoId implements IdEntity<Long> {
+public class SequenceAutoId implements IdEntity<Long> {
 	@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="UserSequence")
 	@SequenceGenerator(name = "UserSequence", sequenceName = "SEQ_USER", allocationSize=20)
@@ -48,7 +48,7 @@ public class OracleAutoId implements IdEntity<Long> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		OracleAutoId other = (OracleAutoId) obj;
+		SequenceAutoId other = (SequenceAutoId) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

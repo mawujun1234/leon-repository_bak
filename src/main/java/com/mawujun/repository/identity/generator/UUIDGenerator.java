@@ -1,4 +1,4 @@
-package com.mawujun.repository.identity;
+package com.mawujun.repository.identity.generator;
 
 import java.util.UUID;
 

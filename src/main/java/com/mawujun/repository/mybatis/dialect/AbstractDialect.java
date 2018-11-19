@@ -20,6 +20,38 @@ import com.mawujun.utils.string.StringUtils;
 public abstract class AbstractDialect implements Dialect {
 	  //处理SQL
     protected CountSqlParser countSqlParser = new CountSqlParser();
+    
+    
+
+	public AbstractDialect() {
+		super();
+		// TODO Auto-generated constructor stub
+		this.registerColumnType(-7, "bit");
+		this.registerColumnType(16, "boolean");
+		this.registerColumnType(-6, "tinyint");
+		this.registerColumnType(5, "smallint");
+		this.registerColumnType(4, "integer");
+		this.registerColumnType(-5, "bigint");
+		this.registerColumnType(6, "float($p)");
+		this.registerColumnType(8, "double precision");
+		this.registerColumnType(2, "numeric($p,$s)");
+		this.registerColumnType(7, "real");
+		this.registerColumnType(91, "date");
+		this.registerColumnType(92, "time");
+		this.registerColumnType(93, "timestamp");
+		this.registerColumnType(-3, "bit varying($l)");
+		this.registerColumnType(-4, "bit varying($l)");
+		this.registerColumnType(2004, "blob");
+		this.registerColumnType(1, "char($l)");
+		this.registerColumnType(12, "varchar($l)");
+		this.registerColumnType(-1, "varchar($l)");
+		this.registerColumnType(2005, "clob");
+		this.registerColumnType(-15, "nchar($l)");
+		this.registerColumnType(-9, "nvarchar($l)");
+		this.registerColumnType(-16, "nvarchar($l)");
+		this.registerColumnType(2011, "nclob");
+	}
+
 
 	@Override
 	public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, PageInfo pageInfo, CacheKey pageKey) {

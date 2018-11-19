@@ -16,7 +16,7 @@ import com.mawujun.repository.validate.ValidatorUtils;
  *
  */
 @MappedSuperclass
-public class OracleAutoIdValidate  extends OracleAutoId  implements IdEntity<Long> {
+public class OracleAutoIdValidate  extends SequenceAutoId  implements IdEntity<Long> {
 	/**
 	 * 会抛出ConstraintViolationException异常
 	 * @exception ConstraintViolationException
