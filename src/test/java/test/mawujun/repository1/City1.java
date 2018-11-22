@@ -1,4 +1,4 @@
-package test.mawujun.repository;
+package test.mawujun.repository1;
 
 import java.util.Date;
 
@@ -11,11 +11,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.ibatis.type.Alias;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mawujun.repository.identity.UUIDEntityValidate;
+
+import test.mawujun.model.Sex;
 
 /**
  * 1：时间映射,@Temporal注解
@@ -33,10 +33,10 @@ import com.mawujun.repository.identity.UUIDEntityValidate;
  * @author Administrator
  *
  */
-@Alias("city")
+@Alias("city1")
 @Entity
-@Table(name="t_city")
-public class City extends UUIDEntityValidate{
+@Table(name="t_city1")
+public class City1 extends UUIDEntityValidate{
 	
 	/**
 	 * 
@@ -95,18 +95,18 @@ public class City extends UUIDEntityValidate{
 
 }
 
-enum Sex {
-	Man("男"),Women("女");
-	
-	private String name;
-	Sex(String name ){
-		this.name=name;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-}
+//enum Sex {
+//	Man("男"),Women("女");
+//	
+//	private String name;
+//	Sex(String name ){
+//		this.name=name;
+//	}
+//	public String getName() {
+//		return name;
+//	}
+//	public void setName(String name) {
+//		this.name = name;
+//	}
+//	
+//}

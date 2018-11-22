@@ -13,16 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.mawujun.repository.mybatis.extend.NewApplicationListenerConfig;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
+
+import test.mawujun.model.City;
+import test.mawujun.model.Sex;
 
 
 
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes=App.class)
+@SpringBootTest(classes={App.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CityMapperTest {
 	@Autowired

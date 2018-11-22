@@ -1,26 +1,37 @@
-package test.mawujun.repository;
+package test.mawujun.repository1;
 
 
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.sql.DataSource;
+
+import org.apache.ibatis.binding.MapperProxyFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.context.annotation.Bean;
+
+import com.mawujun.repository.mybatis.extend.NewMapperProxyFactory;
+import com.mawujun.utils.ReflectUtils;
 
 @SpringBootApplication
 @EntityScan("test.mawujun.model")
-public class App  implements CommandLineRunner {
+public class JpaMybatis  implements CommandLineRunner {
 //	@Autowired
 //	private CityMapper cityMapper;
 
 
 	public static void main(String[] args) throws SQLException {
 		//ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
-		ConfigurableApplicationContext context = new SpringApplicationBuilder(App.class)
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(JpaMybatis.class)
 	    .web(WebApplicationType.NONE)
 	    .run(args);
 		

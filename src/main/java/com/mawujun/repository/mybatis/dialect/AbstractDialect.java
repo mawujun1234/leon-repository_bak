@@ -1,6 +1,14 @@
 package com.mawujun.repository.mybatis.dialect;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,35 +29,89 @@ public abstract class AbstractDialect implements Dialect {
 	  //处理SQL
     protected CountSqlParser countSqlParser = new CountSqlParser();
     
+    Map<String,String> columtypes=new HashMap<String,String>();
+    
     
 
 	public AbstractDialect() {
 		super();
 		// TODO Auto-generated constructor stub
-		this.registerColumnType(-7, "bit");
-		this.registerColumnType(16, "boolean");
-		this.registerColumnType(-6, "tinyint");
-		this.registerColumnType(5, "smallint");
-		this.registerColumnType(4, "integer");
-		this.registerColumnType(-5, "bigint");
-		this.registerColumnType(6, "float($p)");
-		this.registerColumnType(8, "double precision");
-		this.registerColumnType(2, "numeric($p,$s)");
-		this.registerColumnType(7, "real");
-		this.registerColumnType(91, "date");
-		this.registerColumnType(92, "time");
-		this.registerColumnType(93, "timestamp");
-		this.registerColumnType(-3, "bit varying($l)");
-		this.registerColumnType(-4, "bit varying($l)");
-		this.registerColumnType(2004, "blob");
-		this.registerColumnType(1, "char($l)");
-		this.registerColumnType(12, "varchar($l)");
-		this.registerColumnType(-1, "varchar($l)");
-		this.registerColumnType(2005, "clob");
-		this.registerColumnType(-15, "nchar($l)");
-		this.registerColumnType(-9, "nvarchar($l)");
-		this.registerColumnType(-16, "nvarchar($l)");
-		this.registerColumnType(2011, "nclob");
+		//this.columtypes.put(Boolean.class.getName(), "bit"); sql server
+		//this.columtypes.put(Boolean.class.getName(), "boolean");
+		this.columtypes.put(Boolean.class.getName(), "tinyint");
+		this.columtypes.put(Boolean.class.getName()+"_yn", "char(1)");
+		this.columtypes.put(Boolean.class.getName()+"_tf", "char(1)");
+		
+		this.columtypes.put(Byte.class.getName(), "tinyint");
+		this.columtypes.put(Short.class.getName(), "smallint");
+		this.columtypes.put(Integer.class.getName(), "integer");
+		this.columtypes.put(Long.class.getName(), "bigint");
+		
+		this.columtypes.put(Float.class.getName(), "float");
+		this.columtypes.put(Double.class.getName(), "double");
+		this.columtypes.put(BigDecimal.class.getName(), "numeric");
+		this.columtypes.put(BigInteger.class.getName(), "numeric");
+		
+		//this.columtypes.put(7, "real");
+		this.columtypes.put(Date.class.getName(), "date");
+		this.columtypes.put(Date.class.getName()+"_time", "time");
+		this.columtypes.put(Date.class.getName()+"_timestamp", "time");
+		this.columtypes.put(java.sql.Date.class.getName(), "date");
+		this.columtypes.put(Time.class.getName(), "time");
+		this.columtypes.put(Timestamp.class.getName(), "timestamp");
+		this.columtypes.put(Calendar.class.getName(), "timestamp");
+		this.columtypes.put(Calendar.class.getName()+"_date", "date");
+		
+		//this.columtypes.put(-3, "bit varying($l)");
+		//this.columtypes.put(-4, "bit varying($l)");
+		
+		this.columtypes.put(Character.class.getName(), "char");
+		this.columtypes.put(String.class.getName(), "varchar");
+		this.columtypes.put(String.class.getName()+"_clob", "clob");
+		this.columtypes.put(Clob.class.getName(), "CLOB");
+		this.columtypes.put("Character[]", "CLOB");
+		this.columtypes.put("char[]", "CLOB");
+		
+		this.columtypes.put("Byte[]", "BLOB");
+		this.columtypes.put("byte[]", "BLOB");	
+		this.columtypes.put(Clob.class.getName(), "BLOB");
+		this.columtypes.put(Serializable.class.getName(), "BLOB");//个属性实现了java.io.Serializable同时也不是基本类型, 并且没有在该属性上使用@Lob注解
+		
+		
+//		this.columtypes.put(2004, "blob");
+//		this.columtypes.put(1, "char($l)");
+//		this.columtypes.put(12, "varchar($l)");
+//		this.columtypes.put(-1, "varchar($l)");
+//		this.columtypes.put(2005, "clob");
+//		this.columtypes.put(-15, "nchar($l)");
+//		this.columtypes.put(-9, "nvarchar($l)");
+//		this.columtypes.put(-16, "nvarchar($l)");
+//		this.columtypes.put(2011, "nclob");
+		
+//		this.columtypes(-7, "bit");
+//		this.columtypes(16, "boolean");
+//		this.columtypes(-6, "tinyint");
+//		this.columtypes(5, "smallint");
+//		this.columtypes(4, "integer");
+//		this.columtypes(-5, "bigint");
+//		this.columtypes(6, "float($p)");
+//		this.columtypes(8, "double precision");
+//		this.columtypes(2, "numeric($p,$s)");
+//		this.columtypes(7, "real");
+//		this.columtypes(91, "date");
+//		this.columtypes(92, "time");
+//		this.columtypes(93, "timestamp");
+//		this.columtypes(-3, "bit varying($l)");
+//		this.columtypes(-4, "bit varying($l)");
+//		this.columtypes(2004, "blob");
+//		this.columtypes(1, "char($l)");
+//		this.columtypes(12, "varchar($l)");
+//		this.columtypes(-1, "varchar($l)");
+//		this.columtypes(2005, "clob");
+//		this.columtypes(-15, "nchar($l)");
+//		this.columtypes(-9, "nvarchar($l)");
+//		this.columtypes(-16, "nvarchar($l)");
+//		this.columtypes(2011, "nclob");
 	}
 
 
