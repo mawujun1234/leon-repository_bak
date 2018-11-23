@@ -1,6 +1,7 @@
 package test.mawujun.repository1;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -15,6 +16,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.mawujun.repository.mybatis.extend.NewApplicationListenerConfig;
+import com.mawujun.repository.utils.Params;
 
 import test.mawujun.model.City;
 import test.mawujun.model.Sex;
@@ -69,6 +71,11 @@ public class JpaMybatisTest {
 		Assert.assertEquals((Integer) 50, city.getAge());
 		Assert.assertEquals(Sex.Man, city.getSex());
 		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
+		
+		Params params = Params.getInstance().add("sex", Sex.Man);//这样就可以,是否要在后端转换成枚举类型才可以，或者直接在后端动态构建sql，直接使用sql进行查询，这样就可以自由控制了，不需要转那么多多道弯
+		//Params params = Params.getInstance().add("sex", "Man");//这样就不行，后端要转换成
+		List<City> list = cityMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
 
 //		// 测试参数绑定，构建一个ParamsUtils返回一个map作为参数
 //		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);

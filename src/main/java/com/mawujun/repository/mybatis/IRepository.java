@@ -9,6 +9,11 @@ import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.PageInfo;
 
 public interface IRepository<T,ID> {
+	
+	public int create(T t);
+	public int createBatch(List<T> list);
+	public int createBatch(T... list);
+	
 	public T getById(ID id);
 	/**
 	 * 如果有多条记录就返回第一条
@@ -58,10 +63,7 @@ public interface IRepository<T,ID> {
 	public PageInfo<T> listPageByMap(PageInfo<T> params);
 	
 
-	
-	public int create(T t);
-	public int createBatch(List<T> list);
-	public int createBatch(T... list);
+
 	/**
 	 * 更新id为t.id的对象
 	 * @param t

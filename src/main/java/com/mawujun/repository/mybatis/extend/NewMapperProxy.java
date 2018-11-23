@@ -1,9 +1,17 @@
 package com.mawujun.repository.mybatis.extend;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperProxy;
@@ -78,6 +86,29 @@ public class NewMapperProxy<T> extends MapperProxy<T> {
 		} else if(method.getName().equals("create")) {
 			 entityManager.persist(args[0]);
 			 return 1;
+		} else if(method.getName().equals("listByMap")){
+			//https://blog.csdn.net/u012485012/article/details/79396947
+			//https://blog.csdn.net/u012706811/article/details/53218102
+			
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+			CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
+			//Root 定义查询的From子句中能出现的类型
+	        Root itemRoot = query.from(entityClass);
+	      //Predicate 过滤条件 构建where字句可能的各种条件
+//	        //这里用List存放多种查询条件,实现动态查询
+	        List<Predicate> predicatesList = new ArrayList<Predicate>();
+//	        criteriaBuilder.and(criteriaBuilder.greaterThan(itemRoot.get("age"), 60)
+//	        		,criteriaBuilder.greaterThan(itemRoot.get("createDate"), "2018-11-239:55:55"));
+	        Map<String,Object> params=( Map<String,Object>)args[0];
+	        for(Entry<String,Object> param:params.entrySet()) {        	
+	        	predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),param.getValue()));
+	        }
+	        query.where(predicatesList.toArray(new Predicate[predicatesList.size()]));
+	        //query.where(criteriaBuilder.greaterThan(itemRoot.get("age"), "10"),criteriaBuilder.equal(itemRoot.get("sex"), "Man")
+	        //		);//,criteriaBuilder.greaterThan(itemRoot.get("createDate"), "2018-11-23 19:55:55")日期不能按字符串来，需要转换，参考HIberanteDao.setParams方法
+	        TypedQuery typedQuery = entityManager.createQuery(query);
+	        List resultList = typedQuery.getResultList();
+	        return resultList;
 		}
 		
 		
