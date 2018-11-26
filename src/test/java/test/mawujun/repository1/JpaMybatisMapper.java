@@ -7,7 +7,7 @@ import com.mawujun.repository.mybatis.IRepository;
 import test.mawujun.model.City;
 
 @Mapper
-public interface CityMapper1 extends IRepository<City,String>{
+public interface JpaMybatisMapper extends IRepository<City,String>{
 
 
 }

@@ -15,6 +15,8 @@ import com.mawujun.utils.ReflectUtils;
 
 @Component
 public class NewApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
+
+	
 	public static ApplicationContext context;
 
 	@Override

@@ -18,20 +18,22 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
 import com.mawujun.repository.mybatis.extend.NewMapperProxyFactory;
 import com.mawujun.utils.ReflectUtils;
 
 @SpringBootApplication
 @EntityScan("test.mawujun.model")
-public class JpaMybatis  implements CommandLineRunner {
+@ComponentScan("com.mawujun")
+public class JpaMybatisApp  implements CommandLineRunner {
 //	@Autowired
 //	private CityMapper cityMapper;
 
 
 	public static void main(String[] args) throws SQLException {
 		//ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
-		ConfigurableApplicationContext context = new SpringApplicationBuilder(JpaMybatis.class)
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(JpaMybatisApp.class)
 	    .web(WebApplicationType.NONE)
 	    .run(args);
 		

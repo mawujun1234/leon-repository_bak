@@ -11,18 +11,17 @@ import com.mawujun.repository.utils.PageInfo;
 public interface IRepository<T,ID> {
 	
 	public int create(T t);
-	public int createBatch(List<T> list);
-	public int createBatch(T... list);
+	
 	
 	public T getById(ID id);
 	/**
-	 * 如果有多条记录就返回第一条
+	 * 如果有多条记录就返回第一条,如果有多个，将爆出异常
 	 * @param params
 	 * @return
 	 */
 	public T getByMap(Map<String,Object> params);
 	/**
-	 * 如果有多条记录就返回第一条
+	 * 如果有多条记录就返回第一条,如果有多个，将爆出异常
 	 * @param params
 	 * @return
 	 */
@@ -61,8 +60,18 @@ public interface IRepository<T,ID> {
 	 * @return
 	 */
 	public PageInfo<T> listPageByMap(PageInfo<T> params);
-	
-
+	/**
+	 * 批量插入，如果打数据量，请用mybatis，进行性能调优
+	 * @param list
+	 * @return
+	 */
+	public int createBatch(List<T> list);
+	/***
+	 * 批量插入，如果打数据量，请用mybatis，进行性能调优
+	 * @param list
+	 * @return
+	 */
+	public int createBatch(T... list);
 
 	/**
 	 * 更新id为t.id的对象

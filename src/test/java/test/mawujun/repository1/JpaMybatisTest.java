@@ -1,7 +1,6 @@
 package test.mawujun.repository1;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -16,6 +15,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.mawujun.repository.mybatis.extend.NewApplicationListenerConfig;
+import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.Params;
 
 import test.mawujun.model.City;
@@ -26,13 +26,13 @@ import test.mawujun.model.Sex;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes={JpaMybatis.class,NewApplicationListenerConfig.class})
+@SpringBootTest(classes={JpaMybatisApp.class,NewApplicationListenerConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Transactional
 @Rollback(false)
 public class JpaMybatisTest {
 	@Autowired
-	private CityMapper1 cityMapper;
+	private JpaMybatisMapper jpaMybatisMapper;
 	
 	private static String id;
 	private static Date now=new Date();
@@ -47,13 +47,13 @@ public class JpaMybatisTest {
 		city.setAge(50);
 		city.setSex(Sex.Man);
 		city.setCreateDate(now);
-		int result=cityMapper.create(city);
+		int result=jpaMybatisMapper.create(city);
 		
 		Assert.assertEquals(1, result);
 		id=city.getId();
 		Assert.assertNotNull(id);
 		
-		city = cityMapper.getById(id);
+		city = jpaMybatisMapper.getById(id);
 		//
 		Assert.assertEquals("宁波", city.getName());
 		Assert.assertEquals((Double) 10.253, city.getPrice());
@@ -64,7 +64,7 @@ public class JpaMybatisTest {
 	
 	@Test
 	public void test1() {
-		City city = cityMapper.getById(id);
+		City city = jpaMybatisMapper.getById(id);
 		//
 		Assert.assertEquals("宁波", city.getName());
 		Assert.assertEquals((Double) 10.253, city.getPrice());
@@ -72,36 +72,37 @@ public class JpaMybatisTest {
 		Assert.assertEquals(Sex.Man, city.getSex());
 		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
 		
-		Params params = Params.getInstance().add("sex", Sex.Man);//这样就可以,是否要在后端转换成枚举类型才可以，或者直接在后端动态构建sql，直接使用sql进行查询，这样就可以自由控制了，不需要转那么多多道弯
-		//Params params = Params.getInstance().add("sex", "Man");//这样就不行，后端要转换成
-		List<City> list = cityMapper.listByMap(params);
-		Assert.assertEquals(1, list.size());
+//		Params params = Params.getInstance().add("sex", Sex.Man);
+//		//Params params = Params.getInstance().add("sex", "Man");//这样就不行，后端要转换成
+//		//		.add("createDate", "2018-11-26 11:02:02");
+//		List<City> list = cityMapper.listByMap(params);
+//		Assert.assertEquals(1, list.size());
 
-//		// 测试参数绑定，构建一个ParamsUtils返回一个map作为参数
-//		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
-//		//city = cityMapper.getByMap(paramsUtils.getParams());
-//		city = cityMapper.getByMap(paramsUtils);
-//		Assert.assertNotNull(city);
-//		Assert.assertEquals("宁波", city.getName());
-//		Assert.assertEquals((Double) 10.253, city.getPrice());
-//		Assert.assertEquals((Integer) 50, city.getAge());
-//		Assert.assertEquals(Sex.Man, city.getSex());
-//		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
-//		
-//		City params =new City();
-//		params.setId(id);
-//		params.setName("宁波");
-//		city=cityMapper.getByEntity(params);
-//		Assert.assertNotNull(city);
-//		Assert.assertEquals("宁波", city.getName());
-//		Assert.assertEquals((Double) 10.253, city.getPrice());
-//		Assert.assertEquals((Integer) 50, city.getAge());
-//		Assert.assertEquals(Sex.Man, city.getSex());
-//		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
-//		
-//		paramsUtils = Params.getInstance().addIn("name", "宁波","杭州","苏州").addLike("sex", Sex.Man);
-//		Assert.assertEquals("'宁波','杭州','苏州'", paramsUtils.getParams().get("name"));
-//		Assert.assertEquals("%Man%", paramsUtils.getParams().get("sex"));
+		// 测试参数绑定，构建一个ParamsUtils返回一个map作为参数
+		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
+		//city = cityMapper.getByMap(paramsUtils.getParams());
+		city = jpaMybatisMapper.getByMap(paramsUtils);
+		Assert.assertNotNull(city);
+		Assert.assertEquals("宁波", city.getName());
+		Assert.assertEquals((Double) 10.253, city.getPrice());
+		Assert.assertEquals((Integer) 50, city.getAge());
+		Assert.assertEquals(Sex.Man, city.getSex());
+		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
+		
+		City params =new City();
+		params.setId(id);
+		params.setName("宁波");
+		city=jpaMybatisMapper.getByEntity(params);
+		Assert.assertNotNull(city);
+		Assert.assertEquals("宁波", city.getName());
+		Assert.assertEquals((Double) 10.253, city.getPrice());
+		Assert.assertEquals((Integer) 50, city.getAge());
+		Assert.assertEquals(Sex.Man, city.getSex());
+		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
+		
+		paramsUtils = Params.getInstance().addIn("name", "宁波","杭州","苏州").addLike("sex", Sex.Man);
+		Assert.assertEquals("'宁波','杭州','苏州'", paramsUtils.getParams().get("name"));
+		Assert.assertEquals("%Man%", paramsUtils.getParams().get("sex"));
 		
 		
 		
@@ -111,7 +112,7 @@ public class JpaMybatisTest {
 //	 */
 //	@Test
 //	public void test2() {	
-//		BeanMap city = cityMapper.getMapById(id);
+//		BeanMap city = jpaMybatisMapper.getMapById(id);
 //		Assert.assertEquals("宁波", city.get("name"));
 //		Assert.assertEquals((Double) 10.253, (Double)city.get("price"));
 //		Assert.assertEquals((Integer) 50, (Integer)city.get("Age"));
@@ -119,7 +120,7 @@ public class JpaMybatisTest {
 //		Assert.assertEquals(now.getTime(), ((Date)city.get("createDate")).getTime());
 //		
 //		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
-//		city = cityMapper.getMapByMap(paramsUtils.getParams());
+//		city = jpaMybatisMapper.getMapByMap(paramsUtils.getParams());
 //		Assert.assertEquals("宁波", city.get("name"));
 //		Assert.assertEquals((Double) 10.253, (Double)city.get("price"));
 //		Assert.assertEquals((Integer) 50, (Integer)city.get("Age"));
@@ -129,7 +130,7 @@ public class JpaMybatisTest {
 //		City params =new City();
 //		params.setId(id);
 //		params.setName("宁波");
-//		city=cityMapper.getMapByEntity(params);
+//		city=jpaMybatisMapper.getMapByEntity(params);
 //		Assert.assertEquals("宁波", city.get("name"));
 //		Assert.assertEquals((Double) 10.253, (Double)city.get("price"));
 //		Assert.assertEquals((Integer) 50, (Integer)city.get("Age"));
