@@ -13,6 +13,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Repository;
 
 import com.mawujun.utils.ConvertUtils;
@@ -69,9 +70,15 @@ public class NewDao  {
 	}
 	
 	public Object getByEntity(Class entityClass,Object params) {
+//		Session session = (Session) em.getDelegate();
+//		Criteria criteria = session.c.createCriteria(entityClass);
+//		List<T> results = criteria.add(example).list();
+//		return results;
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
-		criteriaBuilder.a
+		//criteriaBuilder.a
+		Example example = ExampleBuilder.create();
+
 	}
 	
 
