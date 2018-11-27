@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -45,8 +46,9 @@ public class NewDao  {
 		return repository;
 	}
 	
-	public Object create(Class entityClass,Object entity) {1:判断对象是否创建成功，通过判断对象的状态，是持久态，还是有态来进行判断，然后返回是0还是1
-		2:批量更新是使用jpql还是条件查询
+	public Object create(Class entityClass,Object entity) {
+		//1:判断对象是否创建成功，通过判断对象的状态，是持久态，还是有态来进行判断，然后返回是0还是1
+		//2:批量更新是使用jpql还是条件查询
 		
 		return getSimpleJpaRepository(entityClass).saveAndFlush(entity);
 		//em.persist(t);
@@ -182,12 +184,16 @@ public class NewDao  {
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
 		Root itemRoot = query.from(entityClass);
-		List<Predicate> predicatesList = new ArrayList<Predicate>();
+		//List<Predicate> predicatesList = new ArrayList<Predicate>();
+		Predicate[] predicatesList=new Predicate[params.size()];
+		int i=0;
 		for(Entry<String,Object> param:params.entrySet()) {   
 			Class javatype=itemRoot.get(param.getKey()).getJavaType();
-			predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+			predicatesList[i]=criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+			i++;
+			//predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
 		}
-		query.where(predicatesList.toArray(new Predicate[predicatesList.size()]));
+		query.where(predicatesList);
         TypedQuery typedQuery = em.createQuery(query);
         return typedQuery;
 	}
@@ -215,26 +221,58 @@ public class NewDao  {
 //		return pageinfo;
 //	}
 	
-	public PageInfo listPageByMap(Class entityClass,Map<String,Object> params, int pageIndex,int limit) {
-		Pageable pageable = PageRequest.of(pageIndex, limit);
-		Specification spec = new Specification() { // 查询条件构造
-			@Override
-			public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder cb) {
-				List<Predicate> predicatesList = new ArrayList<Predicate>();
-				//root.as(entityClass);
-				if(params!=null) {
-					for(Entry<String,Object> param:params.entrySet()) {   
-						Class javatype=root.get(param.getKey()).getJavaType();
-						predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
-					}
+	private static class PageSpecification<T> implements Specification<T> {
+		private  Map<String,Object> params;
+		
+		public PageSpecification(Map<String, Object> params) {
+			super();
+			this.params = params;
+		}
+
+		@Override
+		public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder cb) {
+			//List<Predicate> predicatesList = new ArrayList<Predicate>();
+			Predicate[] predicatesList=new Predicate[0];
+			if(params!=null) {
+				predicatesList=new Predicate[params.size()];
+				int i=0;
+				for(Entry<String,Object> param:params.entrySet()) {   
+					Class javatype=root.get(param.getKey()).getJavaType();
+					predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+					i++;
+					//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
 				}
 				
-				Predicate p =cb.and(predicatesList.toArray(new Predicate[predicatesList.size()]));
-				return p;
+			} 
+			Predicate p =cb.and(predicatesList);
+			return p;
 
-			}
-
-		};   
+		}
+	}
+	public PageInfo listPageByMap(Class entityClass,Map<String,Object> params, int pageIndex,int limit) {
+		Pageable pageable = PageRequest.of(pageIndex, limit);
+//		Specification spec = new Specification() { // 查询条件构造
+//			@Override
+//			public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder cb) {
+//				//List<Predicate> predicatesList = new ArrayList<Predicate>();
+//				Predicate[] predicatesList=new Predicate[0];
+//				if(params!=null) {
+//					predicatesList=new Predicate[params.size()];
+//					int i=0;
+//					for(Entry<String,Object> param:params.entrySet()) {   
+//						Class javatype=root.get(param.getKey()).getJavaType();
+//						predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+//						i++;
+//						//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+//					}
+//					
+//				} 
+//				Predicate p =cb.and(predicatesList);
+//				return p;
+//			}
+//
+//		};   
+		PageSpecification spec=new PageSpecification(params);
 		Page page=getSimpleJpaRepository(entityClass).findAll(spec, pageable);
 		
 		PageInfo pageinfo=new PageInfo();
@@ -257,8 +295,20 @@ public class NewDao  {
 		if(params.get("id")==null || "".equals(params.get("id"))) {
 			throw new BusinessException("id不能为空!");
 		}
-		throw new BusinessException("还未开发");
 		
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaUpdate update = cb.createCriteriaUpdate(entityClass);
+		Root root = update.from(entityClass);
+		//List<Predicate> predicatesList = new ArrayList<Predicate>();
+		Predicate[] predicatesList=new Predicate[params.size()];
+		int i=0;
+		for(Entry<String,Object> param:params.entrySet()) {   
+			Class javatype=root.get(param.getKey()).getJavaType();
+			predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+			i++;
+			//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+		}
+		update.where(predicatesList);
 		//repository.flush();
 	}
 	
