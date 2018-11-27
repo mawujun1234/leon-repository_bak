@@ -8,8 +8,15 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-
+/**
+ * 继承List的原因是mybatis的接口只能返回list，继承list就可以以PageInfo的形式返回了
+ * 在mybatis中分页拦截的时候，必须是要参数为PageInfo才行
+ * @author mawujun
+ *
+ * @param <T>
+ */
 public class PageInfo<T> implements List<T>{
+	
 	protected int page = -1;//当前第几页
 	protected int limit = 50;// 默认是每页50条
 	protected int start = 0;
@@ -41,8 +48,11 @@ public class PageInfo<T> implements List<T>{
 //		param.setLimit(limit);
 //		return param;
 //	}
+	
+	
 	/**
 	 * 使用哪一列进行统计总数，默认是null,一般可以设置为id
+	 * 只在mybatis中有效
 	 * @param countColumn
 	 */
 	public void setCountColumn(String countColumn) {

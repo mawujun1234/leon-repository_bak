@@ -1,28 +1,13 @@
 package com.mawujun.repository.mybatis.extend;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.Attribute;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
-import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.session.SqlSession;
 
-import com.mawujun.utils.ConvertUtils;
+import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.utils.ReflectUtils;
 
 /**
@@ -93,23 +78,52 @@ public class NewMapperProxy<T> extends MapperProxy<T> {
 		if(method.getName().equals("getById")) {
 			return newdao.getById(entityClass, args[0]);
 		} else if(method.getName().equals("create")) {
-			 newdao.create(args[0]);
-			 return 1;
+			 return newdao.create(entityClass,args[0]);
+			 //return 1;
 		} else if(method.getName().equals("getByMap"))  {
 			return newdao.getByMap(entityClass, (Map<String,Object>)args[0]);
-		} else if(method.getName().equals("getByEntity"))  {
+		} else if(method.getName().equals("getByExample"))  {
+			return newdao.getByExample(entityClass, args[0]);
+		} else if(method.getName().equals("existsByExample"))  {
+			return newdao.existsByExample(entityClass, args[0]);
+		} else if(method.getName().equals("countByExample"))  {
+			return newdao.countByExample(entityClass, args[0]);
+		} else if(method.getName().equals("listByExample"))  {
+			return newdao.listByExample(entityClass, args[0]);
+		} else if(method.getName().equals("listPageByExample"))  {
+			return newdao.listPageByExample(entityClass, args[0],(int)args[1],(int)args[2]);
+		} 
+		else if(method.getName().equals("listByMap"))  {
+			return newdao.listByMap(entityClass, (Map<String,Object>)args[0]);
+		} else if(method.getName().equals("listAll"))  {
+			return newdao.listAll(entityClass);
+		} else if(method.getName().equals("listPageByMap"))  {
+			return newdao.listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);
+		} 
+		
+		else if(method.getName().equals("update"))  {
+			return newdao.update(entityClass, args[0]);
+			//return 1;
+		}  else if(method.getName().equals("updateByMap"))  {
+			newdao.updateByMap(entityClass,(Map<String,Object>)args[0]);
+			return 1;
+		}  else if(method.getName().equals("updateBatch"))  {
 			
-		} else if(method.getName().equals("getMapById"))  {
+		}  else if(method.getName().equals("updateBatch"))  {//数组
 			
-		}  else if(method.getName().equals("getMapByMap"))  {
-			
-		}  else if(method.getName().equals("getMapByEntity"))  {
-			
-		}  else if(method.getName().equals(""))  {
-			
-		}  else if(method.getName().equals(""))  {
-			
-		}  else if (method.getName().equals("listByMap")){
+		}  
+		
+		else if(method.getName().equals("remove"))  {
+			 return newdao.remove(entityClass, args[0]);
+		} else if(method.getName().equals("removeByMap"))  {
+			newdao.removeByMap(entityClass, (Map<String,Object>)args[0]);
+			//这里影响的函数，还没设置
+			return 0;
+		} else if(method.getName().equals("removeById"))  {
+			return newdao.removeById(entityClass, args[0]);
+		} else if(method.getName().equals("removeByIds"))  {
+			return newdao.removeByIds(entityClass, (Object[])args[0]);
+		} else if (method.getName().equals("")){
 //			//https://blog.csdn.net/u012485012/article/details/79396947
 //			//https://blog.csdn.net/u012706811/article/details/53218102
 //			

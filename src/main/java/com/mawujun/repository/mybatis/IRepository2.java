@@ -13,14 +13,15 @@ import com.mawujun.repository.utils.PageInfo;
 
 /**
  * 如果要使用mybatis进行分页查询，那必须参数是PageInfo<T>,返回值也是PageInfo<T>(返回值其实不是pageinfo也可以)，因为参数时引用传递。
+ * 用于mybatis的，和IRepository的区别是很多方法都返回的int的影响函数的值，但是IRepository不能返回影响函数的值
  * @author admin
  *
  * @param <T>
  * @param <ID>
  */
-public interface IRepository<T,ID> {
+public interface IRepository2<T,ID> {
 	
-	public T create(T t);
+	public int create(T t);
 	
 	
 	public T getById(ID id);
@@ -90,7 +91,7 @@ public interface IRepository<T,ID> {
 	 * @param t
 	 * @return
 	 */
-	public T update(T t);
+	public int update(T t);
 	/**
 	 * 更新id为params.id的对象,如果没有id参数，江会报错
 	 * 是动态更新
@@ -137,13 +138,13 @@ public interface IRepository<T,ID> {
 	 * @param list
 	 * @return
 	 */
-	public List<T> createBatch(List<T> list);
+	public int createBatch(List<T> list);
 	/***
 	 * 批量插入，如果打数据量，请用mybatis，进行性能调优
 	 * @param list
 	 * @return
 	 */
-	public List<T> createBatch(T... list);
+	public int createBatch(T... list);
 	/**
 	 * 更新id为list中的t.id的对象
 	 * @param t

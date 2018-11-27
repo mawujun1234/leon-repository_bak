@@ -9,7 +9,7 @@
     <select id="getByMap" resultType="city" parameterType="java.util.Map">
         <include refid="test.mawujun.repository.BaseCityMapper.getByMap"></include>
     </select>
-    <select id="getByEntity" resultType="city" parameterType="city">
+    <select id="getByExample" resultType="city" parameterType="city">
         <include refid="test.mawujun.repository.BaseCityMapper.getByMap"></include>
     </select>
     
@@ -26,7 +26,7 @@
     <select id="listByMap" resultType="city" parameterType="java.util.Map">
         <include refid="test.mawujun.repository.BaseCityMapper.getListByMap"></include>
     </select>
-    <select id="listByEntity" resultType="city" parameterType="city">
+    <select id="listByExample" resultType="city" parameterType="city">
         <include refid="test.mawujun.repository.BaseCityMapper.getListByMap"></include>
     </select>
 
@@ -34,10 +34,10 @@
         <include refid="test.mawujun.repository.BaseCityMapper.listPageByMap"></include>
     </select>
 
-    <select id="getCounts" resultType="int" parameterType="java.util.Map">
+    <select id="countByMap" resultType="int" parameterType="java.util.Map">
         <include refid="test.mawujun.repository.BaseCityMapper.getCounts"></include>
     </select>
-    <select id="getCountsByEntity" resultType="int" parameterType="city">
+    <select id="countByExample" resultType="int" parameterType="city">
         <include refid="test.mawujun.repository.BaseCityMapper.getCounts"></include>
     </select>
 
