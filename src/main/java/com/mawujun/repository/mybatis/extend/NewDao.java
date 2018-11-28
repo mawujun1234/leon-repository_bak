@@ -2,6 +2,7 @@ package com.mawujun.repository.mybatis.extend;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +17,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.criteria.ParameterExpression;
-import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.query.criteria.internal.expression.EntityTypeExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -31,7 +33,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import com.mawujun.exception.BusinessException;
@@ -500,40 +501,84 @@ public class NewDao  {
 	}
 	
 	public long countByMap(Class entityClass,Map<String,Object> params) {
-		SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
-		repository.count(spec)
-	}
-	private static final class CountByMapSpecification<T> implements Specification<T> {
-		private final JpaEntityInformation<T, ?> entityInformation;
-		Map<String,Object> params;
+		//SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
+		//repository.count(spec)
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = cb.createQuery(Long.class);
+		Root root = criteriaQuery.from(entityClass);
+		JpaEntityInformation entityInformation=entityInformationCache.get(entityClass);
+		
+		Expression<Long> selection=cb.count(root.get(entityInformation.getIdAttribute()));
+		criteriaQuery.select(selection);
+		
+		int i=0;
+		if (params != null && params.size() > 0) {
+			Predicate[] predicatesList = new Predicate[params.size()];
 
-		CountByMapSpecification(JpaEntityInformation<T, ?> entityInformation) {
-			this.entityInformation = entityInformation;
+			for (Entry<String, Object> param : params.entrySet()) {
+				Class javatype = root.get(param.getKey()).getJavaType();
+				predicatesList[i] = cb.equal(root.get(param.getKey()),
+						ConvertUtils.convert(param.getValue(), javatype));
+				i++;
+			}
+			criteriaQuery.where(predicatesList);
 		}
+		
+		TypedQuery<Long> query= em.createQuery(criteriaQuery);
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.data.jpa.domain.Specification#toPredicate(javax.persistence.criteria.Root, javax.persistence.criteria.CriteriaQuery, javax.persistence.criteria.CriteriaBuilder)
-		 */
-		public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-			query.select(cb.count(root.get));
+		return query.getSingleResult();
+		
+//		Class id_javatype=entityInformation.getIdType();
+//		Iterable<String> idAttributeNames = entityInformation.getIdAttributeNames();
+//		if (!entityInformation.hasCompositeId()) {
+//			//criteriaQuery.where(cb.equal(root.get(idAttributeNames.iterator().next()),ConvertUtils.convert(id, id_javatype)));
+//			Expression<Long> selection=cb.count(root.get(idAttributeNames.iterator().next()));
+//			criteriaQuery.select(selection);
+//		} else {
+//			root.get(entityInformation.getIdAttribute())
+//			EntityTypeExpression exp=new EntityTypeExpression(cb,id_javatype);
+////			Predicate[] predicatesList=new Predicate[((Collection)idAttributeNames).size()];
+////			int i=0;
+////			for (String idAttributeName : idAttributeNames) {
+////				//Object idAttributeValue = entityInformation.getCompositeIdAttributeValue(id, idAttributeName);
+////				//predicatesList[i]=cb.equal(root.get(idAttributeName),ConvertUtils.convert(id, id_javatype));
+////				i++;
+////			}
+////			update.where(predicatesList);	
+//		}
 
-//			Predicate[] predicatesList=new Predicate[0];
-//			if(params!=null) {
-//				predicatesList=new Predicate[params.size()];
-//				int i=0;
-//				for(Entry<String,Object> param:params.entrySet()) {   
-//					Class javatype=root.get(param.getKey()).getJavaType();
-//					predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
-//					i++;
-//					//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
-//				}
-//				
-//			} 
-//			Predicate p =cb.and(predicatesList);
-//			return p;
-		}
 	}
+//	private static final class CountByMapSpecification<T> implements Specification<T> {
+//		private final JpaEntityInformation<T, ?> entityInformation;
+//		Map<String,Object> params;
+//
+//		CountByMapSpecification(JpaEntityInformation<T, ?> entityInformation) {
+//			this.entityInformation = entityInformation;
+//		}
+//
+//		/*
+//		 * (non-Javadoc)
+//		 * @see org.springframework.data.jpa.domain.Specification#toPredicate(javax.persistence.criteria.Root, javax.persistence.criteria.CriteriaQuery, javax.persistence.criteria.CriteriaBuilder)
+//		 */
+//		public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+//			query.select(cb.count(root.get));
+//
+////			Predicate[] predicatesList=new Predicate[0];
+////			if(params!=null) {
+////				predicatesList=new Predicate[params.size()];
+////				int i=0;
+////				for(Entry<String,Object> param:params.entrySet()) {   
+////					Class javatype=root.get(param.getKey()).getJavaType();
+////					predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+////					i++;
+////					//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+////				}
+////				
+////			} 
+////			Predicate p =cb.and(predicatesList);
+////			return p;
+//		}
+//	}
 	
 	public Object existsById(Class entityClass,Object id) {
 		return getSimpleJpaRepository(entityClass).existsById(id);

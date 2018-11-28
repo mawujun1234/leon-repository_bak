@@ -186,7 +186,7 @@ public interface IRepository<T,ID> {
 	 * @param params
 	 * @return
 	 */
-	public int countByMap(Map<String,Object> params);
+	public long countByMap(Map<String,Object> params);
 
 	
 	/**

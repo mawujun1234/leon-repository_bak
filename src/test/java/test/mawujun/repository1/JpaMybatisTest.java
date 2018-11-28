@@ -31,7 +31,7 @@ import test.mawujun.model.Sex;
  * updateBatch,updateBatchByArray.还未测试
  * create,createBatch,createBatchByArray还未测试
  * existsById,existsByExample,existsByMap还未测试
- * 
+ * countByMap复合主键测试
  * 时间条件测试，特别是3种形式的时间
  * @author admin
  *
