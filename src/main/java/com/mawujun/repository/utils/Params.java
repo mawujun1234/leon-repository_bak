@@ -91,8 +91,18 @@ public class Params extends HashMap<String,Object>{
 	}
 	
 	//=======================================================
-	public static Params getInstance() {
+	/**
+	 * 创建一个新的Params对象
+	 * @return
+	 */
+	public static Params of() {
 		Params utils=new Params();
+		return utils;
+		
+	}
+	public static Params of(String key,Object value) {
+		Params utils=new Params();
+		utils.put(key, value);
 		return utils;
 		
 	}

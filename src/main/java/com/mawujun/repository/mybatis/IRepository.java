@@ -19,8 +19,43 @@ import com.mawujun.repository.utils.PageInfo;
  * @param <ID>
  */
 public interface IRepository<T,ID> {
+	/**
+	 * 清空持久化上下文中的内容
+	 */
+	public boolean clear();
 	
 	public T create(T t);
+	/**
+	 * 批量插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
+	 * @param list
+	 * @return
+	 */
+	public List<T> createBatch(List<T> list);
+	/***
+	 * 批量插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
+	 * @param list
+	 * @return
+	 */
+	public List<T> createBatchByArray(T... list);
+	
+	/**
+	 * 如果存在就更新，如果不存在就插入
+	 * @param t
+	 * @return
+	 */
+	public T save(T t);
+	/**
+	 * 如果存在就更新，如果不存在就插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
+	 * @param list
+	 * @return
+	 */
+	public List<T> saveBatch(List<T> list);
+	/***
+	 * 如果存在就更新，如果不存在就插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
+	 * @param list
+	 * @return
+	 */
+	public List<T> saveBatchByArray(T... list);
 	
 	
 	public T getById(ID id);
@@ -37,20 +72,8 @@ public interface IRepository<T,ID> {
 	 * @return
 	 */
 	public T getByExample(T params);
-	/**
-	 * 是否存在相同的对象
-	 * Example还可以扩展，例如某个属性的名字不是=，而是使用like
-	 * @param params
-	 * @return
-	 */
-	public boolean existsByExample(T params);
-	/**
-	 * 类似的对象有几个
-	 * Example还可以扩展，例如某个属性的名字不是=，而是使用like
-	 * @param params
-	 * @return
-	 */
-	public long countByExample(T params);
+	
+	
 	
 	public List<T> listByExample(T params);
 	
@@ -92,59 +115,6 @@ public interface IRepository<T,ID> {
 	 */
 	public T update(T t);
 	/**
-	 * 更新id为params.id的对象,如果没有id参数，江会报错
-	 * 是动态更新
-	 * @param t
-	 * @return
-	 */
-	public int updateByMap(Map<String,Object> params);
-	
-
-	/**
-	 * 和T一样的属性值的对象都会被删除
-	 * 不要传入一个没有任何值的实体对象，这样会清空整个表的数据
-	 * @param t
-	 * @return
-	 */
-	public int remove(T t);
-	public int removeByMap(Map<String,Object> params);
-	
-	public int removeById(ID id);
-	public int removeByIds(ID... ids);
-	
-	
-	
-	/**
-	 * 参数为null，就统计所有的记录
-	 * @param params
-	 * @return
-	 */
-	public int countByMap(Map<String,Object> params);
-//	/**
-//	 * 参数为null，就返回所有的数据
-//	 * @param t
-//	 * @return
-//	 */
-//	public int getCountsByEntity(T t);
-	
-	
-	public PageInfo<T> getPagerByMap(PageInfo pagerInfo);
-	
-	
-	
-	/**
-	 * 批量插入，如果打数据量，请用mybatis，进行性能调优
-	 * @param list
-	 * @return
-	 */
-	public List<T> createBatch(List<T> list);
-	/***
-	 * 批量插入，如果打数据量，请用mybatis，进行性能调优
-	 * @param list
-	 * @return
-	 */
-	public List<T> createBatch(T... list);
-	/**
 	 * 更新id为list中的t.id的对象
 	 * @param t
 	 * @return
@@ -155,7 +125,98 @@ public interface IRepository<T,ID> {
 	 * @param t
 	 * @return
 	 */
-	public int updateBatch(T... list);
+	public int updateBatchByArray(T... list);
+	/**
+	 * sets就是要更新的值
+	 * params是条件
+	 * 是动态更新
+	 * @param t
+	 * @return
+	 */
+	public int updateByMap(Map<String,Object> sets,Map<String,Object> params);
+	/**
+	 * 根据id更新内容
+	 * @param sets
+	 * @param id
+	 * @return
+	 */
+	public int updateById(ID id,Map<String,Object> sets);
+	
+
+	/**
+	 * 和T一样的属性值的对象都会被删除
+	 * 不要传入一个没有任何值的实体对象，这样会清空整个表的数据
+	 * @param t
+	 * @return
+	 */
+	public int remove(T t);
+	/**
+	 * 根据指定的条件删除对象
+	 * @param params
+	 * @return
+	 */
+	public int removeByMap(Map<String,Object> params);
+	/**
+	 * 根据id删除对象
+	 * @param id
+	 * @return
+	 */
+	public int removeById(ID id);
+	/**
+	 * 根据id数组删除对象
+	 * @param ids
+	 * @return
+	 */
+	public int removeByIds(ID... ids);
+	
+	/**
+	 * 统计所有
+	 * @return
+	 */
+	public long count();
+	/**
+	 * 类似的对象有几个，如果参数为null，将会返回所有的数据
+	 * Example还可以扩展，例如某个属性的名字不是=，而是使用like
+	 * @param params
+	 * @return
+	 */
+	public long countByExample(T params);
+	/**
+	 * 参数为null，就统计所有的记录
+	 * @param params
+	 * @return
+	 */
+	public int countByMap(Map<String,Object> params);
+
+	
+	/**
+	 * 判断是否存在某个id的数据
+	 * @param id
+	 * @return
+	 */
+	public boolean existsById(ID id);
+	/**
+	 * 是否存在相同的对象
+	 * Example还可以扩展，例如某个属性的名字不是=，而是使用like
+	 * @param params
+	 * @return
+	 */
+	public boolean existsByExample(T params);
+	/**
+	 * 是否存在相同的对象
+	 * 
+	 * @param params
+	 * @return
+	 */
+	public boolean existsByMap(T params);
+	
+	
+	public PageInfo<T> getPagerByMap(PageInfo pagerInfo);
+	
+	
+	
+
+
 	
 	
 	

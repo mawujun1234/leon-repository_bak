@@ -1,6 +1,7 @@
 package com.mawujun.repository.mybatis.extend;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +10,14 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -24,13 +29,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import com.mawujun.exception.BusinessException;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.utils.CollectionUtils;
 import com.mawujun.utils.ConvertUtils;
+import com.mawujun.utils.ReflectUtils;
 
 @Repository
 public class NewDao  {
@@ -39,38 +47,76 @@ public class NewDao  {
 	private EntityManager em;
 	
 	private Map<Class,SimpleJpaRepository> repositoryCache=new HashMap<Class,SimpleJpaRepository>();
+	private Map<Class,JpaEntityInformation> entityInformationCache=new HashMap<Class,JpaEntityInformation>();
 	
 	public SimpleJpaRepository getSimpleJpaRepository(Class entityClass) {
 		SimpleJpaRepository repository=new SimpleJpaRepository(entityClass,em);
 		repositoryCache.put(entityClass, repository);
+		entityInformationCache.put(entityClass, (JpaEntityInformation)ReflectUtils.getFieldValue(repository, "entityInformation"));
+		
 		return repository;
 	}
 	
+	public void clear() {
+		em.clear();
+	}
+	
 	public Object create(Class entityClass,Object entity) {
-		//1:判断对象是否创建成功，通过判断对象的状态，是持久态，还是有态来进行判断，然后返回是0还是1
-		//2:批量更新是使用jpql还是条件查询
-		
+		//return getSimpleJpaRepository(entityClass).saveAndFlush(entity);
+		em.persist(entity);
+		em.flush();
+		return entity;
+	}
+	
+	public List createBatch(Class entityClass,List<Object> list) {
+//		SimpleJpaRepository aaa=getSimpleJpaRepository(entityClass);
+//		aaa.saveAll(list);
+//		aaa.flush();
+		for (int i = 0; i < list.size(); i++) {
+			em.persist(list.get(i));
+			if (i % 30 == 0) {
+				em.flush();
+				em.clear();
+			}
+		}
+		em.flush();
+		return list;
+	}
+	
+	public List createBatchByArray(Class entityClass,Object... list) {
+//		SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
+//		repository.saveAll(CollectionUtils.arrayToList(list));
+//		repository.flush();
+		List result=new ArrayList();
+		for (int i = 0; i < list.length; i++) {
+			em.persist(list[i]);
+			result.add(list[i]);
+			if (i % 30 == 0) {
+				em.flush();
+				em.clear();
+			}
+		}
+		em.flush();
+		return result;
+	}
+	
+	public Object save(Class entityClass,Object entity) {
 		return getSimpleJpaRepository(entityClass).saveAndFlush(entity);
 		//em.persist(t);
 	}
 	
-	public void createBatch(Class entityClass,List<Object> list) {
+	public List saveBatch(Class entityClass,List<Object> list) {
 		SimpleJpaRepository aaa=getSimpleJpaRepository(entityClass);
-		aaa.saveAll(list);
+		List resylt=aaa.saveAll(list);
 		aaa.flush();
-//		for (int i = 0; i < list.size(); i++) {
-//			em.persist(list.get(i));
-//			if (i % 30 == 0) {
-//				em.flush();
-//				em.clear();
-//			}
-//		}
+		return resylt;
 	}
 	
-	public void createBatch(Class entityClass,Object... list) {
+	public List saveBatchByArray(Class entityClass,Object... list) {
 		SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
-		repository.saveAll(CollectionUtils.arrayToList(list));
+		List resylt=repository.saveAll(CollectionUtils.arrayToList(list));
 		repository.flush();
+		return resylt;
 //		for (int i = 0; i < list.length; i++) {
 //			em.persist(list[i]);
 //			if (i % 30 == 0) {
@@ -82,6 +128,7 @@ public class NewDao  {
 	
 	public Object getById(Class entityClass,Object id) {
 		SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
+		
 		Optional optional= repository.findById(id);
 		if(optional.isPresent()) {
 			return optional.get();
@@ -132,21 +179,8 @@ public class NewDao  {
 //			return null;
 //		}
 	}
-	public Object existsByExample(Class entityClass,Object params) {
-		ExampleMatcher matcher = ExampleMatcher.matching();
-		Example example = Example.of(params, matcher); 	
-		return getSimpleJpaRepository(entityClass).exists(example);
-		//return exists(example);
-	}
-	public long countByExample(Class entityClass,Object params) {
-		if(params==null) {
-			return getSimpleJpaRepository(entityClass).count();
-		}
-		ExampleMatcher matcher = ExampleMatcher.matching();
-		Example example = Example.of(params, matcher); 	
-		return getSimpleJpaRepository(entityClass).count(example);
-		//return count(example);
-	}
+
+
 	
 	public List listByExample(Class entityClass,Object params) {
 		ExampleMatcher matcher = ExampleMatcher.matching();
@@ -287,14 +321,41 @@ public class NewDao  {
 	
 	
 	public Object update(Class entityClass,Object entity) {
-		SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
-		return repository.saveAndFlush(entity);
+		//SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
+		//return repository.u(entity);
+		Object aaa=em.merge(entity);
+		em.flush();
+		return aaa;
+	}
+	public List updateBatch(Class entityClass,List list) {
+		for (int i = 0; i < list.size(); i++) {
+			em.merge(list.get(i));
+			if (i % 30 == 0) {
+				em.flush();
+				em.clear();
+			}
+		}
+		em.flush();
+		return list;
+	}
+	public List updateBatchByArray(Class entityClass,Object... list) {
+		List result=new ArrayList();
+		for (int i = 0; i < list.length; i++) {
+			em.merge(list[i]);
+			result.add(list[i]);
+			if (i % 30 == 0) {
+				em.flush();
+				em.clear();
+			}
+		}
+		em.flush();
+		return result;
 	}
 	
-	public void updateByMap(Class entityClass,Map<String,Object> params) {
-		if(params.get("id")==null || "".equals(params.get("id"))) {
-			throw new BusinessException("id不能为空!");
-		}
+	public int updateByMap(Class entityClass,Map<String,Object> sets,Map<String,Object> params) {
+//		if(params.get("id")==null || "".equals(params.get("id"))) {
+//			throw new BusinessException("id不能为空!");
+//		}
 		
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaUpdate update = cb.createCriteriaUpdate(entityClass);
@@ -309,7 +370,64 @@ public class NewDao  {
 			//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
 		}
 		update.where(predicatesList);
+		
+		for(Entry<String,Object> set:sets.entrySet()) { 
+			Class javatype=root.get(set.getKey()).getJavaType();
+			update.set(root.get(set.getKey()),ConvertUtils.convert(set.getValue(), javatype));
+		}
+		
+		Query query = em.createQuery(update);
+        int rowCount = query.executeUpdate();
+        em.clear();
+        return rowCount;
 		//repository.flush();
+	}
+	/**
+	 * 已经支持复合主键
+	 * @param entityClass
+	 * @param sets
+	 * @param id
+	 * @return
+	 */
+	public int updateById(Class entityClass,Object id,Map<String,Object> sets) {
+		JpaEntityInformation entityInformation=entityInformationCache.get(entityClass);
+		
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaUpdate update = cb.createCriteriaUpdate(entityClass);
+		
+		Root root = update.from(entityClass);
+		Class id_javatype=entityInformation.getIdType();
+		Iterable<String> idAttributeNames = entityInformation.getIdAttributeNames();
+		if (!entityInformation.hasCompositeId()) {
+			update.where(cb.equal(root.get(idAttributeNames.iterator().next()),ConvertUtils.convert(id, id_javatype)));
+		} else {
+			Predicate[] predicatesList=new Predicate[((Collection)idAttributeNames).size()];
+			int i=0;
+			for (String idAttributeName : idAttributeNames) {
+				Object idAttributeValue = entityInformation.getCompositeIdAttributeValue(id, idAttributeName);
+
+//				boolean complexIdParameterValueDiscovered = idAttributeValue != null&& !query.getParameter(idAttributeName).getParameterType().isAssignableFrom(idAttributeValue.getClass());
+//				if (complexIdParameterValueDiscovered) {
+//					update.where(cb.equal(root.get(idAttributeName),ConvertUtils.convert(id, id_javatype)));
+//					break;
+//				} 
+				predicatesList[i]=cb.equal(root.get(idAttributeName),ConvertUtils.convert(id, id_javatype));
+				i++;
+			}
+			update.where(predicatesList);	
+		}
+
+		
+		for(Entry<String,Object> set:sets.entrySet()) { 
+			Class javatype=root.get(set.getKey()).getJavaType();
+			update.set(root.get(set.getKey()),ConvertUtils.convert(set.getValue(), javatype));
+		}
+		
+		Query query = em.createQuery(update);
+        int rowCount = query.executeUpdate();
+        em.clear();
+        return rowCount;
+		
 	}
 	
 	public int remove(Class entityClass,Object entity) {
@@ -324,11 +442,24 @@ public class NewDao  {
 		return 1;
 	}
 	
-	public void removeByMap(Class entityClass,Map<String,Object> params) {
-		//这里返回影响的函数，还没设置
-		throw new BusinessException("还未开发");
-		//SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
-		//repository.flush();
+	public int removeByMap(Class entityClass,Map<String,Object> params) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaDelete update = cb.createCriteriaDelete(entityClass);
+		Root root = update.from(entityClass);
+		//List<Predicate> predicatesList = new ArrayList<Predicate>();
+		Predicate[] predicatesList=new Predicate[params.size()];
+		int i=0;
+		for(Entry<String,Object> param:params.entrySet()) {   
+			Class javatype=root.get(param.getKey()).getJavaType();
+			predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+			i++;
+			//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+		}
+		update.where(predicatesList);
+		Query query = em.createQuery(update);
+        int rowCount = query.executeUpdate();
+        em.clear();
+        return rowCount;
 	}
 	
 	public int removeById(Class entityClass,Object id) {
@@ -352,6 +483,72 @@ public class NewDao  {
 		}
 		return result;
 	}
+	
+	public long count(Class entityClass ) {
+		return getSimpleJpaRepository(entityClass).count();
+	}
+	
+	
+	public long countByExample(Class entityClass,Object params) {
+		if(params==null) {
+			return getSimpleJpaRepository(entityClass).count();
+		}
+		ExampleMatcher matcher = ExampleMatcher.matching();
+		Example example = Example.of(params, matcher); 	
+		return getSimpleJpaRepository(entityClass).count(example);
+		//return count(example);
+	}
+	
+	public long countByMap(Class entityClass,Map<String,Object> params) {
+		SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
+		repository.count(spec)
+	}
+	private static final class CountByMapSpecification<T> implements Specification<T> {
+		private final JpaEntityInformation<T, ?> entityInformation;
+		Map<String,Object> params;
+
+		CountByMapSpecification(JpaEntityInformation<T, ?> entityInformation) {
+			this.entityInformation = entityInformation;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.springframework.data.jpa.domain.Specification#toPredicate(javax.persistence.criteria.Root, javax.persistence.criteria.CriteriaQuery, javax.persistence.criteria.CriteriaBuilder)
+		 */
+		public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+			query.select(cb.count(root.get));
+
+//			Predicate[] predicatesList=new Predicate[0];
+//			if(params!=null) {
+//				predicatesList=new Predicate[params.size()];
+//				int i=0;
+//				for(Entry<String,Object> param:params.entrySet()) {   
+//					Class javatype=root.get(param.getKey()).getJavaType();
+//					predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+//					i++;
+//					//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+//				}
+//				
+//			} 
+//			Predicate p =cb.and(predicatesList);
+//			return p;
+		}
+	}
+	
+	public Object existsById(Class entityClass,Object id) {
+		return getSimpleJpaRepository(entityClass).existsById(id);
+		//return exists(example);
+	}
+	public Object existsByExample(Class entityClass,Object params) {
+		ExampleMatcher matcher = ExampleMatcher.matching();
+		Example example = Example.of(params, matcher); 	
+		return getSimpleJpaRepository(entityClass).exists(example);
+		//return exists(example);
+	}
+	public Object existsByMap(Class entityClass,Map<String,Object> params) {
+		throw new BusinessException("未开发");
+	}
+	
 	
 //	//============================example相关的
 //	public  List findAll(Example example) {

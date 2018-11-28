@@ -1,13 +1,13 @@
 package com.mawujun.repository.mybatis.extend;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.session.SqlSession;
 
-import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.utils.ReflectUtils;
 
 /**
@@ -62,15 +62,23 @@ public class NewMapperProxy<T> extends MapperProxy<T> {
 			return newdao.getById(entityClass, args[0]);
 		} else if(method.getName().equals("create")) {
 			 return newdao.create(entityClass,args[0]);
-			 //return 1;
-		} else if(method.getName().equals("getByMap"))  {
+		} else if(method.getName().equals("createBatch")) {
+			 return newdao.createBatch(entityClass,(List)args[0]);
+		} else if(method.getName().equals("createBatchByArray")) {
+			 return newdao.createBatchByArray(entityClass,(Object[])args[0]);
+		}
+		else if(method.getName().equals("save")) {
+			 return newdao.save(entityClass,args[0]);
+		} else if(method.getName().equals("saveBatch")) {
+			 return newdao.saveBatch(entityClass,(List)args[0]);
+		} else if(method.getName().equals("saveBatchByArray")) {
+			 return newdao.saveBatchByArray(entityClass,(Object[])args[0]);
+		}
+		
+		else if(method.getName().equals("getByMap"))  {
 			return newdao.getByMap(entityClass, (Map<String,Object>)args[0]);
 		} else if(method.getName().equals("getByExample"))  {
 			return newdao.getByExample(entityClass, args[0]);
-		} else if(method.getName().equals("existsByExample"))  {
-			return newdao.existsByExample(entityClass, args[0]);
-		} else if(method.getName().equals("countByExample"))  {
-			return newdao.countByExample(entityClass, args[0]);
 		} else if(method.getName().equals("listByExample"))  {
 			return newdao.listByExample(entityClass, args[0]);
 		} else if(method.getName().equals("listPageByExample"))  {
@@ -86,58 +94,43 @@ public class NewMapperProxy<T> extends MapperProxy<T> {
 		
 		else if(method.getName().equals("update"))  {
 			return newdao.update(entityClass, args[0]);
-			//return 1;
+		} else if(method.getName().equals("updateBatch"))  {
+			return newdao.updateBatch(entityClass, (List)args[0]);
+		}  else if(method.getName().equals("updateBatchByArray"))  {//数组
+			return newdao.updateBatchByArray(entityClass, (Object[])args[0]);
 		}  else if(method.getName().equals("updateByMap"))  {
-			newdao.updateByMap(entityClass,(Map<String,Object>)args[0]);
-			return 1;
-		}  else if(method.getName().equals("updateBatch"))  {
-			
-		}  else if(method.getName().equals("updateBatch"))  {//数组
-			
+			return newdao.updateByMap(entityClass,(Map<String,Object>)args[0],(Map<String,Object>)args[1]);
+		} else if(method.getName().equals("updateById"))  {
+			return newdao.updateById(entityClass,args[0],(Map<String,Object>)args[1]);
 		}  
 		
 		else if(method.getName().equals("remove"))  {
 			 return newdao.remove(entityClass, args[0]);
 		} else if(method.getName().equals("removeByMap"))  {
-			newdao.removeByMap(entityClass, (Map<String,Object>)args[0]);
-			//这里影响的函数，还没设置
-			return 0;
+			return newdao.removeByMap(entityClass, (Map<String,Object>)args[0]);
 		} else if(method.getName().equals("removeById"))  {
 			return newdao.removeById(entityClass, args[0]);
 		} else if(method.getName().equals("removeByIds"))  {
 			return newdao.removeByIds(entityClass, (Object[])args[0]);
-		} else if (method.getName().equals("")){
-//			//https://blog.csdn.net/u012485012/article/details/79396947
-//			//https://blog.csdn.net/u012706811/article/details/53218102
-//			
-//			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//			CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
-//			//Root 定义查询的From子句中能出现的类型
-//	        Root itemRoot = query.from(entityClass);
-//	      //Predicate 过滤条件 构建where字句可能的各种条件
-////	        //这里用List存放多种查询条件,实现动态查询
-//	        List<Predicate> predicatesList = new ArrayList<Predicate>();
-////	        criteriaBuilder.and(criteriaBuilder.greaterThan(itemRoot.get("age"), 60)
-////	        		,criteriaBuilder.greaterThan(itemRoot.get("createDate"), "2018-11-239:55:55"));
-//	        Map<String,Object> params=( Map<String,Object>)args[0];
-//	        for(Entry<String,Object> param:params.entrySet()) {        
-//	        	Class javatype=itemRoot.get(param.getKey()).getJavaType();
-//	        	
-//	        	predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
-//	        	
-//	        	
-//	        	Metamodel mm=entityManager.getMetamodel();
-//	        	EntityType<T> et=mm.entity(entityClass);
-//	        	Attribute attr=et.getAttribute("name");
-//	        	System.out.println(((SingularAttribute)attr).getBindableType());
-//	        	System.out.println(attr.getName());
-//	        }
-//	        query.where(predicatesList.toArray(new Predicate[predicatesList.size()]));
-//	        //query.where(criteriaBuilder.greaterThan(itemRoot.get("age"), "10"),criteriaBuilder.equal(itemRoot.get("sex"), "Man")
-//	        //		);//,criteriaBuilder.greaterThan(itemRoot.get("createDate"), "2018-11-23 19:55:55")日期不能按字符串来，需要转换，参考HIberanteDao.setParams方法
-//	        TypedQuery typedQuery = entityManager.createQuery(query);
-//	        List resultList = typedQuery.getResultList();
-//	        return resultList;
+		} 
+		else if(method.getName().equals("count"))  {
+			return newdao.count(entityClass);
+		} else if(method.getName().equals("countByExample"))  {
+			return newdao.countByExample(entityClass, args[0]);
+		} else if(method.getName().equals("countByMap"))  {
+			return newdao.countByMap(entityClass, (Map<String,Object>)args[0]);
+		} 
+		
+		else if(method.getName().equals("existsById"))  {
+			return newdao.existsById(entityClass, args[0]);
+		} else if(method.getName().equals("existsByExample"))  {
+			return newdao.existsByExample(entityClass, args[0]);
+		} else if(method.getName().equals("existsByMap"))  {
+			return newdao.existsByMap(entityClass, (Map<String,Object>)args[0]);
+		} 
+		else if (method.getName().equals("clear")){
+			newdao.clear();
+			return true;
 		}
 		
 		

@@ -61,7 +61,7 @@ public class CityMapperTest {
 		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
 
 		// 测试参数绑定，构建一个ParamsUtils返回一个map作为参数
-		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
+		Params paramsUtils = Params.of().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
 		//city = cityMapper.getByMap(paramsUtils.getParams());
 		city = cityMapper.getByMap(paramsUtils);
 		Assert.assertNotNull(city);
@@ -82,7 +82,7 @@ public class CityMapperTest {
 		Assert.assertEquals(Sex.Man, city.getSex());
 		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
 		
-		paramsUtils = Params.getInstance().addIn("name", "宁波","杭州","苏州").addLike("sex", Sex.Man);
+		paramsUtils = Params.of().addIn("name", "宁波","杭州","苏州").addLike("sex", Sex.Man);
 		Assert.assertEquals("'宁波','杭州','苏州'", paramsUtils.getParams().get("name"));
 		Assert.assertEquals("%Man%", paramsUtils.getParams().get("sex"));
 		
@@ -101,7 +101,7 @@ public class CityMapperTest {
 		Assert.assertEquals("Man", city.get("sex"));
 		Assert.assertEquals(now.getTime(), ((Date)city.get("createDate")).getTime());
 		
-		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
+		Params paramsUtils = Params.of().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
 		city = cityMapper.getMapByMap(paramsUtils.getParams());
 		Assert.assertEquals("宁波", city.get("name"));
 		Assert.assertEquals((Double) 10.253, (Double)city.get("price"));
@@ -148,7 +148,7 @@ public class CityMapperTest {
 		Assert.assertEquals(now.getTime(), city1.getCreateDate().getTime());
 		
 		
-		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
+		Params paramsUtils = Params.of().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
 		list=cityMapper.listByMap(paramsUtils);
 		Assert.assertEquals(1, list.size());
 		city0=list.get(0);
@@ -188,7 +188,7 @@ public class CityMapperTest {
 		Assert.assertEquals(Sex.Man, city0.getSex());
 		Assert.assertEquals(now.getTime(), city0.getCreateDate().getTime());
 		
-		Params paramsUtils = Params.getInstance().add("id", id).add("price", 11.11).add("sex", Sex.Women);
+		Params paramsUtils = Params.of().add("id", id).add("price", 11.11).add("sex", Sex.Women);
 		cityMapper.updateByMap(paramsUtils);
 		city0 = cityMapper.getById(id);
 		Assert.assertEquals("宁波", city0.getName());
@@ -216,7 +216,7 @@ public class CityMapperTest {
 		
 		
 		
-		Params params = Params.getInstance().add("name", "宁波");
+		Params params = Params.of().add("name", "宁波");
 		result =cityMapper.removeByMap(params);
 		Assert.assertEquals(1, result);
 		list=cityMapper.listByMap(null);
@@ -274,7 +274,7 @@ public class CityMapperTest {
 		count=cityMapper.countByMap(null);
 		Assert.assertEquals(2, count);
 		
-		Params params = Params.getInstance().add("name", "宁波");
+		Params params = Params.of().add("name", "宁波");
 		count=cityMapper.countByMap(params);
 		Assert.assertEquals(1, count);
 		

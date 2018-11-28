@@ -26,7 +26,16 @@ import test.mawujun.model.Sex;
 
 
 
-
+/**
+ * save,saveBatch,saveBatchByArray还未测试
+ * updateBatch,updateBatchByArray.还未测试
+ * create,createBatch,createBatchByArray还未测试
+ * existsById,existsByExample,existsByMap还未测试
+ * 
+ * 时间条件测试，特别是3种形式的时间
+ * @author admin
+ *
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes={JpaMybatisApp.class,NewApplicationListenerConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -49,12 +58,8 @@ public class JpaMybatisTest {
 		city.setAge(50);
 		city.setSex(Sex.Man);
 		city.setCreateDate(now);
-		int result=jpaMybatisMapper.create(city);
-		任务：1：各个方法的返回值，返回什么内容
-		   2：jpa的几种查询方式笔记整理
-		   3：按map参数的动态更细，动态删除实现
-		
-		Assert.assertEquals(1, result);
+		jpaMybatisMapper.create(city);
+		//Assert.assertEquals(1, result);
 		id=city.getId();
 		Assert.assertNotNull(id);
 		
@@ -77,14 +82,14 @@ public class JpaMybatisTest {
 		Assert.assertEquals(Sex.Man, city.getSex());
 		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
 		
-//		Params params = Params.getInstance().add("sex", Sex.Man);
-//		//Params params = Params.getInstance().add("sex", "Man");//这样就不行，后端要转换成
+//		Params params = Params.of().add("sex", Sex.Man);
+//		//Params params = Params.of().add("sex", "Man");//这样就不行，后端要转换成
 //		//		.add("createDate", "2018-11-26 11:02:02");
 //		List<City> list = jpaMybatisMapper.listByMap(params);
 //		Assert.assertEquals(1, list.size());
 
 		// 测试参数绑定，构建一个ParamsUtils返回一个map作为参数
-		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
+		Params paramsUtils = Params.of().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
 		//city = jpaMybatisMapper.getByMap(paramsUtils.getParams());
 		city = jpaMybatisMapper.getByMap(paramsUtils);
 		Assert.assertNotNull(city);
@@ -145,7 +150,7 @@ public class JpaMybatisTest {
 		
 		
 		
-		paramsUtils = Params.getInstance().addIn("name", "宁波","杭州","苏州").addLike("sex", Sex.Man);
+		paramsUtils = Params.of().addIn("name", "宁波","杭州","苏州").addLike("sex", Sex.Man);
 		Assert.assertEquals("'宁波','杭州','苏州'", paramsUtils.getParams().get("name"));
 		Assert.assertEquals("%Man%", paramsUtils.getParams().get("sex"));
 		
@@ -161,8 +166,8 @@ public class JpaMybatisTest {
 		city.setAge(50);
 		city.setSex(Sex.Women);
 		city.setCreateDate(now);
-		int result=jpaMybatisMapper.create(city);
-		Assert.assertEquals(1, result);
+		jpaMybatisMapper.create(city);
+		//Assert.assertEquals(1, result);
 		
 		List<City> list=jpaMybatisMapper.listAll();
 		Assert.assertEquals(2, list.size());
@@ -180,7 +185,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(now.getTime(), city1.getCreateDate().getTime());
 		
 		
-		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
+		Params paramsUtils = Params.of().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
 		list=jpaMybatisMapper.listByMap(paramsUtils);
 		Assert.assertEquals(1, list.size());
 		city0=list.get(0);
@@ -201,7 +206,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(now.getTime(), city1.getCreateDate().getTime());
 		
 		
-		paramsUtils = Params.getInstance().add("age", 50);
+		paramsUtils = Params.of().add("age", 50);
 		PageInfo<City> oage=jpaMybatisMapper.listPageByMap(paramsUtils, 0, 1);
 		Assert.assertEquals(2, oage.getTotal());
 		Assert.assertEquals(2, oage.getTotalPages());
@@ -267,7 +272,7 @@ public class JpaMybatisTest {
 		
 		//params=new PageInfo<City>();
 		//params.addParam("name", "宁波");
-		Params params=Params.getInstance().add("name", "宁波");
+		Params params=Params.of().add("name", "宁波");
 		pageinfo=jpaMybatisMapper.listPageByMap(params,0,10);
 		Assert.assertEquals(1, pageinfo.getTotal());
 		Assert.assertEquals(1, pageinfo.getRootSize());
@@ -293,8 +298,9 @@ public class JpaMybatisTest {
 		Assert.assertEquals(Sex.Man, city0.getSex());
 		Assert.assertEquals(now.getTime(), city0.getCreateDate().getTime());
 		
-		Params paramsUtils = Params.getInstance().add("id", id).add("price", 11.11).add("sex", Sex.Women);
-		jpaMybatisMapper.updateByMap(paramsUtils);
+		Params paramsUtils = Params.of().add("price", 11.11).add("sex", Sex.Women);
+		int result=jpaMybatisMapper.updateByMap(paramsUtils,Params.of().add("id", id));
+		Assert.assertEquals(1, result);
 		city0 = jpaMybatisMapper.getById(id);
 		Assert.assertEquals("宁波", city0.getName());
 		Assert.assertEquals((Double) 11.11, city0.getPrice());
@@ -302,38 +308,46 @@ public class JpaMybatisTest {
 		Assert.assertEquals(Sex.Women, city0.getSex());
 		Assert.assertEquals(now.getTime(), city0.getCreateDate().getTime());
 		
+		jpaMybatisMapper.updateById(id,Params.of().add("price", 22.22).add("sex", Sex.Man));
+		city0 = jpaMybatisMapper.getById(id);
+		Assert.assertEquals("宁波", city0.getName());
+		Assert.assertEquals((Double) 22.22, city0.getPrice());
+		Assert.assertEquals((Integer) 40, city0.getAge());
+		Assert.assertEquals(Sex.Man, city0.getSex());
+		Assert.assertEquals(now.getTime(), city0.getCreateDate().getTime());
+		
 		
 	}
 	
 	@Test
 	public void test5remove() {
+		List<City> list=jpaMybatisMapper.listByMap(null);
+		Assert.assertEquals(2, list.size());	
 	
 		City city=new City();
-		city.setName("杭州");
+		city.setId(id);
 		jpaMybatisMapper.remove(city);
-		List<City> list=jpaMybatisMapper.listByMap(null);
-		Assert.assertEquals(2, list.size());		
+		list=jpaMybatisMapper.listByMap(null);
+		Assert.assertEquals(1, list.size());	
+
 		
-		Params params = Params.getInstance().add("name", "宁波");
+		Params params = Params.of().add("name", "杭州");
 		int result =jpaMybatisMapper.removeByMap(params);
 		Assert.assertEquals(1, result);
 		list=jpaMybatisMapper.listByMap(null);
 		Assert.assertEquals(0, list.size());
-
-	}
-	
-	@Test
-	public void test6remove() {
-		test();
-		List<City> list=jpaMybatisMapper.listByMap(null);
-		Assert.assertEquals(3, list.size());
-		int result =jpaMybatisMapper.removeById(id);
-		Assert.assertEquals(1, result);
-		 list=jpaMybatisMapper.listByMap(null);
-		Assert.assertEquals(2, list.size());
+		
 		
 		test();
-		City city=new City();
+		list=jpaMybatisMapper.listByMap(null);
+		Assert.assertEquals(1, list.size());
+		result =jpaMybatisMapper.removeById(id);
+		Assert.assertEquals(1, result);
+		 list=jpaMybatisMapper.listByMap(null);
+		Assert.assertEquals(0, list.size());
+		
+		test();
+		city=new City();
 		city.setName("杭州");
 		city.setPrice(10.253);
 		city.setAge(50);
@@ -342,24 +356,30 @@ public class JpaMybatisTest {
 		jpaMybatisMapper.create(city);
 		//Assert.assertEquals(1, result);
 		list=jpaMybatisMapper.listByMap(null);
-		Assert.assertEquals(4, list.size());
+		Assert.assertEquals(2, list.size());
 		String id1=city.getId();
 		
 		result=jpaMybatisMapper.removeByIds(id,id1);
 		Assert.assertEquals(2, result);
 		list=jpaMybatisMapper.listByMap(null);
-		Assert.assertEquals(2, list.size());
-		
-		
+		Assert.assertEquals(0, list.size());
+
 	}
 	
+//	@Test
+//	public void test6remove() {
+//		
+//		
+//		
+//	}
+	
 	@Test
-	public void test7getCounts() {
-		long count=jpaMybatisMapper.countByMap(null);
+	public void test7counts() {
+		long count=jpaMybatisMapper.count();
 		Assert.assertEquals(0, count);
 		
 		test();
-		count=jpaMybatisMapper.countByMap(null);
+		count=jpaMybatisMapper.count();
 		Assert.assertEquals(1, count);
 		
 		City city=new City();
@@ -368,13 +388,13 @@ public class JpaMybatisTest {
 		city.setAge(50);
 		city.setSex(Sex.Women);
 		city.setCreateDate(now);
-		int result=jpaMybatisMapper.create(city);
-		Assert.assertEquals(1, result);
+		jpaMybatisMapper.create(city);
+		//Assert.assertEquals(1, result);
 		
 		count=jpaMybatisMapper.countByMap(null);
 		Assert.assertEquals(2, count);
 		
-		Params params = Params.getInstance().add("name", "宁波");
+		Params params = Params.of().add("name", "宁波");
 		count=jpaMybatisMapper.countByMap(params);
 		Assert.assertEquals(1, count);
 		
@@ -391,99 +411,108 @@ public class JpaMybatisTest {
 		
 	}
 	
-	public void test8createBatch() {
-		City city=new City();
-		city.setName("宁波");
-		city.setPrice(10.253);
-		city.setAge(50);
-		city.setSex(Sex.Man);
-		city.setCreateDate(now);
-		
-		City city1=new City();
-		city1.setName("杭州");
-		city1.setPrice(10.253);
-		city1.setAge(50);
-		city1.setSex(Sex.Women);
-		city1.setCreateDate(now);
-		
-		List<City> list=new ArrayList<City>();
-		list.add(city);
-		list.add(city1);
-		
-		int result=jpaMybatisMapper.createBatch(list);
-		Assert.assertEquals(2, result);
-		long count=jpaMybatisMapper.countByExample(null);
-		Assert.assertEquals(2, count);
-		
-		result=jpaMybatisMapper.removeByIds(city.getId(),city1.getId());
-		Assert.assertEquals(2, result);
-		count=jpaMybatisMapper.countByExample(null);
-		Assert.assertEquals(0, count);
+	@Test
+	public void test9clear() {
+		jpaMybatisMapper.clear();
 	}
 	
-	public void test8updateBatch() {
-		City city=new City();
-		city.setName("宁波");
-		city.setPrice(10.253);
-		city.setAge(50);
-		city.setSex(Sex.Man);
-		city.setCreateDate(now);
-		
-		City city1=new City();
-		city1.setName("杭州");
-		city1.setPrice(10.253);
-		city1.setAge(50);
-		city1.setSex(Sex.Women);
-		city1.setCreateDate(now);
-		
-		List<City> list=new ArrayList<City>();
-		list.add(city);
-		list.add(city1);
-		
-		int result=jpaMybatisMapper.createBatch(list);
-		Assert.assertEquals(2, result);
-		long count=jpaMybatisMapper.countByExample(null);
-		Assert.assertEquals(2, count);
-		
-		city.setName("宁波1");
-		city1.setName("杭州1");
-		city1.setPrice(789.123);
-		result=jpaMybatisMapper.updateBatch(list);
-		Assert.assertEquals(2, result);
-		
-		
-		City city3 = jpaMybatisMapper.getById(city.getId());
-		Assert.assertEquals("宁波1", city3.getName());
-		Assert.assertEquals((Double) 10.253, city3.getPrice());
-		Assert.assertEquals((Integer) 50, city3.getAge());
-		Assert.assertEquals(Sex.Man, city3.getSex());
-		Assert.assertEquals(now.getTime(), city3.getCreateDate().getTime());
-		
-		City city4=jpaMybatisMapper.getById(city1.getId());
-		Assert.assertEquals("杭州1", city4.getName());
-		Assert.assertEquals((Double)789.123, city4.getPrice());
-		Assert.assertEquals((Integer)50, city4.getAge());
-		Assert.assertEquals(Sex.Women, city4.getSex());
-		Assert.assertEquals(now.getTime(), city4.getCreateDate().getTime());
-		
-		city.setName("宁波2");
-		city1.setName("杭州2");
-		jpaMybatisMapper.updateBatch(list.get(0),list.get(1));
-		
-		city3 = jpaMybatisMapper.getById(city.getId());
-		Assert.assertEquals("宁波2", city3.getName());
-		Assert.assertEquals((Double) 10.253, city3.getPrice());
-		Assert.assertEquals((Integer) 50, city3.getAge());
-		Assert.assertEquals(Sex.Man, city3.getSex());
-		Assert.assertEquals(now.getTime(), city3.getCreateDate().getTime());
-		
-		city4=jpaMybatisMapper.getById(city1.getId());
-		Assert.assertEquals("杭州2", city4.getName());
-		Assert.assertEquals((Double)789.123, city4.getPrice());
-		Assert.assertEquals((Integer)50, city4.getAge());
-		Assert.assertEquals(Sex.Women, city4.getSex());
-		Assert.assertEquals(now.getTime(), city4.getCreateDate().getTime());
-	}
+//	public void test8createBatch() {
+//		City city=new City();
+//		city.setName("宁波");
+//		city.setPrice(10.253);
+//		city.setAge(50);
+//		city.setSex(Sex.Man);
+//		city.setCreateDate(now);
+//		
+//		City city1=new City();
+//		city1.setName("杭州");
+//		city1.setPrice(10.253);
+//		city1.setAge(50);
+//		city1.setSex(Sex.Women);
+//		city1.setCreateDate(now);
+//		
+//		List<City> list=new ArrayList<City>();
+//		list.add(city);
+//		list.add(city1);
+//		
+//		jpaMybatisMapper.createBatch(list);
+//		//Assert.assertEquals(2, result);
+//		long count=jpaMybatisMapper.countByExample(null);
+//		Assert.assertEquals(2, count);
+//		
+//		int result=jpaMybatisMapper.removeByIds(city.getId(),city1.getId());
+//		Assert.assertEquals(2, result);
+//		count=jpaMybatisMapper.countByExample(null);
+//		Assert.assertEquals(0, count);
+//	}
+//	
+//	public void test8updateBatch() {
+//		City city=new City();
+//		city.setName("宁波");
+//		city.setPrice(10.253);
+//		city.setAge(50);
+//		city.setSex(Sex.Man);
+//		city.setCreateDate(now);
+//		
+//		City city1=new City();
+//		city1.setName("杭州");
+//		city1.setPrice(10.253);
+//		city1.setAge(50);
+//		city1.setSex(Sex.Women);
+//		city1.setCreateDate(now);
+//		
+//		List<City> list=new ArrayList<City>();
+//		list.add(city);
+//		list.add(city1);
+//		
+//		jpaMybatisMapper.createBatch(list);
+//		//Assert.assertEquals(2, result);
+//		long count=jpaMybatisMapper.countByExample(null);
+//		Assert.assertEquals(2, count);
+//		
+//		city.setName("宁波1");
+//		city1.setName("杭州1");
+//		city1.setPrice(789.123);
+//		jpaMybatisMapper.updateBatch(list);
+//		//Assert.assertEquals(2, result);
+//		
+//		
+//		City city3 = jpaMybatisMapper.getById(city.getId());
+//		Assert.assertEquals("宁波1", city3.getName());
+//		Assert.assertEquals((Double) 10.253, city3.getPrice());
+//		Assert.assertEquals((Integer) 50, city3.getAge());
+//		Assert.assertEquals(Sex.Man, city3.getSex());
+//		Assert.assertEquals(now.getTime(), city3.getCreateDate().getTime());
+//		
+//		City city4=jpaMybatisMapper.getById(city1.getId());
+//		Assert.assertEquals("杭州1", city4.getName());
+//		Assert.assertEquals((Double)789.123, city4.getPrice());
+//		Assert.assertEquals((Integer)50, city4.getAge());
+//		Assert.assertEquals(Sex.Women, city4.getSex());
+//		Assert.assertEquals(now.getTime(), city4.getCreateDate().getTime());
+//		
+//		city.setName("宁波2");
+//		city1.setName("杭州2");
+//		jpaMybatisMapper.updateBatchByArray(list.get(0),list.get(1));
+//		
+//		city3 = jpaMybatisMapper.getById(city.getId());
+//		Assert.assertEquals("宁波2", city3.getName());
+//		Assert.assertEquals((Double) 10.253, city3.getPrice());
+//		Assert.assertEquals((Integer) 50, city3.getAge());
+//		Assert.assertEquals(Sex.Man, city3.getSex());
+//		Assert.assertEquals(now.getTime(), city3.getCreateDate().getTime());
+//		
+//		city4=jpaMybatisMapper.getById(city1.getId());
+//		Assert.assertEquals("杭州2", city4.getName());
+//		Assert.assertEquals((Double)789.123, city4.getPrice());
+//		Assert.assertEquals((Integer)50, city4.getAge());
+//		Assert.assertEquals(Sex.Women, city4.getSex());
+//		Assert.assertEquals(now.getTime(), city4.getCreateDate().getTime());
+//	}
+	
+	
+	
+	
 	
 
 //	/**
@@ -499,7 +528,7 @@ public class JpaMybatisTest {
 //		Assert.assertEquals("Man", city.get("sex"));
 //		Assert.assertEquals(now.getTime(), ((Date)city.get("createDate")).getTime());
 //		
-//		Params paramsUtils = Params.getInstance().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
+//		Params paramsUtils = Params.of().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
 //		city = jpaMybatisMapper.getMapByMap(paramsUtils.getParams());
 //		Assert.assertEquals("宁波", city.get("name"));
 //		Assert.assertEquals((Double) 10.253, (Double)city.get("price"));
