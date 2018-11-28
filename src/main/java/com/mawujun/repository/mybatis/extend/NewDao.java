@@ -274,7 +274,7 @@ public class NewDao  {
 //		};   
 		PageSpecification spec=new PageSpecification(params);
 		Page page=getSimpleJpaRepository(entityClass).findAll(spec, pageable);
-		
+
 		PageInfo pageinfo=new PageInfo();
 		pageinfo.setPage(pageIndex);
 		pageinfo.setLimit(limit);

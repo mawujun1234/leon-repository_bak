@@ -23,23 +23,6 @@ public class NewMapperProxy<T> extends MapperProxy<T> {
 	private static final long serialVersionUID = 1L;
 
 	
-//	private HibernateDao<Object,Serializable> hibernateDao=null;
-//	
-//	private MybatisRepository mybatisRepository;
-//	private String namespace;
-//	
-//	//Set<String> hibernateMethods=new HashSet<String>();
-//
-//	public void setSessionFactory(SessionFactory sessionFactory) {
-//		//this.sessionFactory = sessionFactory;
-//		//当Repository没有继承IRepository的时候，hibernateDao就为null
-//		if(hibernateDao!=null){
-//			hibernateDao.setSessionFactory(sessionFactory);
-//		}
-//		
-//	}
-	//private EntityManager entityManager;
-	
 	private NewDao newdao;
 	protected Class<T> entityClass;
 	public NewMapperProxy(SqlSession sqlSession, Class<T> mapperInterface,

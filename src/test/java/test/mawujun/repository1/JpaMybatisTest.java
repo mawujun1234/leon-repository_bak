@@ -50,6 +50,9 @@ public class JpaMybatisTest {
 		city.setSex(Sex.Man);
 		city.setCreateDate(now);
 		int result=jpaMybatisMapper.create(city);
+		任务：1：各个方法的返回值，返回什么内容
+		   2：jpa的几种查询方式笔记整理
+		   3：按map参数的动态更细，动态删除实现
 		
 		Assert.assertEquals(1, result);
 		id=city.getId();
