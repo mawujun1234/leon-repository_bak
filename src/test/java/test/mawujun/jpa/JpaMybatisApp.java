@@ -1,4 +1,4 @@
-package test.mawujun.repository1;
+package test.mawujun.jpa;
 
 
 import java.sql.SQLException;
@@ -20,7 +20,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
-import com.mawujun.repository.mybatis.extend.NewMapperProxyFactory;
+import com.mawujun.repository.mybatis.extend.JpaMapperProxyFactory;
 import com.mawujun.utils.ReflectUtils;
 
 @SpringBootApplication

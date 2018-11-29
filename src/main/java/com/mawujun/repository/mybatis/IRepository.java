@@ -3,15 +3,11 @@ package com.mawujun.repository.mybatis;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.PageInfo;
 
 /**
+ * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
  * 如果要使用mybatis进行分页查询，那必须参数是PageInfo<T>,返回值也是PageInfo<T>(返回值其实不是pageinfo也可以)，因为参数时引用传递。
  * @author admin
  *
@@ -79,7 +75,7 @@ public interface IRepository<T,ID> {
 	
 	//public PageInfo<T> listPageByExample(T params, PageInfo<T> pageinfo);
 	/**
-	 * 
+	 * 满足不了时，请参考listPageByPageInfo
 	 * @param params
 	 * @param page 第几页，第一页是0；
 	 * @param limit 一页放几行
@@ -96,14 +92,22 @@ public interface IRepository<T,ID> {
 	 * @return
 	 */
 	public List<T> listByMap(Map<String,Object> params);
-//	/**
-//	 * 要分页就全部使用这种模式，参数是PageInfo，封装了sql要用的参数和分页信息，
-//	 * 返回值也是PageInfo
-//	 * PageInfo中的参数可以是Map也可以是T，但不能是其他类型，否则会报异常
-//	 * @param params
-//	 * @return
-//	 */
-//	public PageInfo<T> listPageByMap(PageInfo<T> pageinfo);
+	/**
+	 * 参数是PageInfo，封装了sql要用的参数和分页信息。
+	 * PageInfo中的参数可以是Map也可以是T，但不能是其他类型，否则会报异常
+	 * 还可以自定义复杂查询的分页，需要自己增加一个方法，参数是PageInfo<M> ，返回值也是PageInfo,并在Mapper.xml文件中，写对应的方法.泛型可以是T也可以是Map
+	 * @param params
+	 * @return
+	 */
+	public PageInfo<T> listPageByPageInfo(PageInfo<T> pageinfo);
+	
+	/**
+	 * 取分页数据，满足不了时，请参考listPageByPageInfo
+	 * @param params 如果为null，按所有数据进行分页
+	 * @param page 第几页  从0 开始
+	 * @param limit 每页的页数
+	 * @return
+	 */
 	public PageInfo<T> listPageByMap(Map<String,Object> params,int page,int limit);
 
 
@@ -208,16 +212,13 @@ public interface IRepository<T,ID> {
 	 * @param params
 	 * @return
 	 */
-	public boolean existsByMap(T params);
+	public boolean existsByMap(Map<String,Object> params);
 	
 	
-	public PageInfo<T> getPagerByMap(PageInfo pagerInfo);
 	
 	
 	
 
-
-	
 	
 	
 	

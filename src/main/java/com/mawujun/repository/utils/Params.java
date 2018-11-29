@@ -76,19 +76,35 @@ public class Params extends HashMap<String,Object>{
 //		return super.entrySet();
 //	}
 	
+	//存放操作符
+	private Map<String,OpEnum> op=new HashMap<String,OpEnum>();
+	
+	/**
+	 * 如果不存在，默认是eq
+	 * @param key
+	 * @return
+	 */
+	public OpEnum getOpEnum(String key) {
+		OpEnum opEnum=op.get(key);
+		return opEnum==null?OpEnum.eq:opEnum;
+	}
 	
 	//==============================================
+	/**
+	 * 默认的操作符是“=”
+	 */
 	@Override
 	public Params put(String key, Object value) {
 		// TODO Auto-generated method stub
 		super.put(key, value);
+		op.put(key, OpEnum.eq);
 		return this;
 	}
-	@Override
-	public void putAll(Map<? extends String, ? extends Object> m) {
-		// TODO Auto-generated method stub
-		this.putAll(m);
-	}
+//	@Override
+//	public void putAll(Map<? extends String, ? extends Object> m) {
+//		// TODO Auto-generated method stub
+//		this.putAll(m);
+//	}
 	
 	//=======================================================
 	/**
@@ -113,8 +129,146 @@ public class Params extends HashMap<String,Object>{
 	
 	public Params add(String key,Object value) {
 		this.put(key, value);
+		op.put(key, OpEnum.eq);
 		return this;
 	}
+	public Params add(String key,OpEnum opEnum,Object value) {
+		this.put(key, value);
+		op.put(key, opEnum);
+		return this;
+	}
+	
+	public Params eq(String key,Object value) {
+		this.add(key,value);
+		return this;
+	}
+	public Params noteq(String key,Object value) {
+		this.add(key,OpEnum.noteq,value);
+		return this;
+	}
+	/**
+	 * 大于
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params gt(String key,Object value) {
+		this.add(key,OpEnum.gt,value);
+		return this;
+	}
+	/**
+	 * 大于等于
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params ge(String key,Object value) {
+		this.add(key,OpEnum.ge,value);
+		return this;
+	}
+	/**
+	 * 小于
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params lt(String key,Object value) {
+		this.add(key,OpEnum.lt,value);
+		return this;
+	}
+	/**
+	 * 小于等于
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params le(String key,Object value) {
+		this.add(key,OpEnum.le,value);
+		return this;
+	}
+	public Params between(String key,Object value1,Object value2) {
+		this.add(key,OpEnum.between,new Object[] {value1,value2});
+		return this;
+	}
+	public Params in(String key,Object... value) {
+		this.add(key,OpEnum.in,value);
+		return this;
+	}
+	public Params notin(String key,Object... value) {
+		this.add(key,OpEnum.notin,value);
+		return this;
+	}
+	public Params isnull(String key) {
+		this.add(key,OpEnum.isnull,null);
+		return this;
+	}
+	public Params isnotnull(String key) {
+		this.add(key,OpEnum.isnotnull,null);
+		return this;
+	}
+	/**
+	 * 两端like,"%"+value+"%"
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params like(String key,String value) {
+		this.add(key,OpEnum.like,"%"+value+"%");
+		return this;
+	}
+	/**
+	 * 前端匹配，"%"+value
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params likeprefix(String key,String value) {
+		this.add(key,OpEnum.likeprefix,"%"+value);
+		return this;
+	}
+	
+	/**
+	 * 后端匹配，value+"%"
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params likesuffix(String key,String value) {
+		this.add(key,OpEnum.likesuffix,value+"%");
+		return this;
+	}
+	
+	 /** 两端like,"%"+value+"%"
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params notlike(String key,String value) {
+		this.add(key,OpEnum.notlike,"%"+value+"%");
+		return this;
+	}
+	/**
+	 * 前端匹配，"%"+value
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params notlikeprefix(String key,String value) {
+		this.add(key,OpEnum.notlikeprefix,"%"+value);
+		return this;
+	}
+	
+	/**
+	 * 后端匹配，value+"%"
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params notlikesuffix(String key,String value) {
+		this.add(key,OpEnum.notlikesuffix,value+"%");
+		return this;
+	}
+	
 	/**
 	 * 会把key相同的值组装成sql中in的形式,'a','b','c'
 	 * 同个key不能和其他方法混合调用，但是同个key可以多次调用addin()方法.addIn(....).addIn(...)
@@ -145,17 +299,17 @@ public class Params extends HashMap<String,Object>{
 		}
 		return this;
 	}
-	/**
-	 * 会再value的两边都加上%号
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public Params addLike(String key,Object value) {
-		if(value!=null) {
-			this.add(key, "%"+value.toString()+"%");
-		}
-		return this;
-	}
+//	/**
+//	 * 会再value的两边都加上%号
+//	 * @param key
+//	 * @param value
+//	 * @return
+//	 */
+//	public Params addLike(String key,Object value) {
+//		if(value!=null) {
+//			this.add(key, "%"+value.toString()+"%");
+//		}
+//		return this;
+//	}
 
 }

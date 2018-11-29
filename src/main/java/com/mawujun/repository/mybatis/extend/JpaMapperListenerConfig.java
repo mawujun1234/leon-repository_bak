@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-public class NewApplicationListenerConfig {
+public class JpaMapperListenerConfig {
 	@Bean
-    public NewApplicationListener newApplicationListener(){
-        return new NewApplicationListener();
+    public JpaMapperListener newApplicationListener(){
+        return new JpaMapperListener();
     }
 }

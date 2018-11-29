@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import com.mawujun.utils.page.Pager;
+
 /**
  * 继承List的原因是mybatis的接口只能返回list，继承list就可以以PageInfo的形式返回了
  * 在mybatis中分页拦截的时候，必须是要参数为PageInfo才行
@@ -49,6 +51,13 @@ public class PageInfo<T> implements List<T>{
 //		return param;
 //	}
 	
+	public static PageInfo of(int page,int limit){
+		PageInfo param = new PageInfo();
+		param.setPage(page);
+		param.setLimit(limit);
+		return param;
+	}
+	
 	
 	/**
 	 * 使用哪一列进行统计总数，默认是null,一般可以设置为id
@@ -83,6 +92,9 @@ public class PageInfo<T> implements List<T>{
 
 
 	public int getStart() {
+		if(start==0 &&page>0) {
+			return page*limit;
+		}
 		return start;
 	}
 	public PageInfo<T> setStart(int start) {

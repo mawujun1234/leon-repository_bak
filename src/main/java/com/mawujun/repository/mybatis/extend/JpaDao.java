@@ -2,7 +2,7 @@ package com.mawujun.repository.mybatis.extend;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +18,10 @@ import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.query.criteria.internal.expression.EntityTypeExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -36,14 +35,16 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.mawujun.exception.BusinessException;
+import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Params;
 import com.mawujun.utils.CollectionUtils;
 import com.mawujun.utils.ConvertUtils;
 import com.mawujun.utils.ReflectUtils;
 
 @Repository
-public class NewDao  {
-	private static final Logger logger=LoggerFactory.getLogger(NewDao.class);
+public class JpaDao  {
+	private static final Logger logger=LoggerFactory.getLogger(JpaDao.class);
 	@PersistenceContext
 	private EntityManager em;
 	
@@ -143,16 +144,6 @@ public class NewDao  {
 	
 	
 	public Object getByMap(Class entityClass,Map<String,Object> params) {
-//		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-//		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
-//		Root itemRoot = query.from(entityClass);
-//		List<Predicate> predicatesList = new ArrayList<Predicate>();
-//		for(Entry<String,Object> param:params.entrySet()) {   
-//			Class javatype=itemRoot.get(param.getKey()).getJavaType();
-//			predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
-//		}
-//		query.where(predicatesList.toArray(new Predicate[predicatesList.size()]));
-//        TypedQuery typedQuery = em.createQuery(query);
 		TypedQuery typedQuery=genTypedQuery(entityClass,params);
         //List resultList = typedQuery.getResultList();
         return typedQuery.getSingleResult();
@@ -190,29 +181,7 @@ public class NewDao  {
 		//return findAll(example);
 	}
 	
-//	public PageInfo listPageByExample(Class entityClass,Object params, PageInfo pageinfo) {
-//		ExampleMatcher matcher = ExampleMatcher.matching();
-//		Example example = Example.of(params, matcher); 	
-//		Pageable pageable=PageRequest.of(pageinfo.getPage(), pageinfo.getLimit());
-//		Page page=getSimpleJpaRepository(entityClass).findAll(example, pageable);
-//		pageinfo.setTotal((int)page.getTotalElements());
-//		pageinfo.setRoot(page.getContent());
-//		return pageinfo;
-//	}
-	public PageInfo listPageByExample(Class entityClass,Object params, int pageIndex,int limit) {
-		ExampleMatcher matcher = ExampleMatcher.matching();
-		Example example = Example.of(params, matcher); 	
-		Pageable pageable=PageRequest.of(pageIndex, limit);
-		Page page=getSimpleJpaRepository(entityClass).findAll(example, pageable);
-		
-		PageInfo pageinfo=new PageInfo();
-		pageinfo.setPage(pageIndex);
-		pageinfo.setLimit(limit);
-		pageinfo.setTotal((int)page.getTotalElements());
-		pageinfo.setRoot(page.getContent());
-		pageinfo.setParams(params);
-		return pageinfo;
-	}
+
 	
 	
 	private TypedQuery genTypedQuery(Class entityClass,Map<String,Object> params) {
@@ -220,15 +189,113 @@ public class NewDao  {
 		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
 		Root itemRoot = query.from(entityClass);
 		//List<Predicate> predicatesList = new ArrayList<Predicate>();
-		Predicate[] predicatesList=new Predicate[params.size()];
+		
+		boolean isParams=(params instanceof Params);
+		//Predicate[] predicatesList=new Predicate[params.size()];
+		List<Predicate> predicatesList=new ArrayList<Predicate>();
 		int i=0;
 		for(Entry<String,Object> param:params.entrySet()) {   
-			Class javatype=itemRoot.get(param.getKey()).getJavaType();
-			predicatesList[i]=criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+			Path path=itemRoot.get(param.getKey());
+			Class javatype=path.getJavaType();
+			Object value=param.getValue();
+			if(isParams) {
+				OpEnum opEnum=((Params)params).getOpEnum(param.getKey());
+				switch (opEnum)
+		        {
+		            case eq:
+		            	predicatesList.add(criteriaBuilder.equal(path,ConvertUtils.convert(value, javatype)));
+		                break;
+		            case noteq:
+		            	predicatesList.add(criteriaBuilder.notEqual(path,ConvertUtils.convert(value, javatype)));
+		                break;
+		            case gt:	
+		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
+		            		predicatesList.add(criteriaBuilder.gt(path,(Number)ConvertUtils.convert(value, javatype)));
+		            	} else if(value instanceof Date) {
+		            		predicatesList.add(criteriaBuilder.greaterThan(path,(Date)ConvertUtils.convert(value, javatype)));
+		            	} else {
+		            		predicatesList.add(criteriaBuilder.greaterThan(path,param.getValue().toString()));
+		            	}
+		                break;
+		            case ge:
+		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
+		            		predicatesList.add(criteriaBuilder.ge(path,(Number)ConvertUtils.convert(value, javatype)));
+		            	} else if(value instanceof Date) {
+		            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,(Date)ConvertUtils.convert(value, javatype)));
+		            	} else {
+		            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,param.getValue().toString()));
+		            	}
+		                break;
+		            case lt:
+		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
+		            		predicatesList.add(criteriaBuilder.lt(path,(Number)ConvertUtils.convert(value, javatype)));
+		            	} else if(value instanceof Date) {
+		            		predicatesList.add(criteriaBuilder.lessThan(path,(Date)ConvertUtils.convert(value, javatype)));
+		            	} else {
+		            		predicatesList.add(criteriaBuilder.lessThan(path,param.getValue().toString()));
+		            	}
+		                break;
+		            case le:
+		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
+		            		predicatesList.add(criteriaBuilder.le(path,(Number)ConvertUtils.convert(value, javatype)));
+		            	} else if(value instanceof Date) {
+		            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,(Date)ConvertUtils.convert(value, javatype)));
+		            	} else {
+		            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,param.getValue().toString()));
+		            	}
+		                break;
+		            case between:
+		            	Object[] values=(Object[])param.getValue();
+		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
+		            		predicatesList.add(criteriaBuilder.ge(path,(Number)ConvertUtils.convert(values[0], javatype)));
+		            		predicatesList.add(criteriaBuilder.le(path,(Number)ConvertUtils.convert(values[0], javatype)));
+		            	} else if(value instanceof Date) {
+		            		predicatesList.add(criteriaBuilder.between(path,(Date)ConvertUtils.convert(values[0], javatype),(Date)ConvertUtils.convert(values[1], javatype)));
+		            	} else {
+		            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,values[0].toString()));
+		            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,values[1].toString()));
+		            	}
+		                break;
+		            case in:
+		                System.out.println("This is a banana");
+		                break;
+		            case notin:
+		                System.out.println("This is an orange");
+		                break;
+		            case like:
+		                System.out.println("This is a watermelon");
+		                break;
+		            case likeprefix:
+		                System.out.println("This is a watermelon");
+		                break;
+		            case likesuffix:
+		                System.out.println("This is a watermelon");
+		                break;
+		            case notlike:
+		                System.out.println("This is a watermelon");
+		                break;
+		            case notlikeprefix:
+		                System.out.println("This is a watermelon");
+		                break;
+		            case notlikesuffix:
+		                System.out.println("This is a watermelon");
+		                break;
+		            case isnull:
+		                System.out.println("This is a watermelon");
+		                break;
+		            case isnotnull:
+		                System.out.println("This is a watermelon");
+		                break;
+		            default:
+		                break;
+		        }
+			} else {
+				predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+			}
 			i++;
 			//predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
 		}
-		query.where(predicatesList);
+		query.where(predicatesList.toArray(new Predicate[predicatesList.size()]));
         TypedQuery typedQuery = em.createQuery(query);
         return typedQuery;
 	}
@@ -284,29 +351,26 @@ public class NewDao  {
 
 		}
 	}
+
+	
+	public PageInfo listPageByExample(Class entityClass,Object params, int pageIndex,int limit) {
+		ExampleMatcher matcher = ExampleMatcher.matching();
+		Example example = Example.of(params, matcher); 	
+		Pageable pageable=PageRequest.of(pageIndex, limit);
+		Page page=getSimpleJpaRepository(entityClass).findAll(example, pageable);
+		
+		PageInfo pageinfo=new PageInfo();
+		pageinfo.setPage(pageIndex);
+		pageinfo.setLimit(limit);
+		pageinfo.setTotal((int)page.getTotalElements());
+		pageinfo.setRoot(page.getContent());
+		pageinfo.setParams(params);
+		return pageinfo;
+	}
+	
 	public PageInfo listPageByMap(Class entityClass,Map<String,Object> params, int pageIndex,int limit) {
 		Pageable pageable = PageRequest.of(pageIndex, limit);
-//		Specification spec = new Specification() { // 查询条件构造
-//			@Override
-//			public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder cb) {
-//				//List<Predicate> predicatesList = new ArrayList<Predicate>();
-//				Predicate[] predicatesList=new Predicate[0];
-//				if(params!=null) {
-//					predicatesList=new Predicate[params.size()];
-//					int i=0;
-//					for(Entry<String,Object> param:params.entrySet()) {   
-//						Class javatype=root.get(param.getKey()).getJavaType();
-//						predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
-//						i++;
-//						//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
-//					}
-//					
-//				} 
-//				Predicate p =cb.and(predicatesList);
-//				return p;
-//			}
-//
-//		};   
+   
 		PageSpecification spec=new PageSpecification(params);
 		Page page=getSimpleJpaRepository(entityClass).findAll(spec, pageable);
 
@@ -317,6 +381,25 @@ public class NewDao  {
 		pageinfo.setRoot(page.getContent());
 		pageinfo.setParams(params);
 		
+		return pageinfo;
+	}
+	
+	public PageInfo listPageByPageInfo(Class entityClass,PageInfo pageinfo) {
+		Object params=pageinfo.getParams();
+		Pageable pageable = PageRequest.of(pageinfo.getPage(), pageinfo.getLimit());
+		if(params instanceof Map) {
+			PageSpecification spec=new PageSpecification((Map)params);
+			Page page=getSimpleJpaRepository(entityClass).findAll(spec, pageable);
+			pageinfo.setTotal((int)page.getTotalElements());
+			pageinfo.setRoot(page.getContent());
+		} else {
+			ExampleMatcher matcher = ExampleMatcher.matching();
+			Example example = Example.of(params, matcher); 	
+			Page page=getSimpleJpaRepository(entityClass).findAll(example, pageable);
+			pageinfo.setTotal((int)page.getTotalElements());
+			pageinfo.setRoot(page.getContent());
+		}
+
 		return pageinfo;
 	}
 	
@@ -580,18 +663,48 @@ public class NewDao  {
 //		}
 //	}
 	
-	public Object existsById(Class entityClass,Object id) {
+	public boolean existsById(Class entityClass,Object id) {
 		return getSimpleJpaRepository(entityClass).existsById(id);
 		//return exists(example);
 	}
-	public Object existsByExample(Class entityClass,Object params) {
+	public boolean existsByExample(Class entityClass,Object params) {
 		ExampleMatcher matcher = ExampleMatcher.matching();
 		Example example = Example.of(params, matcher); 	
 		return getSimpleJpaRepository(entityClass).exists(example);
 		//return exists(example);
 	}
-	public Object existsByMap(Class entityClass,Map<String,Object> params) {
-		throw new BusinessException("未开发");
+	public boolean existsByMap(Class entityClass,Map<String,Object> params) {
+		long count=countByMap(entityClass,params);
+		return count >= 1;
+		
+//		JpaEntityInformation entityInformation=entityInformationCache.get(entityClass);
+//		
+//		String placeholder ="";// provider.getCountQueryPlaceholder();
+//		String entityName = entityInformation.getEntityName();
+//		Iterable<String> idAttributeNames = entityInformation.getIdAttributeNames();
+//		if(idAttributeNames!=null) {
+//			Iterator<String> iterator=idAttributeNames.iterator();
+//			while(iterator.hasNext()) {
+//				String str=iterator.next();
+//				placeholder=placeholder+","+str;
+//			}
+//		}
+//		if(placeholder!=null) {
+//			placeholder=placeholder.substring(1, placeholder.length());
+//		} else {
+//			placeholder="*";
+//		}
+//		
+//		String existsQuery = QueryUtils.getExistsQueryString(entityName, placeholder, idAttributeNames);
+//		
+//		String COUNT_QUERY_STRING = "select count(%s) from %s x";
+//		
+//		String aa=String.format(COUNT_QUERY_STRING, placeholder,entityName);
+//		System.out.println(aa);
+//		
+//		params.str
+//		return false;
+		
 	}
 	
 	

@@ -1,4 +1,4 @@
-package test.mawujun.repository1;
+package test.mawujun.jpa;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.mawujun.repository.mybatis.extend.NewApplicationListenerConfig;
+import com.mawujun.repository.mybatis.extend.JpaMapperListenerConfig;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
 
@@ -31,13 +31,13 @@ import test.mawujun.model.Sex;
  * updateBatch,updateBatchByArray.还未测试
  * create,createBatch,createBatchByArray还未测试
  * existsById,existsByExample,existsByMap还未测试
- * countByMap复合主键测试
+ * 
  * 时间条件测试，特别是3种形式的时间
  * @author admin
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes={JpaMybatisApp.class,NewApplicationListenerConfig.class})
+@SpringBootTest(classes={JpaMybatisApp.class,JpaMapperListenerConfig.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Transactional
 @Rollback(false)
@@ -73,7 +73,7 @@ public class JpaMybatisTest {
 	}
 	
 	@Test
-	public void test1() {
+	public void test1get() {
 		City city = jpaMybatisMapper.getById(id);
 		//
 		Assert.assertEquals("宁波", city.getName());
@@ -147,19 +147,12 @@ public class JpaMybatisTest {
 		Assert.assertEquals(0, pageinfo.getPage());
 		Assert.assertEquals(1, pageinfo.getLimit());
 		Assert.assertEquals(0, pageinfo.getRootSize());
-		
-		
-		
-		paramsUtils = Params.of().addIn("name", "宁波","杭州","苏州").addLike("sex", Sex.Man);
-		Assert.assertEquals("'宁波','杭州','苏州'", paramsUtils.getParams().get("name"));
-		Assert.assertEquals("%Man%", paramsUtils.getParams().get("sex"));
-		
-		
+
 		
 	}
 
 	@Test
-	public void test3() {
+	public void test3list() {
 		City city=new City();
 		city.setName("杭州");
 		city.setPrice(10.253);
@@ -213,27 +206,8 @@ public class JpaMybatisTest {
 		Assert.assertEquals(0, oage.getPage());
 		Assert.assertEquals(1, oage.getLimit());
 		Assert.assertEquals(1, oage.getRootSize());
-		
-		
-		City params =new City();
-		//params.setId(id);
-		//params.setName("宁波");
-		params.setAge(50);
-		PageInfo<City> pageinfo=jpaMybatisMapper.listPageByExample(params, 0,1);
-		Assert.assertEquals(2, pageinfo.getTotal());
-		Assert.assertEquals(2, pageinfo.getTotalPages());
-		Assert.assertEquals(0, pageinfo.getPage());
-		Assert.assertEquals(1, pageinfo.getLimit());
-		Assert.assertEquals(1, pageinfo.getRootSize());
-		params.setAge(11);
-		pageinfo=jpaMybatisMapper.listPageByExample(params, 0,1);
-		Assert.assertEquals(0, pageinfo.getTotal());
-		Assert.assertEquals(0, pageinfo.getTotalPages());
-		Assert.assertEquals(0, pageinfo.getPage());
-		Assert.assertEquals(1, pageinfo.getLimit());
-		Assert.assertEquals(0, pageinfo.getRootSize());
-		
 	}
+
 	
 	@Test
 	public void test3listPageByMap() {
@@ -260,15 +234,40 @@ public class JpaMybatisTest {
 		long count=jpaMybatisMapper.countByExample(null);
 		Assert.assertEquals(2, count);
 		
+		City city_params =new City();
+		//params.setId(id);
+		//params.setName("宁波");
+		city_params.setAge(50);
+		PageInfo<City> pageinfo=jpaMybatisMapper.listPageByExample(city_params, 0,1);
+		Assert.assertEquals(2, pageinfo.getTotal());
+		Assert.assertEquals(2, pageinfo.getTotalPages());
+		Assert.assertEquals(0, pageinfo.getPage());
+		Assert.assertEquals(1, pageinfo.getLimit());
+		Assert.assertEquals(1, pageinfo.getRootSize());
+		city_params.setAge(11);
+		pageinfo=jpaMybatisMapper.listPageByExample(city_params, 0,1);
+		Assert.assertEquals(0, pageinfo.getTotal());
+		Assert.assertEquals(0, pageinfo.getTotalPages());
+		Assert.assertEquals(0, pageinfo.getPage());
+		Assert.assertEquals(1, pageinfo.getLimit());
+		Assert.assertEquals(0, pageinfo.getRootSize());
+		
 		//PageInfo<City> params=new PageInfo<City>();
 		//params.setCountColumn("id");
-		PageInfo<City> pageinfo=jpaMybatisMapper.listPageByMap(null,0,10);
+		pageinfo=jpaMybatisMapper.listPageByMap(null,0,10);
 		Assert.assertEquals(2, pageinfo.getTotal());
 		Assert.assertEquals(2, pageinfo.getRootSize());
+		Assert.assertEquals(0, pageinfo.getPage());
 
 		pageinfo=jpaMybatisMapper.listPageByMap(null,0,1);
 		Assert.assertEquals(2, pageinfo.getTotal());
 		Assert.assertEquals(1, pageinfo.getRootSize());
+		Assert.assertEquals(0, pageinfo.getPage());
+		
+		pageinfo=jpaMybatisMapper.listPageByMap(null,1,1);
+		Assert.assertEquals(2, pageinfo.getTotal());
+		Assert.assertEquals(1, pageinfo.getRootSize());
+		Assert.assertEquals(1, pageinfo.getPage());
 		
 		//params=new PageInfo<City>();
 		//params.addParam("name", "宁波");
@@ -276,8 +275,76 @@ public class JpaMybatisTest {
 		pageinfo=jpaMybatisMapper.listPageByMap(params,0,10);
 		Assert.assertEquals(1, pageinfo.getTotal());
 		Assert.assertEquals(1, pageinfo.getRootSize());
+		Assert.assertEquals(0, pageinfo.getPage());
 		
+		params=Params.of().add("name", "宁波");
+		pageinfo=jpaMybatisMapper.listPageByMap(params,1,10);
+		Assert.assertEquals(1, pageinfo.getTotal());
+		Assert.assertEquals(0, pageinfo.getRootSize());
+		Assert.assertEquals(1, pageinfo.getPage());
 		
+		PageInfo<City> pageInfo=PageInfo.of(0, 10).addParam("name", "宁波");
+		PageInfo<City> pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
+		Assert.assertEquals(pageInfo, pageinfo_result);
+		Assert.assertEquals(1, pageinfo_result.getTotal());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
+		Assert.assertEquals(0, pageinfo_result.getPage());
+		
+		pageInfo.setPage(1);
+		pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
+		Assert.assertEquals(pageInfo, pageinfo_result);
+		Assert.assertEquals(1, pageinfo_result.getTotal());
+		Assert.assertEquals(0, pageinfo_result.getRootSize());
+		Assert.assertEquals(1, pageinfo_result.getPage());
+		
+		city_params.setAge(50);
+		pageInfo=PageInfo.of(0, 1).setParams(city_params);
+		pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
+		Assert.assertEquals(2, pageinfo_result.getTotal());
+		Assert.assertEquals(2, pageinfo_result.getTotalPages());
+		Assert.assertEquals(0, pageinfo_result.getPage());
+		Assert.assertEquals(1, pageinfo_result.getLimit());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
+		city_params.setAge(11);
+		pageInfo=PageInfo.of(0, 1).setParams(city_params);
+		pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
+		Assert.assertEquals(0, pageinfo_result.getTotal());
+		Assert.assertEquals(0, pageinfo_result.getTotalPages());
+		Assert.assertEquals(0, pageinfo_result.getPage());
+		Assert.assertEquals(1, pageinfo_result.getLimit());
+		Assert.assertEquals(0, pageinfo_result.getRootSize());
+		
+		//mybatis中的分页测试
+		pageInfo=PageInfo.of(0, 10).addParam("name", "宁波");
+		pageinfo_result=jpaMybatisMapper.listPageByMybatis(pageInfo);
+		Assert.assertEquals(pageInfo, pageinfo_result);
+		Assert.assertEquals(1, pageinfo_result.getTotal());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
+		Assert.assertEquals(0, pageinfo_result.getPage());
+		
+		pageInfo.setPage(1);
+		pageinfo_result=jpaMybatisMapper.listPageByMybatis(pageInfo);
+		Assert.assertEquals(pageInfo, pageinfo_result);
+		Assert.assertEquals(1, pageinfo_result.getTotal());
+		Assert.assertEquals(0, pageinfo_result.getRootSize());
+		Assert.assertEquals(1, pageinfo_result.getPage());
+		
+		city_params.setAge(50);
+		pageInfo=PageInfo.of(0, 1).setParams(city_params);
+		pageinfo_result=jpaMybatisMapper.listPageByMybatis(pageInfo);
+		Assert.assertEquals(2, pageinfo_result.getTotal());
+		Assert.assertEquals(2, pageinfo_result.getTotalPages());
+		Assert.assertEquals(0, pageinfo_result.getPage());
+		Assert.assertEquals(1, pageinfo_result.getLimit());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
+		city_params.setAge(11);
+		pageInfo=PageInfo.of(0, 1).setParams(city_params);
+		pageinfo_result=jpaMybatisMapper.listPageByMybatis(pageInfo);
+		Assert.assertEquals(0, pageinfo_result.getTotal());
+		Assert.assertEquals(0, pageinfo_result.getTotalPages());
+		Assert.assertEquals(0, pageinfo_result.getPage());
+		Assert.assertEquals(1, pageinfo_result.getLimit());
+		Assert.assertEquals(0, pageinfo_result.getRootSize());
 	}
 	
 	@Test
@@ -320,7 +387,40 @@ public class JpaMybatisTest {
 	}
 	
 	@Test
-	public void test5remove() {
+	public void test5exists() {
+		boolean bool=jpaMybatisMapper.existsById(id);
+		Assert.assertEquals(true, bool);
+		bool=jpaMybatisMapper.existsById("1111");
+		Assert.assertEquals(false, bool);
+		
+		//City city=jpaMybatisMapper.getById(id);
+		//jpaMybatisMapper.clear();
+		City city=new City();
+		city.setName("宁波");
+		city.setSex(Sex.Man);
+		bool=jpaMybatisMapper.existsByExample(city);
+		Assert.assertEquals(true, bool);
+		
+		city.setId(id);
+		bool=jpaMybatisMapper.existsByExample(city);
+		Assert.assertEquals(true, bool);
+		
+		city.setAge(11);;
+		bool=jpaMybatisMapper.existsByExample(city);
+		Assert.assertEquals(false, bool);
+		
+		Params params = Params.of().add("name", "杭州");
+		bool=jpaMybatisMapper.existsByMap(params);
+		Assert.assertEquals(true, bool);
+		
+		params.add("age", 11);
+		bool=jpaMybatisMapper.existsByMap(params);
+		Assert.assertEquals(false, bool);
+		
+	}
+	
+	@Test
+	public void test6remove() {
 		List<City> list=jpaMybatisMapper.listByMap(null);
 		Assert.assertEquals(2, list.size());	
 	
@@ -366,12 +466,7 @@ public class JpaMybatisTest {
 
 	}
 	
-//	@Test
-//	public void test6remove() {
-//		
-//		
-//		
-//	}
+	
 	
 	@Test
 	public void test7counts() {
@@ -410,6 +505,58 @@ public class JpaMybatisTest {
 		
 		
 	}
+	
+	/**
+	 * 测试各种操作符
+	 */
+	@Test
+	public void test8gtORge() {
+		long count=jpaMybatisMapper.count();
+		Assert.assertEquals(0, count);
+		
+		City city=new City();
+		city.setName("杭州");
+		city.setPrice(10.253);
+		city.setAge(50);
+		city.setSex(Sex.Women);
+		city.setCreateDate(now);
+		jpaMybatisMapper.create(city);
+		test();
+		
+		count=jpaMybatisMapper.count();
+		Assert.assertEquals(2, count);
+		
+		Params params = Params.of().gt("age", 49);
+		List<City> list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().gt("age", 51);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		
+		params = Params.of().ge("age", 49);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().ge("age", 50);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().ge("age", 51);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		
+		params = Params.of().gt("createDate", now);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		params = Params.of().ge("createDate", now);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		其他方法也向这边靠拢
+		
+		
+	}
+	
+	
 	
 	@Test
 	public void test9clear() {

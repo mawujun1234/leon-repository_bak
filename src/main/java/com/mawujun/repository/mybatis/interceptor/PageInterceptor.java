@@ -39,7 +39,7 @@ import com.mawujun.utils.PropertiesUtils;
  * @author badqiu
  *
  */
-
+@Deprecated
 @Intercepts({@Signature(
 		type= Executor.class,
 		method = "query",

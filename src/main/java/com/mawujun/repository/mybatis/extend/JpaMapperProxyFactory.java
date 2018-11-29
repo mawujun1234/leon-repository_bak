@@ -6,8 +6,8 @@ import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.session.SqlSession;
 
-public class NewMapperProxyFactory<T> extends MapperProxyFactory<T> {
-	public NewMapperProxyFactory(Class<Object> mapperInterface) {
+public class JpaMapperProxyFactory<T> extends MapperProxyFactory<T> {
+	public JpaMapperProxyFactory(Class<Object> mapperInterface) {
 		super((Class<T>)mapperInterface);
 		// TODO Auto-generated constructor stub
 	}
@@ -18,7 +18,7 @@ public class NewMapperProxyFactory<T> extends MapperProxyFactory<T> {
 	}
 
 	public T newInstance(SqlSession sqlSession) {
-		NewMapperProxy<T> mapperProxy = new NewMapperProxy(sqlSession, this.getMapperInterface(), this.getMethodCache());
+		JpaMapperProxy<T> mapperProxy = new JpaMapperProxy(sqlSession, this.getMapperInterface(), this.getMethodCache());
 		return this.newInstance(mapperProxy);
 	}
 }

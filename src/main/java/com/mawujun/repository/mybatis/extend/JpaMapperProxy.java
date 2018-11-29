@@ -8,6 +8,7 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.session.SqlSession;
 
+import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.utils.ReflectUtils;
 
 /**
@@ -16,22 +17,30 @@ import com.mawujun.utils.ReflectUtils;
  *
  * @param <T>
  */
-public class NewMapperProxy<T> extends MapperProxy<T> {
+public class JpaMapperProxy<T> extends MapperProxy<T> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
 	
-	private NewDao newdao;
+	private JpaDao newdao;
 	protected Class<T> entityClass;
-	public NewMapperProxy(SqlSession sqlSession, Class<T> mapperInterface,
+	private final SqlSession sqlSession_;
+	
+	/**
+	 * 之初始化一次
+	 * @param sqlSession
+	 * @param mapperInterface
+	 * @param methodCache
+	 */
+	public JpaMapperProxy(SqlSession sqlSession, Class<T> mapperInterface,
 			Map<Method, MapperMethod> methodCache) {
 		super(sqlSession, mapperInterface, methodCache);
-		
+		sqlSession_=sqlSession;
 		
 		//this.entityManager=NewApplicationListener.context.getBean(EntityManager.class);
-		this.newdao=NewApplicationListener.context.getBean(NewDao.class);
+		this.newdao=JpaMapperListener.context.getBean(JpaDao.class);
 		this.entityClass = ReflectUtils.getGenericInterfaces(mapperInterface,0);
 		//System.out.println(entityManager);
 
@@ -59,6 +68,7 @@ public class NewMapperProxy<T> extends MapperProxy<T> {
 	 */
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if(method.getName().equals("getById")) {
+			sqlSession_.clearCache();
 			return newdao.getById(entityClass, args[0]);
 		} else if(method.getName().equals("create")) {
 			 return newdao.create(entityClass,args[0]);
@@ -83,13 +93,14 @@ public class NewMapperProxy<T> extends MapperProxy<T> {
 			return newdao.listByExample(entityClass, args[0]);
 		} else if(method.getName().equals("listPageByExample"))  {
 			return newdao.listPageByExample(entityClass, args[0],(int)args[1],(int)args[2]);
-		} 
-		else if(method.getName().equals("listByMap"))  {
+		} else if(method.getName().equals("listByMap"))  {
 			return newdao.listByMap(entityClass, (Map<String,Object>)args[0]);
 		} else if(method.getName().equals("listAll"))  {
 			return newdao.listAll(entityClass);
 		} else if(method.getName().equals("listPageByMap"))  {
 			return newdao.listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);
+		} else if(method.getName().equals("listPageByPageInfo"))  {
+			return newdao.listPageByPageInfo(entityClass, (PageInfo)args[0]);
 		} 
 		
 		else if(method.getName().equals("update"))  {

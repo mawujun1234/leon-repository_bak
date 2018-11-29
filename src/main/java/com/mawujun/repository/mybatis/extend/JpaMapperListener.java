@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import com.mawujun.utils.ReflectUtils;
 
 @Component
-public class NewApplicationListener implements ApplicationListener<ContextRefreshedEvent> {
+public class JpaMapperListener implements ApplicationListener<ContextRefreshedEvent> {
 
 	
 	public static ApplicationContext context;
@@ -39,7 +39,7 @@ public class NewApplicationListener implements ApplicationListener<ContextRefres
 		Map<Class<?>, MapperProxyFactory<?>> knownMappers=(Map<Class<?>, MapperProxyFactory<?>>)ReflectUtils.getFieldValue(conf.getMapperRegistry(), "knownMappers");
 		
 		for(Entry<Class<?>,MapperProxyFactory<?>> entry:knownMappers.entrySet()) {
-			knownMappers.put(entry.getKey(), new NewMapperProxyFactory(entry.getValue().getMapperInterface()));
+			knownMappers.put(entry.getKey(), new JpaMapperProxyFactory(entry.getValue().getMapperInterface()));
 		}
 //	
 //		CityMapper cityMapper=context.getBean(CityMapper.class);
