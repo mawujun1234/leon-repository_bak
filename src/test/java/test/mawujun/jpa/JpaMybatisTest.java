@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.mawujun.repository.mybatis.extend.JpaMapperListenerConfig;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
+import com.mawujun.utils.DateUtils;
 
 import test.mawujun.model.City;
 import test.mawujun.model.Sex;
@@ -551,12 +552,255 @@ public class JpaMybatisTest {
 		list=jpaMybatisMapper.listByMap(params);
 		Assert.assertEquals(2, list.size());
 		
-		其他方法也向这边靠拢
+		//其他方法也向这边靠拢
+		params = Params.of().ge("age", 49);
+		PageInfo<City> pageinfo_result=jpaMybatisMapper.listPageByMap(params, 0, 1);
+		Assert.assertEquals(2, pageinfo_result.getTotal());
+		Assert.assertEquals(2, pageinfo_result.getTotalPages());
+		Assert.assertEquals(0, pageinfo_result.getPage());
+		Assert.assertEquals(1, pageinfo_result.getLimit());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
 		
-		
+		pageinfo_result=jpaMybatisMapper.listPageByMap(params, 1, 1);
+		Assert.assertEquals(2, pageinfo_result.getTotal());
+		Assert.assertEquals(2, pageinfo_result.getTotalPages());
+		Assert.assertEquals(1, pageinfo_result.getPage());
+		Assert.assertEquals(1, pageinfo_result.getLimit());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
 	}
 	
+	@Test
+	public void test8ltORle() {
+		long count=jpaMybatisMapper.count();
+		Assert.assertEquals(2, count);
+		
+		Params params = Params.of().lt("age", 49);
+		List<City> list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		
+		params = Params.of().lt("age", 51);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().le("age", 49);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		params = Params.of().le("age", 50);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().le("age", 51);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(02, list.size());
+		
+		params = Params.of().lt("createDate", now);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		params = Params.of().le("createDate", now);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		//其他方法也向这边靠拢
+		params = Params.of().le("age", 50);
+		PageInfo<City> pageinfo_result=jpaMybatisMapper.listPageByMap(params, 0, 1);
+		Assert.assertEquals(2, pageinfo_result.getTotal());
+		Assert.assertEquals(2, pageinfo_result.getTotalPages());
+		Assert.assertEquals(0, pageinfo_result.getPage());
+		Assert.assertEquals(1, pageinfo_result.getLimit());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
+		
+		pageinfo_result=jpaMybatisMapper.listPageByMap(params, 1, 1);
+		Assert.assertEquals(2, pageinfo_result.getTotal());
+		Assert.assertEquals(2, pageinfo_result.getTotalPages());
+		Assert.assertEquals(1, pageinfo_result.getPage());
+		Assert.assertEquals(1, pageinfo_result.getLimit());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
+	}
 	
+	@Test
+	public void test8gtbetween() {
+		long count=jpaMybatisMapper.count();
+		Assert.assertEquals(2, count);
+		
+		Params params = Params.of().between("age", 49,50);
+		List<City> list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().between("age", "49","50");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().between("age", 50,51);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().between("age", 49,51);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().between("age", 51,100);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+	
+		
+		params = Params.of().between("createDate", now,DateUtils.addDays(now, 1));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().between("createDate", DateUtils.addDays(now, -1),now);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().between("createDate", DateUtils.addDays(now, -2),DateUtils.addDays(now, -1));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+
+	}
+	
+	@Test
+	public void test8gtin() {
+		Params params = Params.of().in("name", "宁波","杭州");
+		List<City> list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().in("age", 50,51);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().in("age", "50","51");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().in("createDate", now,DateUtils.addDays(now, -1));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+	}
+	
+	@Test
+	public void test8gtnotin() {
+		Params params = Params.of().notin("name", "宁波","杭州");
+		List<City> list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		
+		params = Params.of().notin("age", 49,51);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().notin("age", 50,51);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		params = Params.of().notin("age", "50","51");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		
+		params = Params.of().notin("createDate", now,DateUtils.addDays(now, -1));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+	}
+	
+	@Test
+	public void test8gtlike() {
+		Params params = Params.of().like("name", "宁");
+		List<City> list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().like("name", "波");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().likeprefix("name", "宁");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		
+		params = Params.of().likeprefix("name", "波");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().likesuffix("name", "宁");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().likesuffix("name", "波");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+	}
+	
+	@Test
+	public void test8gtnotlike() {
+		Params params = Params.of().notlike("name", "宁");
+		List<City> list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().notlike("name", "波");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().notlikeprefix("name", "宁");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().notlikeprefix("name", "波");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().notlikesuffix("name", "宁");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().notlikesuffix("name", "波");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+	}
+	
+	@Test
+	public void test8isnull() {
+		Params params = Params.of().isnull("name");
+		List<City> list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		
+		params = Params.of().isnull("age");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		
+		City city=jpaMybatisMapper.getById(id);
+		String name=city.getName();
+		Integer age=city.getAge();
+		
+		params = Params.of().isnotnull("name");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().isnotnull("age");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		city.setName(null);
+		city.setAge(null);
+		jpaMybatisMapper.update(city);
+		
+		params = Params.of().isnull("name");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().isnull("age");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().isnotnull("name");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		params = Params.of().isnotnull("age");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(1, list.size());
+		
+		city.setName(name);
+		city.setAge(age);
+		jpaMybatisMapper.update(city);
+		
+		params = Params.of().isnotnull("name");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().isnotnull("age");
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+	}
 	
 	@Test
 	public void test9clear() {

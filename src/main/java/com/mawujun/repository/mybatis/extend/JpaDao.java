@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
@@ -34,7 +35,6 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.mawujun.exception.BusinessException;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
@@ -144,9 +144,21 @@ public class JpaDao  {
 	
 	
 	public Object getByMap(Class entityClass,Map<String,Object> params) {
-		TypedQuery typedQuery=genTypedQuery(entityClass,params);
-        //List resultList = typedQuery.getResultList();
+//		TypedQuery typedQuery=genTypedQuery(entityClass,params);
+//        //List resultList = typedQuery.getResultList();
+//        return typedQuery.getSingleResult();
+		
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
+		Root itemRoot = query.from(entityClass);
+		
+		Predicate[] predicatesList=genPredicates(criteriaBuilder,itemRoot,params);
+		query.where(predicatesList);
+        TypedQuery typedQuery = em.createQuery(query);
+        //typedQuery.setFirstResult(startPosition)
+        //typedQuery.setMaxResults(maxResult)
         return typedQuery.getSingleResult();
+		
 		
 	}
 	
@@ -184,16 +196,17 @@ public class JpaDao  {
 
 	
 	
-	private TypedQuery genTypedQuery(Class entityClass,Map<String,Object> params) {
-		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
-		Root itemRoot = query.from(entityClass);
-		//List<Predicate> predicatesList = new ArrayList<Predicate>();
+	//private TypedQuery genTypedQuery(Class entityClass,Map<String,Object> params) {
+	private Predicate[] genPredicates(CriteriaBuilder criteriaBuilder,Root itemRoot,Map<String,Object> params) {
+//		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+//		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
+//		Root itemRoot = query.from(entityClass);
+	
 		
 		boolean isParams=(params instanceof Params);
 		//Predicate[] predicatesList=new Predicate[params.size()];
 		List<Predicate> predicatesList=new ArrayList<Predicate>();
-		int i=0;
+		//int i=0;
 		for(Entry<String,Object> param:params.entrySet()) {   
 			Path path=itemRoot.get(param.getKey());
 			Class javatype=path.getJavaType();
@@ -211,7 +224,7 @@ public class JpaDao  {
 		            case gt:	
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.gt(path,(Number)ConvertUtils.convert(value, javatype)));
-		            	} else if(value instanceof Date) {
+		            	} else if(Date.class.isAssignableFrom(javatype)) {
 		            		predicatesList.add(criteriaBuilder.greaterThan(path,(Date)ConvertUtils.convert(value, javatype)));
 		            	} else {
 		            		predicatesList.add(criteriaBuilder.greaterThan(path,param.getValue().toString()));
@@ -220,7 +233,7 @@ public class JpaDao  {
 		            case ge:
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.ge(path,(Number)ConvertUtils.convert(value, javatype)));
-		            	} else if(value instanceof Date) {
+		            	} else if(Date.class.isAssignableFrom(javatype)) {
 		            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,(Date)ConvertUtils.convert(value, javatype)));
 		            	} else {
 		            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,param.getValue().toString()));
@@ -229,7 +242,7 @@ public class JpaDao  {
 		            case lt:
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.lt(path,(Number)ConvertUtils.convert(value, javatype)));
-		            	} else if(value instanceof Date) {
+		            	} else if(Date.class.isAssignableFrom(javatype)) {
 		            		predicatesList.add(criteriaBuilder.lessThan(path,(Date)ConvertUtils.convert(value, javatype)));
 		            	} else {
 		            		predicatesList.add(criteriaBuilder.lessThan(path,param.getValue().toString()));
@@ -238,53 +251,64 @@ public class JpaDao  {
 		            case le:
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.le(path,(Number)ConvertUtils.convert(value, javatype)));
-		            	} else if(value instanceof Date) {
+		            	} else if(Date.class.isAssignableFrom(javatype)) {
 		            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,(Date)ConvertUtils.convert(value, javatype)));
 		            	} else {
 		            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,param.getValue().toString()));
 		            	}
 		                break;
-		            case between:
+		            case between:{
 		            	Object[] values=(Object[])param.getValue();
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.ge(path,(Number)ConvertUtils.convert(values[0], javatype)));
-		            		predicatesList.add(criteriaBuilder.le(path,(Number)ConvertUtils.convert(values[0], javatype)));
-		            	} else if(value instanceof Date) {
+		            		predicatesList.add(criteriaBuilder.le(path,(Number)ConvertUtils.convert(values[1], javatype)));
+		            	} else if(Date.class.isAssignableFrom(javatype) ) {
 		            		predicatesList.add(criteriaBuilder.between(path,(Date)ConvertUtils.convert(values[0], javatype),(Date)ConvertUtils.convert(values[1], javatype)));
 		            	} else {
 		            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,values[0].toString()));
 		            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,values[1].toString()));
 		            	}
+		                break;}
+		            case in:{
+		            	In in = criteriaBuilder.in(path);
+		            	Object[] values=(Object[])value;
+		            	for (Object obj:values) {
+		            		in.value(ConvertUtils.convert(obj, javatype));
+		            	}
+		        		predicatesList.add(in);
 		                break;
-		            case in:
-		                System.out.println("This is a banana");
-		                break;
+		            }
 		            case notin:
-		                System.out.println("This is an orange");
+		            	In in = criteriaBuilder.in(path);
+		            	Object[] values=(Object[])value;
+		            	for (Object obj:values) {
+		            		in.value(ConvertUtils.convert(obj, javatype));
+		            	}
+		            	predicatesList.add(criteriaBuilder.not(in));
 		                break;
 		            case like:
-		                System.out.println("This is a watermelon");
+		            	predicatesList.add(criteriaBuilder.like(path, value.toString()));
 		                break;
 		            case likeprefix:
-		                System.out.println("This is a watermelon");
+		            	predicatesList.add(criteriaBuilder.like(path, value.toString()));
 		                break;
 		            case likesuffix:
-		                System.out.println("This is a watermelon");
+		            	predicatesList.add(criteriaBuilder.like(path, value.toString()));
 		                break;
 		            case notlike:
-		                System.out.println("This is a watermelon");
+		            	predicatesList.add(criteriaBuilder.not(criteriaBuilder.like(path, value.toString())));
 		                break;
 		            case notlikeprefix:
-		                System.out.println("This is a watermelon");
+		            	predicatesList.add(criteriaBuilder.not(criteriaBuilder.like(path, value.toString())));
 		                break;
 		            case notlikesuffix:
-		                System.out.println("This is a watermelon");
+		            	predicatesList.add(criteriaBuilder.not(criteriaBuilder.like(path, value.toString())));
 		                break;
 		            case isnull:
-		                System.out.println("This is a watermelon");
+		            	predicatesList.add(criteriaBuilder.isNull(path));
 		                break;
 		            case isnotnull:
-		                System.out.println("This is a watermelon");
+		            	predicatesList.add(criteriaBuilder.isNotNull(path));
 		                break;
 		            default:
 		                break;
@@ -292,19 +316,26 @@ public class JpaDao  {
 			} else {
 				predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
 			}
-			i++;
+			//i++;
 			//predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
 		}
-		query.where(predicatesList.toArray(new Predicate[predicatesList.size()]));
-        TypedQuery typedQuery = em.createQuery(query);
-        return typedQuery;
+		return predicatesList.toArray(new Predicate[predicatesList.size()]);
+//		query.where(predicatesList.toArray(new Predicate[predicatesList.size()]));
+//        TypedQuery typedQuery = em.createQuery(query);
+//        return typedQuery;
 	}
 	public List listByMap(Class entityClass,Map<String,Object> params) {	
 		if(params==null) {
 			return this.listAll(entityClass);
 		}
-		TypedQuery typedQuery=genTypedQuery(entityClass,params);
-        //List resultList = typedQuery.getResultList();
+		//TypedQuery typedQuery=genTypedQuery(entityClass,params);
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
+		Root itemRoot = query.from(entityClass);
+		
+		Predicate[] predicatesList=genPredicates(criteriaBuilder,itemRoot,params);
+		query.where(predicatesList);
+        TypedQuery typedQuery = em.createQuery(query);
         return typedQuery.getResultList();
 		
 	}
@@ -323,34 +354,7 @@ public class JpaDao  {
 //		return pageinfo;
 //	}
 	
-	private static class PageSpecification<T> implements Specification<T> {
-		private  Map<String,Object> params;
-		
-		public PageSpecification(Map<String, Object> params) {
-			super();
-			this.params = params;
-		}
 
-		@Override
-		public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder cb) {
-			//List<Predicate> predicatesList = new ArrayList<Predicate>();
-			Predicate[] predicatesList=new Predicate[0];
-			if(params!=null) {
-				predicatesList=new Predicate[params.size()];
-				int i=0;
-				for(Entry<String,Object> param:params.entrySet()) {   
-					Class javatype=root.get(param.getKey()).getJavaType();
-					predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
-					i++;
-					//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
-				}
-				
-			} 
-			Predicate p =cb.and(predicatesList);
-			return p;
-
-		}
-	}
 
 	
 	public PageInfo listPageByExample(Class entityClass,Object params, int pageIndex,int limit) {
@@ -366,6 +370,36 @@ public class JpaDao  {
 		pageinfo.setRoot(page.getContent());
 		pageinfo.setParams(params);
 		return pageinfo;
+	}
+	
+	private  class PageSpecification<T> implements Specification<T> {
+		private  Map<String,Object> params;
+		
+		public PageSpecification(Map<String, Object> params) {
+			super();
+			this.params = params;
+		}
+
+		@Override
+		public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder cb) {
+			//List<Predicate> predicatesList = new ArrayList<Predicate>();
+			Predicate[] predicatesList=new Predicate[0];
+			if(params!=null) {
+//				predicatesList=new Predicate[params.size()];
+//				int i=0;
+//				for(Entry<String,Object> param:params.entrySet()) {   
+//					Class javatype=root.get(param.getKey()).getJavaType();
+//					predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+//					i++;
+//					//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+//				}
+				predicatesList=genPredicates(cb,root,params);
+				
+			} 
+			Predicate p =cb.and(predicatesList);
+			return p;
+
+		}
 	}
 	
 	public PageInfo listPageByMap(Class entityClass,Map<String,Object> params, int pageIndex,int limit) {
@@ -444,15 +478,17 @@ public class JpaDao  {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaUpdate update = cb.createCriteriaUpdate(entityClass);
 		Root root = update.from(entityClass);
-		//List<Predicate> predicatesList = new ArrayList<Predicate>();
-		Predicate[] predicatesList=new Predicate[params.size()];
-		int i=0;
-		for(Entry<String,Object> param:params.entrySet()) {   
-			Class javatype=root.get(param.getKey()).getJavaType();
-			predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
-			i++;
-			//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
-		}
+//		//List<Predicate> predicatesList = new ArrayList<Predicate>();
+//		Predicate[] predicatesList=new Predicate[params.size()];
+//		int i=0;
+//		for(Entry<String,Object> param:params.entrySet()) {   
+//			Class javatype=root.get(param.getKey()).getJavaType();
+//			predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+//			i++;
+//			//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+//		}
+		
+		Predicate[] predicatesList=genPredicates(cb,root,params);
 		update.where(predicatesList);
 		
 		for(Entry<String,Object> set:sets.entrySet()) { 
@@ -530,16 +566,20 @@ public class JpaDao  {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaDelete update = cb.createCriteriaDelete(entityClass);
 		Root root = update.from(entityClass);
-		//List<Predicate> predicatesList = new ArrayList<Predicate>();
-		Predicate[] predicatesList=new Predicate[params.size()];
-		int i=0;
-		for(Entry<String,Object> param:params.entrySet()) {   
-			Class javatype=root.get(param.getKey()).getJavaType();
-			predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
-			i++;
-			//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
-		}
+//		//List<Predicate> predicatesList = new ArrayList<Predicate>();
+//		Predicate[] predicatesList=new Predicate[params.size()];
+//		int i=0;
+//		for(Entry<String,Object> param:params.entrySet()) {   
+//			Class javatype=root.get(param.getKey()).getJavaType();
+//			predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+//			i++;
+//			//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+//		}
+//		update.where(predicatesList);
+		
+		Predicate[] predicatesList=genPredicates(cb,root,params);
 		update.where(predicatesList);
+		
 		Query query = em.createQuery(update);
         int rowCount = query.executeUpdate();
         em.clear();
@@ -596,14 +636,15 @@ public class JpaDao  {
 		
 		int i=0;
 		if (params != null && params.size() > 0) {
-			Predicate[] predicatesList = new Predicate[params.size()];
-
-			for (Entry<String, Object> param : params.entrySet()) {
-				Class javatype = root.get(param.getKey()).getJavaType();
-				predicatesList[i] = cb.equal(root.get(param.getKey()),
-						ConvertUtils.convert(param.getValue(), javatype));
-				i++;
-			}
+//			Predicate[] predicatesList = new Predicate[params.size()];
+//
+//			for (Entry<String, Object> param : params.entrySet()) {
+//				Class javatype = root.get(param.getKey()).getJavaType();
+//				predicatesList[i] = cb.equal(root.get(param.getKey()),
+//						ConvertUtils.convert(param.getValue(), javatype));
+//				i++;
+//			}
+			Predicate[] predicatesList=genPredicates(cb,root,params);
 			criteriaQuery.where(predicatesList);
 		}
 		
