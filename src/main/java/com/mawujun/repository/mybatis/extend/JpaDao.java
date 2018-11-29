@@ -217,9 +217,24 @@ public class JpaDao  {
 		        {
 		            case eq:
 		            	predicatesList.add(criteriaBuilder.equal(path,ConvertUtils.convert(value, javatype)));
+		            	
+		                break;
+		            case eq_i:
+		            	if(String.class.isAssignableFrom(javatype)) {
+			            	predicatesList.add(criteriaBuilder.equal(criteriaBuilder.lower(path),value.toString().toLowerCase()));
+		            	} else {
+			            	predicatesList.add(criteriaBuilder.equal(path,ConvertUtils.convert(value, javatype)));
+		            	}            	
 		                break;
 		            case noteq:
 		            	predicatesList.add(criteriaBuilder.notEqual(path,ConvertUtils.convert(value, javatype)));
+		                break;
+		            case noteq_i:
+		            	if(String.class.isAssignableFrom(javatype)) {
+			            	predicatesList.add(criteriaBuilder.notEqual(criteriaBuilder.lower(path),value.toString().toLowerCase()));
+		            	} else {
+			            	predicatesList.add(criteriaBuilder.notEqual(path,ConvertUtils.convert(value, javatype)));
+		            	}  
 		                break;
 		            case gt:	
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
@@ -296,13 +311,13 @@ public class JpaDao  {
 		            	predicatesList.add(criteriaBuilder.like(path, value.toString()));
 		                break;
 		            case notlike:
-		            	predicatesList.add(criteriaBuilder.not(criteriaBuilder.like(path, value.toString())));
+		            	predicatesList.add(criteriaBuilder.notLike(path, value.toString()));
 		                break;
 		            case notlikeprefix:
-		            	predicatesList.add(criteriaBuilder.not(criteriaBuilder.like(path, value.toString())));
+		            	predicatesList.add(criteriaBuilder.notLike(path, value.toString()));
 		                break;
 		            case notlikesuffix:
-		            	predicatesList.add(criteriaBuilder.not(criteriaBuilder.like(path, value.toString())));
+		            	predicatesList.add(criteriaBuilder.notLike(path, value.toString()));
 		                break;
 		            case isnull:
 		            	predicatesList.add(criteriaBuilder.isNull(path));

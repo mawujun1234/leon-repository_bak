@@ -126,7 +126,12 @@ public class Params extends HashMap<String,Object>{
 	public Map<String,Object> getParams() {
 		return this;
 	}
-	
+	/**
+	 *等于eq方法
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	public Params add(String key,Object value) {
 		this.put(key, value);
 		op.put(key, OpEnum.eq);
@@ -139,11 +144,31 @@ public class Params extends HashMap<String,Object>{
 	}
 	
 	public Params eq(String key,Object value) {
-		this.add(key,value);
+		this.add(key,OpEnum.eq,value);
+		return this;
+	}
+	/**
+	 * 忽略大小写的比较
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params eq_i(String key,Object value) {
+		this.add(key,OpEnum.eq_i,value);
 		return this;
 	}
 	public Params noteq(String key,Object value) {
 		this.add(key,OpEnum.noteq,value);
+		return this;
+	}
+	/**
+	 * 忽略大小写
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params noteq_i(String key,Object value) {
+		this.add(key,OpEnum.noteq_i,value);
 		return this;
 	}
 	/**
