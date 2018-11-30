@@ -22,6 +22,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.xml.crypto.Data;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,8 +217,11 @@ public class JpaDao  {
 				switch (opEnum)
 		        {
 		            case eq:
-		            	predicatesList.add(criteriaBuilder.equal(path,ConvertUtils.convert(value, javatype)));
-		            	
+		            	if(Date.class.isAssignableFrom(javatype) && !(value instanceof Date)) {
+		            		predicatesList.add(criteriaBuilder.equal(criteriaBuilder.substring(path.as(String.class),1,10),value));
+		            	} else {
+			            	predicatesList.add(criteriaBuilder.equal(path,ConvertUtils.convert(value, javatype)));
+		            	}	
 		                break;
 		            case eq_i:
 		            	if(String.class.isAssignableFrom(javatype)) {
@@ -309,6 +313,15 @@ public class JpaDao  {
 		                break;
 		            case likesuffix:
 		            	predicatesList.add(criteriaBuilder.like(path, value.toString()));
+		                break;
+		            case like_i:
+		            	predicatesList.add(criteriaBuilder.like(criteriaBuilder.lower(path), value.toString().toLowerCase()));
+		                break;
+		            case likeprefix_i:
+		            	predicatesList.add(criteriaBuilder.like(criteriaBuilder.lower(path), value.toString().toLowerCase()));
+		                break;
+		            case likesuffix_i:
+		            	predicatesList.add(criteriaBuilder.like(criteriaBuilder.lower(path), value.toString().toLowerCase()));
 		                break;
 		            case notlike:
 		            	predicatesList.add(criteriaBuilder.notLike(path, value.toString()));
@@ -575,6 +588,11 @@ public class JpaDao  {
 			return 0;
 		}
 		return 1;
+	}
+	
+	public boolean removeAll(Class entityClass) {
+		getSimpleJpaRepository(entityClass).deleteAll();
+		return true;
 	}
 	
 	public int removeByMap(Class entityClass,Map<String,Object> params) {

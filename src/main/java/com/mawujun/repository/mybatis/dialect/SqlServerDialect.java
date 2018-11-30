@@ -8,15 +8,28 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * https://www.cnblogs.com/fengxiaojiu/p/7994124.html 分页方法
  * @author mwj
  */
 public class SqlServerDialect extends AbstractDialect{
 
+
 	@Override
 	public String getPageSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds,
 			CacheKey pageKey) {
-		// TODO Auto-generated method stub
-		return null;
+//	       pageKey.update(rowBounds.getOffset());
+//	        pageKey.update(rowBounds.getLimit());
+//	        String cacheSql = CACHE_PAGESQL.get(sql);
+//	        if (cacheSql == null) {
+//	            cacheSql = sql;
+//	            cacheSql = replaceSql.replace(cacheSql);
+//	            cacheSql = pageSql.convertToPageSql(cacheSql, null, null);
+//	            cacheSql = replaceSql.restore(cacheSql);
+//	            CACHE_PAGESQL.put(sql, cacheSql);
+//	        }
+//	        cacheSql = cacheSql.replace(String.valueOf(Long.MIN_VALUE), String.valueOf(rowBounds.getOffset()));
+//	        cacheSql = cacheSql.replace(String.valueOf(Long.MAX_VALUE), String.valueOf(rowBounds.getLimit()));
+	        return null;
 	}
 
 	@Override

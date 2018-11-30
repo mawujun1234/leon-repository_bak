@@ -155,6 +155,12 @@ public interface IRepository<T,ID> {
 	 */
 	public int remove(T t);
 	/**
+	 * 全部删除
+	 * @param t
+	 * @return
+	 */
+	public boolean removeAll();
+	/**
 	 * 根据指定的条件删除对象
 	 * @param params
 	 * @return

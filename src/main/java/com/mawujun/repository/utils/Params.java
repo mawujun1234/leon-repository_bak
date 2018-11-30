@@ -263,6 +263,38 @@ public class Params extends HashMap<String,Object>{
 		return this;
 	}
 	
+	/**
+	 * 两端like,"%"+value+"%",或略大小写
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params like_i(String key,String value) {
+		this.add(key,OpEnum.like_i,"%"+value+"%");
+		return this;
+	}
+	/**
+	 * 前端匹配，"%"+value,或略大小写
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params likeprefix_i(String key,String value) {
+		this.add(key,OpEnum.likeprefix_i,"%"+value);
+		return this;
+	}
+	
+	/**
+	 * 后端匹配，value+"%",或略大小写
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public Params likesuffix_i(String key,String value) {
+		this.add(key,OpEnum.likesuffix_i,value+"%");
+		return this;
+	}
+	
 	 /** 两端like,"%"+value+"%"
 	 * @param key
 	 * @param value

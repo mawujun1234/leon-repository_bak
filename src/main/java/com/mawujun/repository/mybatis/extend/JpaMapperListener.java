@@ -24,6 +24,7 @@ public class JpaMapperListener implements ApplicationListener<ContextRefreshedEv
 		
 		//ConfigurableApplicationContext context =event.getApplicationContext();
 		context=event.getApplicationContext();
+		
 		// TODO Auto-generated method stub
 		SqlSessionFactory  sqlSessionFactory=context.getBean(SqlSessionFactory.class);
 		if(sqlSessionFactory==null) {

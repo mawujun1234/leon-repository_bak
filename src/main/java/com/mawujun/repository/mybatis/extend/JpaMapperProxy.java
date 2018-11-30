@@ -117,6 +117,8 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		
 		else if(method.getName().equals("remove"))  {
 			 return newdao.remove(entityClass, args[0]);
+		}if(method.getName().equals("removeAll"))  {
+			 return newdao.removeAll(entityClass);
 		} else if(method.getName().equals("removeByMap"))  {
 			return newdao.removeByMap(entityClass, (Map<String,Object>)args[0]);
 		} else if(method.getName().equals("removeById"))  {

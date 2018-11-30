@@ -9,6 +9,11 @@ import org.apache.ibatis.session.RowBounds;
 
 /**
  *
+ *适用于sql server 2012之上的版本，
+ *并且一定要在offset之前加上order by 子句才可以
+ *
+ *https://www.cnblogs.com/xunziji/archive/2012/08/06/2625563.html
+ *https://www.cnblogs.com/fengxiaojiu/p/7994124.html
  * @author mwj
  *
  */

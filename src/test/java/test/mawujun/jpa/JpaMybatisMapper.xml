@@ -24,6 +24,7 @@
 				and sex= #{sex}
 			</if>
 		</where>
+		order by id
     </select>
 </mapper>
 

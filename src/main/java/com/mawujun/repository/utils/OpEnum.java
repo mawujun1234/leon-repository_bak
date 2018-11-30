@@ -6,5 +6,9 @@ package com.mawujun.repository.utils;
  *
  */
 public enum OpEnum {
-	eq,eq_i,noteq,noteq_i,gt,ge,lt,le,between,in,notin,like,likeprefix,likesuffix,notlike,notlikeprefix,notlikesuffix,isnull,isnotnull;
+	eq,eq_i,noteq,noteq_i,gt,ge,lt,le,between,
+	in,notin,
+	like,likeprefix,likesuffix,like_i,likeprefix_i,likesuffix_i,
+	notlike,notlikeprefix,notlikesuffix,
+	isnull,isnotnull;
 }
