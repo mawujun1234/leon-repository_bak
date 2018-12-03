@@ -20,11 +20,11 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import com.github.pagehelper.PageException;
+import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.Dialect;
-import com.mawujun.repository.mybatis.dialect.SqlServer2012Dialect;
 import com.mawujun.repository.mybatis.extend.JpaMapperListener;
 import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.utils.StringUtils;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Intercepts(
@@ -39,7 +39,7 @@ public class PageInfoInterceptor implements Interceptor {
     //protected Cache<String, MappedStatement> msCountMap = null;
     //private String default_dialect_class = "com.github.pagehelper.PageHelper";
     
-    //private AutoDialect autoDialect=new AutoDialect();
+    private AutoDialect autoDialect=new AutoDialect();
     protected static Map<String, MappedStatement> msCountMap = new HashMap<String, MappedStatement>();
 
     @Override
@@ -48,16 +48,20 @@ public class PageInfoInterceptor implements Interceptor {
         //try {
             Object[] args = invocation.getArgs();
             MappedStatement ms = (MappedStatement) args[0];
-            if(dialect==null) {
-            	//dialect=autoDialect.getDialect(ms);
+            if(dialect==null) {	
             	String dialect_classname=JpaMapperListener.context.getEnvironment().getProperty("leon.mybatis.dialect");
-            	//dialect=new SqlServer2012Dialect();
-            	 try {
-                     Class<?> aClass = Class.forName(dialect_classname);
-                     dialect = (Dialect) aClass.newInstance();
-                 } catch (Exception e) {
-                     throw new PageException(e);
-                 }
+            	if(StringUtils.hasText(dialect_classname)) {
+					try {
+						Class<?> aClass = Class.forName(dialect_classname);
+						dialect = (Dialect) aClass.newInstance();
+					} catch (Exception e) {
+						throw new PageException(e);
+					}
+            	} else {
+            		dialect=autoDialect.getDialect(ms);
+            	}
+//            	//dialect=new SqlServer2012Dialect();
+
         	}
             Object parameter = args[1];
             

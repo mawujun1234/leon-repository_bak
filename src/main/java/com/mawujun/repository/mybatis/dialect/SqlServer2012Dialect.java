@@ -7,6 +7,8 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.exception.BusinessException;
+
 /**
  *
  *适用于sql server 2012之上的版本，
@@ -21,10 +23,19 @@ import org.apache.ibatis.session.RowBounds;
 // TODO 完善并测试SQLServer2005Dialect
 public class SqlServer2012Dialect extends AbstractDialect{
 
+	/**
+	 * offset fetch next方式（SQL2012以上的版本才支持：推荐使用 ）
+	 * 必须要有order by子句，在mapper.xml文件中编写sql的时候，必须加上order by 子句
+	 */
 	@Override
 	public String getPageSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds,
 			CacheKey pageKey) {
 		String sql = boundSql.getSql();
+		sql = sql.toLowerCase();
+		if(!super.existsEndOrderBy(sql)) {
+			throw new RuntimeException("sql的最后一定要加上order by子句，可以添加order by id");
+		}
+		 
 		StringBuilder sqlBuilder = new StringBuilder(sql.length() + 64);
         sqlBuilder.append(sql);
         sqlBuilder.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ");

@@ -12,6 +12,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.mapping.BoundSql;
@@ -30,6 +33,76 @@ public abstract class AbstractDialect implements Dialect {
     protected CountSqlParser countSqlParser = new CountSqlParser();
     
     Map<String,String> columtypes=new HashMap<String,String>();
+    private static final Pattern p = Pattern.compile("order\\s+by\\s+([\\w*|\\w+\\.\\w+](asc|desc|\\s*){1},?)+", Pattern.CASE_INSENSITIVE);
+    
+    /**
+     * 判断是否存在order by子句，在子查询中也存在order by也会返回true
+     * @return
+     */
+    public boolean existsOrderBy(String sql) {
+    	Matcher m = p.matcher(sql);
+    	return m.find();
+    }
+    /**
+     * 判断sql的结尾是否存在order by子句
+     * @param sql
+     * @return
+     */
+    public boolean existsEndOrderBy(String sql) {
+    	int len=sql.length();
+    	Matcher match = p.matcher(sql);
+    	while(match.find()) {
+    		//System.out.println( " matches \"" + m.group(0) );
+	        //System.out.println("start:" + m.start() + " end:" + m.end());
+    		if(match.end()==len) {
+    			return true;
+    		}
+    	}
+    	return false;
+    	
+//    	MatchResult ms = null;
+//        while (match.find()) {
+//            ms = match.toMatchResult();
+//            System.out.print("匹配对象的组结果：");
+//            for (int i = 0; i < ms.groupCount(); i++) {
+//                System.out.print(String.format("\n\t第%s组的结果是:%s",i+1,ms.group(i + 1)));
+//            }
+//            System.out.print("\n匹配的整个结果:");
+//            System.out.println(ms.group());
+//        }
+    }
+    /**
+     * 获取最后的order by子句，如果没有就返回，则返回 空字符串
+     * @param sql
+     * @return
+     */
+    public String getEndOrderBy(String sql) {
+    	int len=sql.length();
+    	Matcher match = p.matcher(sql);
+    	while(match.find()) {
+    		//System.out.println( " matches \"" + m.group(0) );
+	        //System.out.println("start:" + m.start() + " end:" + m.end());
+    		if(match.end()==len) {
+    			return match.group(0);
+    		}
+    	}
+    	return "";
+    	
+    }
+    /**
+     * 去除所有的order by子句，
+     * @param sql
+     * @return
+     */
+    public String removeOrderby(String sql) {
+    	Matcher m = p.matcher(sql);
+    	StringBuffer sb = new StringBuffer();
+    	while(m.find()) {
+    		m.appendReplacement(sb, "");
+    	}
+    	m.appendTail(sb);
+    	return sb.toString();
+    }
     
     
 

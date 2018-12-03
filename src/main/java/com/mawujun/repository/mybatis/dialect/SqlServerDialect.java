@@ -8,28 +8,22 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
 /**
- * https://www.cnblogs.com/fengxiaojiu/p/7994124.html 分页方法
- * @author mwj
+ * https://www.cnblogs.com/fengxiaojiu/p/7994124.html
+ * 支持sql server2005以前版本的分页
+ * @author admin
+ *
  */
 public class SqlServerDialect extends AbstractDialect{
 
 
+	/**
+	 * ROW_NUMBER() OVER()方式适用于2005以上版本
+	 * top not in方式 （适应于数据库2012以下的版本）
+	 */
 	@Override
 	public String getPageSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds,
 			CacheKey pageKey) {
-//	       pageKey.update(rowBounds.getOffset());
-//	        pageKey.update(rowBounds.getLimit());
-//	        String cacheSql = CACHE_PAGESQL.get(sql);
-//	        if (cacheSql == null) {
-//	            cacheSql = sql;
-//	            cacheSql = replaceSql.replace(cacheSql);
-//	            cacheSql = pageSql.convertToPageSql(cacheSql, null, null);
-//	            cacheSql = replaceSql.restore(cacheSql);
-//	            CACHE_PAGESQL.put(sql, cacheSql);
-//	        }
-//	        cacheSql = cacheSql.replace(String.valueOf(Long.MIN_VALUE), String.valueOf(rowBounds.getOffset()));
-//	        cacheSql = cacheSql.replace(String.valueOf(Long.MAX_VALUE), String.valueOf(rowBounds.getLimit()));
-	        return null;
+		throw new RuntimeException("暂不支持，因为2005以前的版本都是使用top的形式来分页的，性能较差，所以还是自己写分页语句，在mapperx.ml文件中写格式为xxxx和xxxx_count的select标签");
 	}
 
 	@Override
@@ -38,42 +32,6 @@ public class SqlServerDialect extends AbstractDialect{
 		// TODO Auto-generated method stub
 		return null;
 	}
-//
-//	public boolean supportsLimitOffset(){
-//		return false;
-//	}
-//	
-//	public boolean supportsLimit() {
-//		return true;
-//	}
-//	
-//	static int getAfterSelectInsertPoint(String sql) {
-//		int selectIndex = sql.toLowerCase().indexOf( "select" );
-//		final int selectDistinctIndex = sql.toLowerCase().indexOf( "select distinct" );
-//		return selectIndex + ( selectDistinctIndex == selectIndex ? 15 : 6 );
-//	}
-//
-//	public String getLimitString(String sql, int offset, int limit) {
-//		return getLimitString(sql,offset,null,limit,null);
-//	}
-//
-//	public String getLimitString(String querySelect, int offset,String offsetPlaceholder, int limit, String limitPlaceholder) {
-//		if ( offset > 0 ) {
-//			throw new UnsupportedOperationException( "sql server has no offset" );
-//		}
-////		if(limitPlaceholder != null) {
-////			throw new UnsupportedOperationException(" sql server not support variable limit");
-////		}
-//		
-//		return new StringBuffer( querySelect.length() + 8 )
-//				.append( querySelect )
-//				.insert( getAfterSelectInsertPoint( querySelect ), " top " + limit )
-//				.toString();
-//	}
-//	
-//	// TODO add Dialect.supportsVariableLimit() for sqlserver 
-////	public boolean supportsVariableLimit() {
-////		return false;
-////	}
+
 
 }
