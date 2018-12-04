@@ -158,7 +158,7 @@ public class AutoDialect {
 			}
         	
         }
-        return null;
+        return dialect_name;
     }
 
     /**
@@ -250,7 +250,7 @@ public class AutoDialect {
             }
             String dialectStr = fromJdbcUrl(url,dataSource);
             if (dialectStr == null) {
-                throw new PageException("无法自动获取数据库类型，请通过 helperDialect 参数指定!");
+                throw new PageException("无法自动获取数据库类型，请通过leon.mybatis.dialect 参数指定!");
             }
             AbstractDialect dialect = initDialect(dialectStr, properties);
             urlDialectMap.put(url, dialect);

@@ -112,7 +112,7 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		}  else if(method.getName().equals("updateByMap"))  {
 			return newdao.updateByMap(entityClass,(Map<String,Object>)args[0],(Map<String,Object>)args[1]);
 		} else if(method.getName().equals("updateById"))  {
-			return newdao.updateById(entityClass,args[0],(Map<String,Object>)args[1]);
+			return newdao.updateById(entityClass,(Map<String,Object>)args[0],args[1]);
 		}  
 		
 		else if(method.getName().equals("remove"))  {
@@ -141,6 +141,15 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		} else if(method.getName().equals("existsByMap"))  {
 			return newdao.existsByMap(entityClass, (Map<String,Object>)args[0]);
 		} 
+		
+		else if(method.getName().equals("getIdType"))  {
+			return newdao.getIdType(entityClass);
+		} else if(method.getName().equals("getIdAttributeNames"))  {
+			return newdao.getIdAttributeNames(entityClass);
+		} else if(method.getName().equals("getIdAttributeNames2Str"))  {
+			return newdao.getIdAttributeNames2Str(entityClass);
+		} 
+		
 		else if (method.getName().equals("clear")){
 			newdao.clear();
 			return true;

@@ -11,7 +11,7 @@ import com.mawujun.repository.mybatis.dialect.SqlServer2005Dialect;
 * @author mawujun 16064988
 * @createDate ：2018年12月3日 下午8:40:22
 */
-public class SqlServer2005DialectTest {
+public class RemoveOrderByTest {
 	
 	SqlServer2005Dialect dialect=new SqlServer2005Dialect();
 	@Test

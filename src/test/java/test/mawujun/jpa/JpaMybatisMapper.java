@@ -11,5 +11,7 @@ import test.mawujun.model.City;
 public interface JpaMybatisMapper extends IRepository<City,String>{
 
 	public PageInfo<City> listPageByMybatis(PageInfo<City> params);
+	
+	public PageInfo<City> listPageByMybatis1(PageInfo<City> params);
 
 }

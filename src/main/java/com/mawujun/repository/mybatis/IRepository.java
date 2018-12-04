@@ -16,6 +16,21 @@ import com.mawujun.repository.utils.PageInfo;
  */
 public interface IRepository<T,ID> {
 	/**
+	 * 获取id的类型
+	 * @return
+	 */
+	public Class<ID> getIdType();
+	/**
+	 * 获取id的属性名称
+	 * @return
+	 */
+	public List<String> getIdAttributeNames();
+	/**
+	 * 获取id的属性字符串,如果 有多个属性就以逗号分隔
+	 * @return
+	 */
+	public String getIdAttributeNames2Str();
+	/**
 	 * 清空持久化上下文中的内容
 	 */
 	public boolean clear();
@@ -144,7 +159,7 @@ public interface IRepository<T,ID> {
 	 * @param id
 	 * @return
 	 */
-	public int updateById(ID id,Map<String,Object> sets);
+	public int updateById(Map<String,Object> sets,ID id);
 	
 
 	/**

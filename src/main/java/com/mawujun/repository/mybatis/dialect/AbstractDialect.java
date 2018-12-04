@@ -12,7 +12,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,14 +22,12 @@ import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.RowBounds;
 
-import com.mawujun.repository.mybatis.interceptor.CountSqlParser;
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.utils.string.StringUtils;
 
 public abstract class AbstractDialect implements Dialect {
-	  //处理SQL
-    protected CountSqlParser countSqlParser = new CountSqlParser();
+
     
     Map<String,String> columtypes=new HashMap<String,String>();
     private static final Pattern p = Pattern.compile("order\\s+by\\s+([\\w*|\\w+\\.\\w+](asc|desc|\\s*){1},?)+", Pattern.CASE_INSENSITIVE);
@@ -192,10 +189,30 @@ public abstract class AbstractDialect implements Dialect {
 	public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, PageInfo pageInfo, CacheKey pageKey) {
 	        String countColumn = pageInfo.getCountColumn();
 	        if (StringUtils.hasText(countColumn)) {
-	            return countSqlParser.getSmartCountSql(boundSql.getSql(), countColumn);
+	            return getSimpleCountSql(boundSql.getSql(), countColumn);
 	        }
-	        return countSqlParser.getSmartCountSql(boundSql.getSql());
+	        return getSimpleCountSql(boundSql.getSql());
 	}
+	
+	 public String getSimpleCountSql(final String sql) {
+		 return getSimpleCountSql(sql, "0");
+	 }
+	/**
+	 * 用这种简单的模式，因为很多数据库，会再select子句里面加上 / *AAAA——inex* /这种形式的内容。
+	 * 本来可以直接取出select from中间的内容，替换成count(name)
+	 * @param sql
+	 * @param name
+	 * @return
+	 */
+    public String getSimpleCountSql(final String sql, String name) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("select count(");
+        stringBuilder.append(name);
+        stringBuilder.append(") from (");
+        stringBuilder.append(this.removeOrderby(sql));
+        stringBuilder.append(") tmp_count");
+        return stringBuilder.toString();
+    }
 
     
 	@Override

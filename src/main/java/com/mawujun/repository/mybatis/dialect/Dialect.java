@@ -5,7 +5,6 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
-import com.mawujun.repository.mybatis.interceptor.CountSqlParser;
 import com.mawujun.repository.utils.PageInfo;
 
 /**

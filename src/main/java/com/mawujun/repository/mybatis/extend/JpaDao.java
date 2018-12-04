@@ -42,6 +42,7 @@ import com.mawujun.repository.utils.Params;
 import com.mawujun.utils.CollectionUtils;
 import com.mawujun.utils.ConvertUtils;
 import com.mawujun.utils.ReflectUtils;
+import com.mawujun.utils.StringUtils;
 
 @Repository
 public class JpaDao  {
@@ -53,15 +54,41 @@ public class JpaDao  {
 	private Map<Class,JpaEntityInformation> entityInformationCache=new HashMap<Class,JpaEntityInformation>();
 	
 	public SimpleJpaRepository getSimpleJpaRepository(Class entityClass) {
+		if(repositoryCache.containsKey(entityClass)) {
+			return repositoryCache.get(entityClass);
+		}
 		SimpleJpaRepository repository=new SimpleJpaRepository(entityClass,em);
 		repositoryCache.put(entityClass, repository);
-		entityInformationCache.put(entityClass, (JpaEntityInformation)ReflectUtils.getFieldValue(repository, "entityInformation"));
+		
 		
 		return repository;
 	}
 	
+	public JpaEntityInformation getEntityInformation(Class entityClass) {
+		if(entityInformationCache.containsKey(entityClass)) {
+			return entityInformationCache.get(entityClass);
+		}
+		JpaEntityInformation  entityInformation=(JpaEntityInformation)ReflectUtils.getFieldValue( getSimpleJpaRepository(entityClass), "entityInformation");
+		entityInformationCache.put(entityClass, entityInformation);
+		return entityInformation;
+		
+	}
+	
 	public void clear() {
 		em.clear();
+	}
+	
+	public Class getIdType(Class entityClass) {
+		JpaEntityInformation entityInformation=getEntityInformation(entityClass);
+		return entityInformation.getIdType();
+	}
+	public List<String> getIdAttributeNames(Class entityClass) {
+		JpaEntityInformation entityInformation=getEntityInformation(entityClass);	
+		return (List<String>)entityInformation.getIdAttributeNames();
+	}
+	public String getIdAttributeNames2Str(Class entityClass) {
+		JpaEntityInformation entityInformation=getEntityInformation(entityClass);	
+		return StringUtils.collectionToDelimitedString(entityInformation.getIdAttributeNames().iterator());
 	}
 	
 	public Object create(Class entityClass,Object entity) {
@@ -530,6 +557,8 @@ public class JpaDao  {
         return rowCount;
 		//repository.flush();
 	}
+	
+
 	/**
 	 * 已经支持复合主键
 	 * @param entityClass
@@ -537,8 +566,8 @@ public class JpaDao  {
 	 * @param id
 	 * @return
 	 */
-	public int updateById(Class entityClass,Object id,Map<String,Object> sets) {
-		JpaEntityInformation entityInformation=entityInformationCache.get(entityClass);
+	public int updateById(Class entityClass,Map<String,Object> sets,Object id) {
+		JpaEntityInformation entityInformation=getEntityInformation(entityClass);
 		
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaUpdate update = cb.createCriteriaUpdate(entityClass);
@@ -554,12 +583,13 @@ public class JpaDao  {
 			for (String idAttributeName : idAttributeNames) {
 				Object idAttributeValue = entityInformation.getCompositeIdAttributeValue(id, idAttributeName);
 
+				//当复合id是以一个单独的类的形式存在的时候
 //				boolean complexIdParameterValueDiscovered = idAttributeValue != null&& !query.getParameter(idAttributeName).getParameterType().isAssignableFrom(idAttributeValue.getClass());
 //				if (complexIdParameterValueDiscovered) {
 //					update.where(cb.equal(root.get(idAttributeName),ConvertUtils.convert(id, id_javatype)));
 //					break;
 //				} 
-				predicatesList[i]=cb.equal(root.get(idAttributeName),ConvertUtils.convert(id, id_javatype));
+				predicatesList[i]=cb.equal(root.get(idAttributeName),ConvertUtils.convert(idAttributeValue, id_javatype));
 				i++;
 			}
 			update.where(predicatesList);	
@@ -662,7 +692,7 @@ public class JpaDao  {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = cb.createQuery(Long.class);
 		Root root = criteriaQuery.from(entityClass);
-		JpaEntityInformation entityInformation=entityInformationCache.get(entityClass);
+		JpaEntityInformation entityInformation=getEntityInformation(entityClass);
 		
 		Expression<Long> selection=cb.count(root.get(entityInformation.getIdAttribute()));
 		criteriaQuery.select(selection);
@@ -751,7 +781,7 @@ public class JpaDao  {
 		long count=countByMap(entityClass,params);
 		return count >= 1;
 		
-//		JpaEntityInformation entityInformation=entityInformationCache.get(entityClass);
+//		JpaEntityInformation entityInformation=getEntityInformation(entityClass).get(entityClass);
 //		
 //		String placeholder ="";// provider.getCountQueryPlaceholder();
 //		String entityName = entityInformation.getEntityName();

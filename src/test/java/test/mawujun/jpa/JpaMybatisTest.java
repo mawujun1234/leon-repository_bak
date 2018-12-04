@@ -2,10 +2,10 @@ package test.mawujun.jpa;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.IdClass;
 import javax.transaction.Transactional;
 
 import org.junit.Assert;
@@ -14,7 +14,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,6 +27,10 @@ import com.mawujun.repository.utils.Params;
 import com.mawujun.utils.DateUtils;
 
 import test.mawujun.model.City;
+import test.mawujun.model.CoplxId1;
+import test.mawujun.model.CoplxId1Entity;
+import test.mawujun.model.CoplxId2;
+import test.mawujun.model.CoplxId2Entity;
 import test.mawujun.model.Sex;
 
 
@@ -45,10 +51,22 @@ import test.mawujun.model.Sex;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Transactional
 @Rollback(false)
-@ActiveProfiles("sqlserver")//mysql,h2,sqlserver,oracle,db2,postgresql
+//@ActiveProfiles("sqlserver")//mysql,h2,sqlserver,oracle,db2,postgresql
+@ActiveProfiles("h2")
 public class JpaMybatisTest {
 	@Autowired
 	private JpaMybatisMapper jpaMybatisMapper;
+	@Autowired
+	private CoplxId1EntityMapper coplxId1EntityMapper;
+	@Autowired
+	private CoplxId2EntityMapper coplxId2EntityMapper;
+	
+	
+	@Autowired
+	protected ApplicationContext ctx;
+
+	@Value("${spring.profiles.active}")
+	private String profile;
 	
 	private static String id;
 	private static Date now=new Date();
@@ -57,6 +75,8 @@ public class JpaMybatisTest {
 	
 	@Test
 	public void atest() {
+		Assert.assertNotNull(ctx);
+		Assert.assertNotNull(profile);
 		jpaMybatisMapper.removeAll();
 	}
 	@Test
@@ -81,6 +101,31 @@ public class JpaMybatisTest {
 		Assert.assertEquals((Integer) 50, city.getAge());
 		Assert.assertEquals(Sex.Man, city.getSex());
 		Assert.assertEquals(now.getTime(), city.getCreateDate().getTime());
+
+	}
+	
+	@Test
+	public void test0GetId() {
+		Class clz=jpaMybatisMapper.getIdType();
+		Assert.assertEquals(String.class, clz);
+		String ids=jpaMybatisMapper.getIdAttributeNames2Str();
+		Assert.assertEquals("id", ids);
+		Assert.assertEquals(1, jpaMybatisMapper.getIdAttributeNames().size());
+		
+		
+		clz=coplxId1EntityMapper.getIdType();
+		Assert.assertEquals(CoplxId1.class, clz);
+		ids=coplxId1EntityMapper.getIdAttributeNames2Str();
+		Assert.assertEquals("id", ids);//属性名还是老的
+		Assert.assertEquals(1, coplxId1EntityMapper.getIdAttributeNames().size());
+
+
+		
+		clz=coplxId2EntityMapper.getIdType();
+		Assert.assertEquals(CoplxId2.class, clz);
+		ids=coplxId2EntityMapper.getIdAttributeNames2Str();
+		Assert.assertEquals("id1,id2", ids);//属性名还是老的
+		Assert.assertEquals(2, coplxId2EntityMapper.getIdAttributeNames().size());
 	}
 	
 	@Test
@@ -357,6 +402,27 @@ public class JpaMybatisTest {
 		Assert.assertEquals(1, pageinfo_result.getLimit());
 		Assert.assertEquals(0, pageinfo_result.getRootSize());
 	}
+	/**
+	 * 测试，如果Mapper.xml文件中，存在listPage和listPage_count的select，那就不执行自动构建count语句
+	 */
+	@Test
+	public void test3listPageByMap1() {
+		PageInfo<City> pageInfo=PageInfo.of(0, 1);
+		PageInfo<City> pageinfo_result=jpaMybatisMapper.listPageByMybatis1(pageInfo);
+		Assert.assertEquals(pageInfo, pageinfo_result);
+		Assert.assertEquals(2, pageinfo_result.getTotal());
+		Assert.assertEquals(2, pageinfo_result.getTotalPages());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
+		Assert.assertEquals(0, pageinfo_result.getPage());
+		
+		pageInfo=PageInfo.of(1, 1);
+		pageinfo_result=jpaMybatisMapper.listPageByMybatis1(pageInfo);
+		Assert.assertEquals(pageInfo, pageinfo_result);
+		Assert.assertEquals(2, pageinfo_result.getTotal());
+		Assert.assertEquals(2, pageinfo_result.getTotalPages());
+		Assert.assertEquals(1, pageinfo_result.getRootSize());
+		Assert.assertEquals(1, pageinfo_result.getPage());
+	}
 	
 	@Test
 	public void test4update() {
@@ -386,7 +452,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(Sex.Women, city0.getSex());
 		Assert.assertEquals(now.getTime(), city0.getCreateDate().getTime());
 		
-		jpaMybatisMapper.updateById(id,Params.of().add("price", 22.22).add("sex", Sex.Man));
+		jpaMybatisMapper.updateById(Params.of().add("price", 22.22).add("sex", Sex.Man),id);
 		city0 = jpaMybatisMapper.getById(id);
 		Assert.assertEquals("宁波", city0.getName());
 		Assert.assertEquals((Double) 22.22, city0.getPrice());
@@ -395,6 +461,49 @@ public class JpaMybatisTest {
 		Assert.assertEquals(now.getTime(), city0.getCreateDate().getTime());
 		
 		
+		
+	}
+	@Test
+	public void test4updateByCompexId() {
+		//如果以单独的id类在外面的时候
+		CoplxId1 coplxId1=new CoplxId1();
+		coplxId1.setId1("1111");
+		coplxId1.setId2("2222");
+		CoplxId1Entity coplxId1Entity=new CoplxId1Entity();
+		coplxId1Entity.setId(coplxId1);
+		coplxId1Entity.setName("coplxId1Entity");
+		
+		coplxId1EntityMapper.create(coplxId1Entity);
+		
+		coplxId1EntityMapper.updateById(Params.of("name", "new_coplxId1Entity"),coplxId1);
+		CoplxId1Entity coplxId1Entity_=coplxId1EntityMapper.getById(coplxId1);
+		Assert.assertEquals("new_coplxId1Entity", coplxId1Entity_.getName());
+		//注意这里和下面那种updateByMap的区别
+		coplxId1EntityMapper.updateByMap(Params.of("name", "new1_coplxId1Entity"), Params.of("id", coplxId1));
+		coplxId1Entity_=coplxId1EntityMapper.getById(coplxId1);
+		Assert.assertEquals("new1_coplxId1Entity", coplxId1Entity_.getName());
+		
+		
+		
+		
+		//通过指定@IdClass(CoplxId2.class)
+		CoplxId2Entity coplxId2Entity=new CoplxId2Entity();
+		coplxId2Entity.setId1("3333");
+		coplxId2Entity.setId2("4444");
+		coplxId2Entity.setName("coplxId2Entity");
+		coplxId2EntityMapper.create(coplxId2Entity);
+		
+		coplxId2Entity.setName("coplxId2Entity_new");
+		CoplxId2 coplxId2=new CoplxId2();
+		coplxId2.setId1(coplxId2Entity.getId1());
+		coplxId2.setId2(coplxId2Entity.getId2());
+		coplxId2EntityMapper.updateById( Params.of("name", "coplxId2Entity_new"),coplxId2);
+		CoplxId2Entity coplxId2Entity_=coplxId2EntityMapper.getById(coplxId2);
+		Assert.assertEquals("coplxId2Entity_new", coplxId2Entity_.getName());
+		
+		coplxId2EntityMapper.updateByMap(Params.of("name", "coplxId2Entity_new2"), Params.of("id1", coplxId2.getId1()).add("id2", coplxId2.getId2()));
+		coplxId2Entity_=coplxId2EntityMapper.getById(coplxId2);
+		Assert.assertEquals("coplxId2Entity_new2", coplxId2Entity_.getName());
 	}
 	
 	@Test
@@ -531,6 +640,9 @@ public class JpaMybatisTest {
 		city.setName("AAAAA");
 		jpaMybatisMapper.update(city);
 		
+		//sql server是不区分大小写的
+				//ALTER DATABASE [DatabaseName] COLLATE Chinese_PRC_CS_AI 
+				//https://www.cnblogs.com/sandunban/p/7272291.html
 		params = Params.of().eq("name", "AAAAA");
 		list=jpaMybatisMapper.listByMap(params);
 		Assert.assertEquals(1, list.size());

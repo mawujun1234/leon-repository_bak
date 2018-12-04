@@ -26,6 +26,13 @@
 		</where>
 		order by id
     </select>
+    
+    <select id="listPageByMybatis1" resultType="city" >
+    	select * from t_city order by id
+    </select>
+    <select id="listPageByMybatis1_count" resultType="long" >
+    	select count(id) from t_city
+    </select>
 </mapper>
 
  
