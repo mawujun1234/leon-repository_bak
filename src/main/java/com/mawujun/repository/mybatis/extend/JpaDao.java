@@ -1,5 +1,6 @@
 package com.mawujun.repository.mybatis.extend;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -22,8 +23,8 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.xml.crypto.Data;
 
+import org.hibernate.engine.spi.SessionImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -36,6 +37,8 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.mawujun.repository.mybatis.dialect.AbstractDialect;
+import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
@@ -45,13 +48,24 @@ import com.mawujun.utils.ReflectUtils;
 import com.mawujun.utils.StringUtils;
 
 @Repository
-public class JpaDao  {
+public class JpaDao {
 	private static final Logger logger=LoggerFactory.getLogger(JpaDao.class);
 	@PersistenceContext
 	private EntityManager em;
 	
+	private AutoDialect autoDialect=new AutoDialect();
+	private volatile AbstractDialect dialect;
+	
 	private Map<Class,SimpleJpaRepository> repositoryCache=new HashMap<Class,SimpleJpaRepository>();
 	private Map<Class,JpaEntityInformation> entityInformationCache=new HashMap<Class,JpaEntityInformation>();
+	
+//	public synchronized void initDialect(Connection connection)  {
+//		// TODO Auto-generated method stub
+//		//java.sql.Connection connection = em.unwrap(java.sql.Connection.class);
+//		if(dialect==null) {
+//			dialect=autoDialect.getDialect(connection);
+//		}
+//	}
 	
 	public SimpleJpaRepository getSimpleJpaRepository(Class entityClass) {
 		if(repositoryCache.containsKey(entityClass)) {
@@ -87,8 +101,9 @@ public class JpaDao  {
 		return (List<String>)entityInformation.getIdAttributeNames();
 	}
 	public String getIdAttributeNames2Str(Class entityClass) {
-		JpaEntityInformation entityInformation=getEntityInformation(entityClass);	
-		return StringUtils.collectionToDelimitedString(entityInformation.getIdAttributeNames().iterator());
+		//JpaEntityInformation entityInformation=getEntityInformation(entityClass);	
+		//return StringUtils.collectionToDelimitedString(entityInformation.getIdAttributeNames().iterator());
+		return StringUtils.collectionToCommaDelimitedString(getIdAttributeNames(entityClass));
 	}
 	
 	public Object create(Class entityClass,Object entity) {
@@ -222,7 +237,23 @@ public class JpaDao  {
 	}
 	
 
-	
+	/**
+	 * 获取某个日期值的日期格式
+	 * @param criteriaBuilder
+	 * @param path
+	 * @param value
+	 * @return
+	 */
+	private Expression<String> getDateExpression(CriteriaBuilder criteriaBuilder,Path path,Object value){
+		//predicatesList.add(criteriaBuilder.equal(criteriaBuilder.substring(path.as(String.class),1,10),value));//这是可以使用的		
+		//Expression<String> timeStr = criteriaBuilder.function("FORMATDATETIME", String.class, path, criteriaBuilder.parameter(String.class, "formatStr"));
+		//Expression<String> timeStr = criteriaBuilder.function("FORMATDATETIME", String.class, path,criteriaBuilder.literal("yyyy-MM-dd"));
+		String format=dialect.getDateFormatStr((String)value);
+		//获取日期格式化函数
+		String date_format=dialect.getDateFormatFunction();
+		Expression<String> timeStr = criteriaBuilder.function(date_format, String.class, path,criteriaBuilder.literal(format));
+		return timeStr;
+	}
 	
 	//private TypedQuery genTypedQuery(Class entityClass,Map<String,Object> params) {
 	private Predicate[] genPredicates(CriteriaBuilder criteriaBuilder,Root itemRoot,Map<String,Object> params) {
@@ -230,7 +261,13 @@ public class JpaDao  {
 //		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
 //		Root itemRoot = query.from(entityClass);
 	
-		
+		if(dialect==null) {
+			//Connection connection = em.unwrap(java.sql.Connection.class);
+			SessionImplementor session =em.unwrap(SessionImplementor.class);
+			Connection connection =session.connection();
+			dialect=autoDialect.getDialect(connection);
+		}
+
 		boolean isParams=(params instanceof Params);
 		//Predicate[] predicatesList=new Predicate[params.size()];
 		List<Predicate> predicatesList=new ArrayList<Predicate>();
@@ -244,8 +281,16 @@ public class JpaDao  {
 				switch (opEnum)
 		        {
 		            case eq:
-		            	if(Date.class.isAssignableFrom(javatype) && !(value instanceof Date)) {
-		            		predicatesList.add(criteriaBuilder.equal(criteriaBuilder.substring(path.as(String.class),1,10),value));
+		            	if(Date.class.isAssignableFrom(javatype)) {
+		            		if(value instanceof String) {
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,value);
+			            		predicatesList.add(criteriaBuilder.equal(timeStr,value));
+		            		} else if(value instanceof Date) {
+		            			predicatesList.add(criteriaBuilder.equal(path,(Date)value));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
+		            		
 		            	} else {
 			            	predicatesList.add(criteriaBuilder.equal(path,ConvertUtils.convert(value, javatype)));
 		            	}	
@@ -253,17 +298,48 @@ public class JpaDao  {
 		            case eq_i:
 		            	if(String.class.isAssignableFrom(javatype)) {
 			            	predicatesList.add(criteriaBuilder.equal(criteriaBuilder.lower(path),value.toString().toLowerCase()));
+		            	} else if(Date.class.isAssignableFrom(javatype)) {
+		            		if(value instanceof String) {
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,value);
+			            		predicatesList.add(criteriaBuilder.equal(timeStr,value));
+		            		} else if(value instanceof Date) {
+		            			predicatesList.add(criteriaBuilder.equal(path,(Date)value));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
 		            	} else {
 			            	predicatesList.add(criteriaBuilder.equal(path,ConvertUtils.convert(value, javatype)));
 		            	}            	
 		                break;
 		            case noteq:
-		            	predicatesList.add(criteriaBuilder.notEqual(path,ConvertUtils.convert(value, javatype)));
+		            	//predicatesList.add(criteriaBuilder.notEqual(path,ConvertUtils.convert(value, javatype)));
+		            	if(Date.class.isAssignableFrom(javatype)) {
+		            		if(value instanceof String) {
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,value);
+			            		predicatesList.add(criteriaBuilder.notEqual(timeStr,value));
+		            		} else if(value instanceof Date) {
+		            			predicatesList.add(criteriaBuilder.notEqual(path,(Date)value));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
+		            		
+		            	} else {
+			            	predicatesList.add(criteriaBuilder.notEqual(path,ConvertUtils.convert(value, javatype)));
+		            	}	
 		                break;
 		            case noteq_i:
 		            	if(String.class.isAssignableFrom(javatype)) {
 			            	predicatesList.add(criteriaBuilder.notEqual(criteriaBuilder.lower(path),value.toString().toLowerCase()));
-		            	} else {
+		            	} else if(Date.class.isAssignableFrom(javatype)) {
+		            		if(value instanceof String) {
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,value);
+			            		predicatesList.add(criteriaBuilder.notEqual(timeStr,value));
+		            		} else if(value instanceof Date) {
+		            			predicatesList.add(criteriaBuilder.notEqual(path,(Date)value));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
+		            	}  else {
 			            	predicatesList.add(criteriaBuilder.notEqual(path,ConvertUtils.convert(value, javatype)));
 		            	}  
 		                break;
@@ -271,7 +347,15 @@ public class JpaDao  {
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.gt(path,(Number)ConvertUtils.convert(value, javatype)));
 		            	} else if(Date.class.isAssignableFrom(javatype)) {
-		            		predicatesList.add(criteriaBuilder.greaterThan(path,(Date)ConvertUtils.convert(value, javatype)));
+		            		//predicatesList.add(criteriaBuilder.greaterThan(path,(Date)ConvertUtils.convert(value, javatype)));
+		            		if(value instanceof String) {
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,value);
+			            		predicatesList.add(criteriaBuilder.greaterThan(timeStr,(String)value));
+		            		} else if(value instanceof Date) {
+		            			predicatesList.add(criteriaBuilder.greaterThan(path,(Date)value));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
 		            	} else {
 		            		predicatesList.add(criteriaBuilder.greaterThan(path,param.getValue().toString()));
 		            	}
@@ -280,7 +364,15 @@ public class JpaDao  {
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.ge(path,(Number)ConvertUtils.convert(value, javatype)));
 		            	} else if(Date.class.isAssignableFrom(javatype)) {
-		            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,(Date)ConvertUtils.convert(value, javatype)));
+		            		//predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,(Date)ConvertUtils.convert(value, javatype)));
+		            		if(value instanceof String) {
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,value);
+			            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(timeStr,(String)value));
+		            		} else if(value instanceof Date) {
+		            			predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,(Date)value));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
 		            	} else {
 		            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,param.getValue().toString()));
 		            	}
@@ -289,7 +381,15 @@ public class JpaDao  {
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.lt(path,(Number)ConvertUtils.convert(value, javatype)));
 		            	} else if(Date.class.isAssignableFrom(javatype)) {
-		            		predicatesList.add(criteriaBuilder.lessThan(path,(Date)ConvertUtils.convert(value, javatype)));
+		            		//predicatesList.add(criteriaBuilder.lessThan(path,(Date)ConvertUtils.convert(value, javatype)));
+		            		if(value instanceof String) {
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,value);
+			            		predicatesList.add(criteriaBuilder.lessThan(timeStr,(String)value));
+		            		} else if(value instanceof Date) {
+		            			predicatesList.add(criteriaBuilder.lessThan(path,(Date)value));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
 		            	} else {
 		            		predicatesList.add(criteriaBuilder.lessThan(path,param.getValue().toString()));
 		            	}
@@ -298,7 +398,15 @@ public class JpaDao  {
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.le(path,(Number)ConvertUtils.convert(value, javatype)));
 		            	} else if(Date.class.isAssignableFrom(javatype)) {
-		            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,(Date)ConvertUtils.convert(value, javatype)));
+		            		//predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,(Date)ConvertUtils.convert(value, javatype)));
+		            		if(value instanceof String) {
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,value);
+			            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(timeStr,(String)value));
+		            		} else if(value instanceof Date) {
+		            			predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,(Date)value));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
 		            	} else {
 		            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,param.getValue().toString()));
 		            	}
@@ -308,30 +416,86 @@ public class JpaDao  {
 		            	if(Number.class.isAssignableFrom(javatype) || ReflectUtils.isPrimitiveNumber(value)) {
 		            		predicatesList.add(criteriaBuilder.ge(path,(Number)ConvertUtils.convert(values[0], javatype)));
 		            		predicatesList.add(criteriaBuilder.le(path,(Number)ConvertUtils.convert(values[1], javatype)));
-		            	} else if(Date.class.isAssignableFrom(javatype) ) {
-		            		predicatesList.add(criteriaBuilder.between(path,(Date)ConvertUtils.convert(values[0], javatype),(Date)ConvertUtils.convert(values[1], javatype)));
+		            	} else if(Date.class.isAssignableFrom(javatype)) {
+		            		//predicatesList.add(criteriaBuilder.between(path,(Date)ConvertUtils.convert(values[0], javatype),(Date)ConvertUtils.convert(values[1], javatype)));
+		            		if(values[0] instanceof String) {
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,values[0]);
+		            			predicatesList.add(criteriaBuilder.between(timeStr,(String)values[0],(String)values[1]));
+		            		} else if(values[0] instanceof Date) {
+		            			predicatesList.add(criteriaBuilder.between(path,(Date)values[0],(Date)values[1]));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
 		            	} else {
-		            		predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,values[0].toString()));
-		            		predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,values[1].toString()));
+		            		predicatesList.add(criteriaBuilder.between(path,values[0].toString(),values[1].toString()));
+		            		//predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,values[0].toString()));
+		            		//predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,values[1].toString()));
 		            	}
 		                break;}
-		            case in:{
-		            	In in = criteriaBuilder.in(path);
+		            case in:{	            	
 		            	Object[] values=(Object[])value;
-		            	for (Object obj:values) {
-		            		in.value(ConvertUtils.convert(obj, javatype));
+		            	if(Date.class.isAssignableFrom(javatype)) {
+		            		if(values[0] instanceof String) {	
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,values[0]);
+		            			In in = criteriaBuilder.in(timeStr);
+		            			for (Object obj:values) {
+				            		in.value((String)obj);
+				            	}
+		            			predicatesList.add(in);
+		            		} else if(values[0] instanceof Date) {
+		            			In in = criteriaBuilder.in(path);
+			            		for (Object obj:values) {
+				            		in.value((Date)obj);
+				            	}
+			            		predicatesList.add(in);
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
+		            	} else {
+		            		In in = criteriaBuilder.in(path);
+		            		for (Object obj:values) {
+			            		in.value(ConvertUtils.convert(obj, javatype));
+			            	}
+		            		predicatesList.add(in);
 		            	}
-		        		predicatesList.add(in);
+		            	
+		        		
 		                break;
 		            }
 		            case notin:
-		            	In in = criteriaBuilder.in(path);
 		            	Object[] values=(Object[])value;
-		            	for (Object obj:values) {
-		            		in.value(ConvertUtils.convert(obj, javatype));
+		            	if(Date.class.isAssignableFrom(javatype)) {
+		            		if(values[0] instanceof String) {	
+		            			Expression<String> timeStr=getDateExpression(criteriaBuilder,path,values[0]);
+		            			In in = criteriaBuilder.in(timeStr);
+		            			for (Object obj:values) {
+				            		in.value((String)obj);
+				            	}
+		            			predicatesList.add(criteriaBuilder.not(in));
+		            		} else if(values[0] instanceof Date) {
+		            			In in = criteriaBuilder.in(path);
+			            		for (Object obj:values) {
+				            		in.value((Date)obj);
+				            	}
+			            		predicatesList.add(criteriaBuilder.not(in));
+		            		} else {
+		            			throw new IllegalArgumentException("参数"+param.getKey()+"类型不对,应该为日期字符串或Date类型!javatype="+value);
+		            		}
+		            	} else {
+		            		In in = criteriaBuilder.in(path);
+		            		for (Object obj:values) {
+			            		in.value(ConvertUtils.convert(obj, javatype));
+			            	}
+		            		predicatesList.add(criteriaBuilder.not(in));
 		            	}
-		            	predicatesList.add(criteriaBuilder.not(in));
-		                break;
+		            	break;
+//		            	In in = criteriaBuilder.in(path);
+//		            	Object[] values=(Object[])value;
+//		            	for (Object obj:values) {
+//		            		in.value(ConvertUtils.convert(obj, javatype));
+//		            	}
+//		            	predicatesList.add(criteriaBuilder.not(in));
+//		                break;
 		            case like:
 		            	predicatesList.add(criteriaBuilder.like(path, value.toString()));
 		                break;
@@ -391,6 +555,7 @@ public class JpaDao  {
 		Predicate[] predicatesList=genPredicates(criteriaBuilder,itemRoot,params);
 		query.where(predicatesList);
         TypedQuery typedQuery = em.createQuery(query);
+       // typedQuery.setParameter("formatStr", "yyyy-MM-dd");
         return typedQuery.getResultList();
 		
 	}
@@ -810,6 +975,8 @@ public class JpaDao  {
 //		return false;
 		
 	}
+
+
 	
 	
 //	//============================example相关的

@@ -70,8 +70,7 @@ public class JpaMybatisTest {
 	
 	private static String id;
 	private static Date now=new Date();
-	private static SimpleDateFormat yyyyMMddHHmmss=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private static SimpleDateFormat yyyyMMdd=new SimpleDateFormat("yyyy-MM-dd");
+
 	
 	@Test
 	public void atest() {
@@ -671,28 +670,61 @@ public class JpaMybatisTest {
 		jpaMybatisMapper.update(city);
 	}
 	//时间的专门测试
+	private static SimpleDateFormat yyyyMMddHHmmss=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static SimpleDateFormat yyyyMMdd=new SimpleDateFormat("yyyy-MM-dd");
+	private static SimpleDateFormat yyyyMM=new SimpleDateFormat("yyyy-MM");
 	@Test
 	public void test8time() throws ParseException {
 		Params params = Params.of().eq("age", 50);
 		List<City> list=jpaMybatisMapper.listByMap(params);
 		Assert.assertEquals(2, list.size());
+		
+		params = Params.of().eq("createDate", now);
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().eq("createDate", yyyyMMdd.parse(yyyyMMdd.format(now)));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());//如果是以时间的形式比较的话，要完全相等才可以
+		params = Params.of().eq("createDate", yyyyMM.format(now));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().eq("createDate", yyyyMMdd.format(now));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().eq("createDate", yyyyMMddHHmmss.format(now));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		
+		
 
 		params = Params.of().between("createDate", yyyyMMdd.format(now),yyyyMMdd.format(DateUtils.addDays(now, 1)));
 		list=jpaMybatisMapper.listByMap(params);
 		Assert.assertEquals(2, list.size());
-		
+		//临界点测试
+		params = Params.of().between("createDate",yyyyMMdd.parse(yyyyMMdd.format(now)),yyyyMMdd.parse(yyyyMMdd.format(now)));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
 		params = Params.of().between("createDate", yyyyMMdd.format(now),yyyyMMdd.format(now));
 		list=jpaMybatisMapper.listByMap(params);
-		Assert.assertEquals(0, list.size());//
-		
+		Assert.assertEquals(2, list.size());//		
 		params = Params.of().between("createDate", yyyyMMdd.format(DateUtils.addDays(now, -1)),yyyyMMdd.format(now));
 		list=jpaMybatisMapper.listByMap(params);
-		Assert.assertEquals(0, list.size());//因为yyyyMMdd.format(now)返回的结果是yyyy-MM-dd 00:00:00  比yyyy-MM-dd 01:22:33小，所以娶不到，需要进行日期格式化
+		Assert.assertEquals(2, list.size());//因为yyyyMMdd.format(now)返回的结果是yyyy-MM-dd 00:00:00  比yyyy-MM-dd 01:22:33小，所以娶不到，需要进行日期格式化
 		
 		
-		params = Params.of().eq("createDate", yyyyMMdd.format(now));
+		params = Params.of().in("createDate", now,DateUtils.addDays(now, 1));
 		list=jpaMybatisMapper.listByMap(params);
 		Assert.assertEquals(2, list.size());
+		params = Params.of().in("createDate", DateUtils.addDays(now, -1),DateUtils.addDays(now, 1));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+		params = Params.of().in("createDate", yyyyMMdd.format(now),yyyyMMdd.format(DateUtils.addDays(now, 1)));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
+		params = Params.of().in("createDate", yyyyMMdd.format(DateUtils.addDays(now, 1)),yyyyMMdd.format(DateUtils.addDays(now, -1)));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(0, list.size());
+
 
 	}
 	/**

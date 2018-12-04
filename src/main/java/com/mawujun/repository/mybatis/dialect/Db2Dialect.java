@@ -36,5 +36,11 @@ public class Db2Dialect extends AbstractDialect{
 	        return paramMap;
 	}
 
+	@Override
+	public String getDateFormatFunction() {
+		// TODO Auto-generated method stub
+		return "TO_CHAR";
+	}
+
 	
 }

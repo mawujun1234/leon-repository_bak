@@ -12,6 +12,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
+import com.mawujun.utils.DateUtils;
 
 /**
  * A dialect compatible with the H2 database.
@@ -66,6 +67,21 @@ public class H2Dialect extends AbstractDialect {
 		sqlBuilder.append(sql);
 		sqlBuilder.append(" limit ? offset ? ");
 		return sqlBuilder.toString();
+	}
+
+	@Override
+	public String getDateFormatFunction() {
+		// TODO Auto-generated method stub
+		return "FORMATDATETIME";
+	}
+
+	
+	@Override
+	public String getDateFormatStr(String dateStr) {
+		//http://www.mamicode.com/info-detail-1026392.html#formatdatetime
+		//和java一致
+		String format=DateUtils.resolverDateFormat(dateStr);
+		return format;
 	}
     
 //    public boolean bindLimitParametersInReverseOrder() {

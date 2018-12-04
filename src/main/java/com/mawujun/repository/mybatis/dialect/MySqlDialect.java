@@ -54,4 +54,11 @@ public class MySqlDialect extends AbstractDialect {
 	}
 
 
+	@Override
+	public String getDateFormatFunction() {
+		// TODO Auto-generated method stub
+		return "DATE_FORMAT";
+	}
+
+
 }

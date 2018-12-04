@@ -31,7 +31,17 @@ public abstract class AbstractDialect implements Dialect {
     
     Map<String,String> columtypes=new HashMap<String,String>();
     private static final Pattern p = Pattern.compile("order\\s+by\\s+([\\w*|\\w+\\.\\w+](asc|desc|\\s*){1},?)+", Pattern.CASE_INSENSITIVE);
-    
+    /**
+     * 获取日期格式化函数
+     * @return
+     */
+    public abstract String getDateFormatFunction();
+   /**
+    * 获取日期格式化字符串
+    * @param dateStr 日期的字符串2018-11-12 这种形式
+    * @return
+    */
+    public abstract String getDateFormatStr(String dateStr);
     /**
      * 判断是否存在order by子句，在子查询中也存在order by也会返回true
      * @return

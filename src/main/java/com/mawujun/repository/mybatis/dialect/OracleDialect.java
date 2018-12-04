@@ -37,6 +37,12 @@ public class OracleDialect extends AbstractDialect{
 	        handleParameter(boundSql, ms);
 	        return paramMap;
 	}
+
+	@Override
+	public String getDateFormatFunction() {
+		// TODO Auto-generated method stub
+		return "to_char";
+	}
 	
 	
 

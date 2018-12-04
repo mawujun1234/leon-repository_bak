@@ -81,16 +81,16 @@ public class AutoDialect {
         registerDialectAlias("edb", OracleDialect.class);
     }
 
-    //自动获取dialect,如果没有setProperties或setSqlUtilConfig，也可以正常进行
-    private boolean autoDialect = true;
+//    //自动获取dialect,如果没有setProperties或setSqlUtilConfig，也可以正常进行
+//    private boolean autoDialect = true;
     //多数据源时，获取jdbcurl后是否关闭数据源
     private boolean closeConn = true;
     //属性配置
     private Properties properties;
     //缓存
-    private Map<String, AbstractDialect> urlDialectMap = new ConcurrentHashMap<String, AbstractDialect>();
-    private ReentrantLock lock = new ReentrantLock();
-    private AbstractDialect delegate;
+    //private Map<String, AbstractDialect> urlDialectMap = new ConcurrentHashMap<String, AbstractDialect>();
+   // private ReentrantLock lock = new ReentrantLock();
+    //private AbstractDialect delegate;
 //    private ThreadLocal<AbstractDialect> dialectThreadLocal = new ThreadLocal<AbstractDialect>();
 //
 //    //多数据动态获取时，每次需要初始化
@@ -117,49 +117,99 @@ public class AutoDialect {
 //        dialectThreadLocal.remove();
 //    }
 
-    private String fromJdbcUrl(String jdbcUrl,DataSource dataSource) {
+    private String getDialect_name(Connection conn) {
     	String dialect_name=null;
-        for (String dialect : dialectAliasMap.keySet()) {
-            if (jdbcUrl.indexOf(":" + dialect + ":") != -1) {
-            	dialect_name= dialect;
-            }
-        }
-        
-        if("sqlserver".equals(dialect_name)) {
-        	try {
-				Connection dbConn =dataSource.getConnection();
-				DatabaseMetaData dmd = dbConn.getMetaData();
-				//https://www.cnblogs.com/SameZhao/p/6184924.html sql server的版本号
-				int marjorVersion= dmd.getDatabaseMajorVersion();
-				//11为 SQL SERVER 2012
-				if(marjorVersion>=11) {
-					return "sqlserver2012";
-				} else if(marjorVersion>=9 && marjorVersion<11) {
-					return "sqlserver2005";
-				} else if(marjorVersion<9){
-					return "sqlserver";
-				}
-				
-				
-//				System.out.println("当前数据库是：" + dmd.getDatabaseProductName());
-//				System.out.println("当前主版本：" + dmd.getDatabaseMajorVersion());
-//				System.out.println("当前次要版本：" + dmd.getDatabaseMinorVersion());
-//				System.out.println("当前数据库版本：" + dmd.getDatabaseProductVersion());
-//				System.out.println("当前数据库驱动：" + dmd.getDriverVersion());
-//				System.out.println("当前数据库URL：" + dmd.getURL());
-//				System.out.println("当前数据库是否是只读模式？：" + dmd.isReadOnly());
-//				System.out.println("当前数据库是否支持批量更新？：" + dmd.supportsBatchUpdates());
-//				System.out.println("当前数据库是否支持结果集的双向移动（数据库数据变动不在ResultSet体现）？：" + dmd.supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE));
-//				System.out.println("当前数据库是否支持结果集的双向移动（数据库数据变动会影响到ResultSet的内容）？：" + dmd.supportsResultSetType(ResultSet.TYPE_SCROLL_SENSITIVE));
-//				System.out.println("========================================");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	
-        }
-        return dialect_name;
+    	try {
+			String jdbcUrl=conn.getMetaData().getURL();
+	        if (StringUtils.isEmpty(jdbcUrl)) {
+	          throw new PageException("无法自动获取jdbcUrl，请在分页插件中配置leon.mybatis.dialect参数!");
+	        }
+			
+	        for (String dialect : dialectAliasMap.keySet()) {
+	            if (jdbcUrl.indexOf(":" + dialect + ":") != -1) {
+	            	dialect_name= dialect;
+	            }
+	        }
+	        
+	        if("sqlserver".equals(dialect_name)) {
+					//Connection dbConn =dataSource.getConnection();
+					DatabaseMetaData dmd = conn.getMetaData();
+					//https://www.cnblogs.com/SameZhao/p/6184924.html sql server的版本号
+					int marjorVersion= dmd.getDatabaseMajorVersion();
+					//11为 SQL SERVER 2012
+					if(marjorVersion>=11) {
+						dialect_name= "sqlserver2012";
+					} else if(marjorVersion>=9 && marjorVersion<11) {
+						dialect_name= "sqlserver2005";
+					} else if(marjorVersion<9){
+						dialect_name= "sqlserver";
+					}			
+//					System.out.println("当前数据库是：" + dmd.getDatabaseProductName());
+//					System.out.println("当前主版本：" + dmd.getDatabaseMajorVersion());
+//					System.out.println("当前次要版本：" + dmd.getDatabaseMinorVersion());
+//					System.out.println("当前数据库版本：" + dmd.getDatabaseProductVersion());
+//					System.out.println("当前数据库驱动：" + dmd.getDriverVersion());
+//					System.out.println("当前数据库URL：" + dmd.getURL());
+//					System.out.println("当前数据库是否是只读模式？：" + dmd.isReadOnly());
+//					System.out.println("当前数据库是否支持批量更新？：" + dmd.supportsBatchUpdates());
+//					System.out.println("当前数据库是否支持结果集的双向移动（数据库数据变动不在ResultSet体现）？：" + dmd.supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE));
+//					System.out.println("当前数据库是否支持结果集的双向移动（数据库数据变动会影响到ResultSet的内容）？：" + dmd.supportsResultSetType(ResultSet.TYPE_SCROLL_SENSITIVE));
+//					System.out.println("========================================");
+	        
+	        } 
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		};
+       if (dialect_name == null) {
+	      throw new PageException("无法自动获取数据库类型，请通过leon.mybatis.dialect 参数指定!");
+	   }
+       return dialect_name;
+    	
     }
+//    private String fromJdbcUrl(String jdbcUrl,DataSource dataSource) {
+//    	String dialect_name=null;
+//        for (String dialect : dialectAliasMap.keySet()) {
+//            if (jdbcUrl.indexOf(":" + dialect + ":") != -1) {
+//            	dialect_name= dialect;
+//            }
+//        }
+//        
+//        if("sqlserver".equals(dialect_name)) {
+//        	try {
+//				Connection dbConn =dataSource.getConnection();
+//				DatabaseMetaData dmd = dbConn.getMetaData();
+//				//https://www.cnblogs.com/SameZhao/p/6184924.html sql server的版本号
+//				int marjorVersion= dmd.getDatabaseMajorVersion();
+//				//11为 SQL SERVER 2012
+//				if(marjorVersion>=11) {
+//					return "sqlserver2012";
+//				} else if(marjorVersion>=9 && marjorVersion<11) {
+//					return "sqlserver2005";
+//				} else if(marjorVersion<9){
+//					return "sqlserver";
+//				}
+//				
+//				
+////				System.out.println("当前数据库是：" + dmd.getDatabaseProductName());
+////				System.out.println("当前主版本：" + dmd.getDatabaseMajorVersion());
+////				System.out.println("当前次要版本：" + dmd.getDatabaseMinorVersion());
+////				System.out.println("当前数据库版本：" + dmd.getDatabaseProductVersion());
+////				System.out.println("当前数据库驱动：" + dmd.getDriverVersion());
+////				System.out.println("当前数据库URL：" + dmd.getURL());
+////				System.out.println("当前数据库是否是只读模式？：" + dmd.isReadOnly());
+////				System.out.println("当前数据库是否支持批量更新？：" + dmd.supportsBatchUpdates());
+////				System.out.println("当前数据库是否支持结果集的双向移动（数据库数据变动不在ResultSet体现）？：" + dmd.supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE));
+////				System.out.println("当前数据库是否支持结果集的双向移动（数据库数据变动会影响到ResultSet的内容）？：" + dmd.supportsResultSetType(ResultSet.TYPE_SCROLL_SENSITIVE));
+////				System.out.println("========================================");
+//			} catch (SQLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//        	
+//        }
+//        return dialect_name;
+//    }
 
     /**
      * 反射类
@@ -234,30 +284,51 @@ public class AutoDialect {
      * @return
      */
     public AbstractDialect getDialect(MappedStatement ms) {
-        //改为对dataSource做缓存
-        DataSource dataSource = ms.getConfiguration().getEnvironment().getDataSource();
-        String url = getUrl(dataSource);
-        if (urlDialectMap.containsKey(url)) {
-            return urlDialectMap.get(url);
-        }
-        try {
-            lock.lock();
-            if (urlDialectMap.containsKey(url)) {
-                return urlDialectMap.get(url);
-            }
-            if (StringUtils.isEmpty(url)) {
-                throw new PageException("无法自动获取jdbcUrl，请在分页插件中配置dialect参数!");
-            }
-            String dialectStr = fromJdbcUrl(url,dataSource);
-            if (dialectStr == null) {
-                throw new PageException("无法自动获取数据库类型，请通过leon.mybatis.dialect 参数指定!");
-            }
-            AbstractDialect dialect = initDialect(dialectStr, properties);
-            urlDialectMap.put(url, dialect);
-            return dialect;
-        } finally {
-            lock.unlock();
-        }
+    	DataSource dataSource = ms.getConfiguration().getEnvironment().getDataSource();
+    	Connection conn = null;
+    	try {
+			conn = dataSource.getConnection();
+			String dialect_name=getDialect_name(conn);
+			AbstractDialect dialect = initDialect(dialect_name, properties);
+			return dialect;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    	
+//        //改为对dataSource做缓存
+//        DataSource dataSource = ms.getConfiguration().getEnvironment().getDataSource();
+//        String url = getUrl(dataSource);
+//        if (urlDialectMap.containsKey(url)) {
+//            return urlDialectMap.get(url);
+//        }
+//        try {
+//            lock.lock();
+//            if (urlDialectMap.containsKey(url)) {
+//                return urlDialectMap.get(url);
+//            }
+//            if (StringUtils.isEmpty(url)) {
+//                throw new PageException("无法自动获取jdbcUrl，请在分页插件中配置dialect参数!");
+//            }
+//            String dialectStr = fromJdbcUrl(url,dataSource);
+//            if (dialectStr == null) {
+//                throw new PageException("无法自动获取数据库类型，请通过leon.mybatis.dialect 参数指定!");
+//            }
+//            AbstractDialect dialect = initDialect(dialectStr, properties);
+//            urlDialectMap.put(url, dialect);
+//            return dialect;
+//        } finally {
+//            lock.unlock();
+//        }
+    }
+    
+    public AbstractDialect getDialect(Connection conn) {
+    	String dialectStr = getDialect_name(conn);
+    	
+    	AbstractDialect dialect = initDialect(dialectStr, properties);
+        
+        return dialect;
     }
 
 //    public void setProperties(Properties properties) {
