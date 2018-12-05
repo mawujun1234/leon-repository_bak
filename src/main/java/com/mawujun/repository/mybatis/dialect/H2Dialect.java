@@ -87,6 +87,12 @@ public class H2Dialect extends AbstractDialect {
 		//return new String[] {date_pattern};
 		return date_pattern;
 	}
+
+	@Override
+	public String getAlias() {
+		// TODO Auto-generated method stub
+		return "h2";
+	}
     
 //    public boolean bindLimitParametersInReverseOrder() {
 //        return true;

@@ -32,6 +32,11 @@ public abstract class AbstractDialect implements Dialect {
     Map<String,String> columtypes=new HashMap<String,String>();
     private static final Pattern p = Pattern.compile("order\\s+by\\s+([\\w*|\\w+\\.\\w+](asc|desc|\\s*){1},?)+", Pattern.CASE_INSENSITIVE);
     /**
+     * 返回数据库的别名
+     * @return
+     */
+    public abstract String getAlias();
+    /**
      * 获取日期格式化函数
      * @return
      */

@@ -29,15 +29,15 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.sql.DataSource;
 
 import org.apache.ibatis.mapping.MappedStatement;
 
 import com.mawujun.repository.mybatis.interceptor.PageException;
+import com.mawujun.utils.PropertiesUtils;
 import com.mawujun.utils.string.StringUtils;
 
 /**
@@ -75,9 +75,9 @@ public class AutoDialect {
         registerDialectAlias("sqlserver2012", SqlServer2012Dialect.class);
 
         registerDialectAlias("derby", SqlServer2012Dialect.class);
-        //达梦数据库,https://github.com/mybatis-book/book/issues/43
+        //达梦数据库
         registerDialectAlias("dm", OracleDialect.class);
-        //阿里云PPAS数据库,https://github.com/pagehelper/Mybatis-PageHelper/issues/281
+        //阿里云PPAS数据库
         registerDialectAlias("edb", OracleDialect.class);
     }
 
@@ -248,7 +248,23 @@ public class AutoDialect {
             throw new PageException("初始化 helper [" + dialectClass + "]时出错:" + e.getMessage(), e);
         }
         //dialect.setProperties(properties);
+        initDatePattern(dialect);
         return dialect;
+    }
+    
+    public void initDatePattern(AbstractDialect dialect) {
+    	Properties properties=PropertiesUtils.load("date.pattern.properties").getProperties();
+    	if(properties!=null || properties.size()>0) {
+    		for(Entry<Object,Object> entry:properties.entrySet()) {
+    			String key=entry.getKey().toString();sdf
+    			if(key.indexOf(dialect.getAlias())==0) {
+    				System.out.println("==========================================================");
+        			System.out.println(entry.getKey().toString().substring(dialect.getAlias().length()+1));
+        			System.out.println(entry.getValue());
+    			}
+    			
+    		}
+    	}
     }
 
     /**
