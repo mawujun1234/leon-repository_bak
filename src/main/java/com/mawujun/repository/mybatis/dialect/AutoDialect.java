@@ -256,7 +256,7 @@ public class AutoDialect {
     	Properties properties=PropertiesUtils.load("date.pattern.properties").getProperties();
     	if(properties!=null || properties.size()>0) {
     		for(Entry<Object,Object> entry:properties.entrySet()) {
-    			String key=entry.getKey().toString();sdf
+    			String key=entry.getKey().toString();
     			if(key.indexOf(dialect.getAlias())==0) {
     				System.out.println("==========================================================");
         			System.out.println(entry.getKey().toString().substring(dialect.getAlias().length()+1));

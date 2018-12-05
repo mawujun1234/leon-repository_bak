@@ -93,6 +93,11 @@ public class H2Dialect extends AbstractDialect {
 		// TODO Auto-generated method stub
 		return "h2";
 	}
+
+	@Override
+	public void addDateFormatStr(String java_pattern, String db_pattern) {
+		//不需要做任何事情，因为h2的日期格式化和java是一样的
+	}
     
 //    public boolean bindLimitParametersInReverseOrder() {
 //        return true;

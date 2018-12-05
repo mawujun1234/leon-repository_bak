@@ -37,6 +37,13 @@ public abstract class AbstractDialect implements Dialect {
      */
     public abstract String getAlias();
     /**
+     * 添加日期解析格式，把java日期格式解析成数据库自己的日期格式
+     * @param java_pattern
+     * @param db_pattern
+     * @return
+     */
+    public abstract void addDateFormatStr(String java_pattern,String db_pattern);
+    /**
      * 获取日期格式化函数
      * @return
      */

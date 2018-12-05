@@ -122,7 +122,7 @@ public class JpaMybatisTest {
 		clz=coplxId2EntityMapper.getIdType();
 		Assert.assertEquals(CoplxId2.class, clz);
 		ids=coplxId2EntityMapper.getIdAttributeNames2Str();
-		if(ids.indexOf("id")==0) {
+		if(ids.indexOf("id1")==0) {
 			Assert.assertEquals("id1,id2", ids);//属性名还是老的
 		} else {
 			Assert.assertEquals("id2,id1", ids);//属性名还是老的
