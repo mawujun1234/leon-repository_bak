@@ -1,5 +1,6 @@
 package com.mawujun.repository.mybatis.dialect;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.ibatis.cache.CacheKey;
@@ -8,6 +9,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.exception.BusinessException;
+import com.mawujun.utils.DateUtils;
 
 /**
  *
@@ -22,6 +24,21 @@ import com.mawujun.exception.BusinessException;
 // Hibernate BUG: http://opensource.atlassian.com/projects/hibernate/browse/HHH-2655
 // TODO 完善并测试SQLServer2005Dialect
 public class SqlServer2012Dialect extends AbstractDialect{
+	
+	//https://www.cnblogs.com/gallen-n/p/6599482.html
+	public static  Map<String, String> date_pattern_map=new LinkedHashMap<String,String>(){{
+		
+		this.put("yyyy-MM-dd","23");//"yyyy-mm-dd"
+		this.put("yyyy-MM-dd HH:mm:ss","120");//"yyyy-mm-dd hh:mi:ss"
+		this.put("HH:mm:ss","108");//"hh:mi:ss"
+		this.put("yyyy-MM","23,7");//后面的7意思是23的样式,然后取7位
+		this.put("yyyy-MM-dd HH:mm", "120,16");//后面的16意思是120的样式,然后取16位
+	}};
+
+	@Override
+	public boolean isSqlServer() {
+		return true;
+	}
 
 	/**
 	 * offset fetch next方式（SQL2012以上的版本才支持：推荐使用 ）
@@ -54,6 +71,23 @@ public class SqlServer2012Dialect extends AbstractDialect{
         //处理参数配置
         handleParameter(boundSql, ms);
         return paramMap;
+	}
+
+	@Override
+	public String getDateFormatFunction() {
+		// TODO Auto-generated method stub
+		return "CONVERT";
+	}
+
+	@Override
+	public String getDateFormatStr(String dateStr) {
+		String date_pattern=DateUtils.resolverDateFormat(dateStr);
+		String db_pattern=date_pattern_map.get(date_pattern);
+		if(db_pattern==null) {
+			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr);
+		}
+		//return new String[] {"varchar(100)",db_pattern};
+		return db_pattern;
 	}
 
 	

@@ -80,8 +80,12 @@ public class H2Dialect extends AbstractDialect {
 	public String getDateFormatStr(String dateStr) {
 		//http://www.mamicode.com/info-detail-1026392.html#formatdatetime
 		//和java一致
-		String format=DateUtils.resolverDateFormat(dateStr);
-		return format;
+		String date_pattern=DateUtils.resolverDateFormat(dateStr);
+		if(date_pattern==null) {
+			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr);
+		}
+		//return new String[] {date_pattern};
+		return date_pattern;
 	}
     
 //    public boolean bindLimitParametersInReverseOrder() {

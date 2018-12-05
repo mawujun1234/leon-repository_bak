@@ -7,6 +7,8 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.utils.DateUtils;
+
 /**
  * https://www.cnblogs.com/fengxiaojiu/p/7994124.html 分页方法
  * 两种方式：select * from ( 
@@ -59,6 +61,24 @@ public class SqlServer2005Dialect extends AbstractDialect{
         handleParameter(boundSql, ms);
         return paramMap;
 	}
+	
+	@Override
+	public String getDateFormatFunction() {
+		// TODO Auto-generated method stub
+		return "CONVERT";
+	}
+
+	@Override
+	public String getDateFormatStr(String dateStr) {
+		String date_pattern=DateUtils.resolverDateFormat(dateStr);
+		String db_pattern=SqlServer2012Dialect.date_pattern_map.get(date_pattern);
+		if(db_pattern==null) {
+			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr);
+		}
+		//return new String[] {"varchar(100)",db_pattern};
+		return db_pattern;
+	}
+	
 //
 //	public boolean supportsLimitOffset(){
 //		return false;

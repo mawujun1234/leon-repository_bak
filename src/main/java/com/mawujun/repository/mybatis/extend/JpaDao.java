@@ -25,6 +25,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
+import com.mawujun.repository.mybatis.expression.VarcharLiteralExpression;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
@@ -237,6 +239,7 @@ public class JpaDao {
 	}
 	
 
+	//private boolean bool =false;
 	/**
 	 * 获取某个日期值的日期格式
 	 * @param criteriaBuilder
@@ -248,11 +251,38 @@ public class JpaDao {
 		//predicatesList.add(criteriaBuilder.equal(criteriaBuilder.substring(path.as(String.class),1,10),value));//这是可以使用的		
 		//Expression<String> timeStr = criteriaBuilder.function("FORMATDATETIME", String.class, path, criteriaBuilder.parameter(String.class, "formatStr"));
 		//Expression<String> timeStr = criteriaBuilder.function("FORMATDATETIME", String.class, path,criteriaBuilder.literal("yyyy-MM-dd"));
+		
 		String format=dialect.getDateFormatStr((String)value);
-		//获取日期格式化函数
-		String date_format=dialect.getDateFormatFunction();
-		Expression<String> timeStr = criteriaBuilder.function(date_format, String.class, path,criteriaBuilder.literal(format));
-		return timeStr;
+		if(!dialect.isSqlServer()) {
+			//获取日期格式化函数
+			String date_format=dialect.getDateFormatFunction();
+			Expression<String> timeStr = criteriaBuilder.function(date_format, String.class, path,criteriaBuilder.literal(format));
+			return timeStr;
+		} else {
+			//获取日期格式化函数
+			String date_format=dialect.getDateFormatFunction();
+			VarcharLiteralExpression varchar=new VarcharLiteralExpression((CriteriaBuilderImpl)criteriaBuilder,50);
+			
+			if(format.indexOf(',')==-1) {
+				Expression<String> timeStr = criteriaBuilder.function(date_format, String.class,varchar,path,criteriaBuilder.literal(Integer.parseInt(format)));
+				return timeStr;
+			} else {
+				String[] formatArray=format.split(",");
+
+//				//function的参数影响到了substring的参数
+//				Expression<String> convert=criteriaBuilder.function(date_format, String.class,varchar,path,criteriaBuilder.literal(Integer.parseInt(formatArray[0])));
+//				//加criteriaBuilder.lower()的原因是解决了criteriaBuilder.substring()后两个参数丢失的bug
+//				Expression<String> timeStr = criteriaBuilder.substring(criteriaBuilder.lower(convert),1,Integer.parseInt(formatArray[1]));
+				
+				Expression<String> convert=criteriaBuilder.function(date_format, String.class,varchar,path,criteriaBuilder.literal(formatArray[0]));
+				Expression<String> timeStr = criteriaBuilder.substring(convert,1,Integer.parseInt(formatArray[1]));
+				
+				//ConvertFunction convert=new ConvertFunction((CriteriaBuilderImpl)criteriaBuilder,path,50,Integer.parseInt(formatArray[0]));
+				//Expression<String> timeStr = criteriaBuilder.substring(criteriaBuilder.lower(convert),1,Integer.parseInt(formatArray[1]));//
+				return timeStr;
+			}	
+		}
+		
 	}
 	
 	//private TypedQuery genTypedQuery(Class entityClass,Map<String,Object> params) {
@@ -261,11 +291,15 @@ public class JpaDao {
 //		CriteriaQuery query = criteriaBuilder.createQuery(entityClass);
 //		Root itemRoot = query.from(entityClass);
 	
-		if(dialect==null) {
-			//Connection connection = em.unwrap(java.sql.Connection.class);
-			SessionImplementor session =em.unwrap(SessionImplementor.class);
-			Connection connection =session.connection();
-			dialect=autoDialect.getDialect(connection);
+		if (dialect == null) {
+			synchronized (autoDialect) {
+				if (dialect == null) {
+					// Connection connection = em.unwrap(java.sql.Connection.class);
+					SessionImplementor session = em.unwrap(SessionImplementor.class);
+					Connection connection = session.connection();
+					dialect = autoDialect.getDialect(connection);
+				}
+			}
 		}
 
 		boolean isParams=(params instanceof Params);
@@ -556,6 +590,7 @@ public class JpaDao {
 		query.where(predicatesList);
         TypedQuery typedQuery = em.createQuery(query);
        // typedQuery.setParameter("formatStr", "yyyy-MM-dd");
+
         return typedQuery.getResultList();
 		
 	}

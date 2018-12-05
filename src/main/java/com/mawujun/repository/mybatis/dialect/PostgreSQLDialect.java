@@ -1,6 +1,7 @@
 package com.mawujun.repository.mybatis.dialect;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,12 +13,21 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
+import com.mawujun.utils.DateUtils;
 
 /**
  * @author mwj
  */
 public class PostgreSQLDialect extends AbstractDialect{
-	
+	//https://blog.csdn.net/snn1410/article/details/7741283
+	private  Map<String, String> date_pattern_map=new LinkedHashMap<String,String>(){{
+		
+		this.put("yyyy-MM-dd","YYYY-MM-DD");
+		this.put("yyyy-MM-dd HH:mm:ss","YYYY-MM-DD HH24:MI:SS");
+		this.put("HH:mm:ss","HH24:MI:SS");
+		this.put("yyyy-MM","YYYY-MM");
+		this.put("yyyy-MM-dd HH:mm", "YYYY-MM-DD HH24:MI");
+	}};
 
 	@Override
 	public String getPageSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds,
@@ -50,5 +60,22 @@ public class PostgreSQLDialect extends AbstractDialect{
 			metaObject.setValue("parameterMappings", newParameterMappings);
 		}
 		return paramMap;
+	}
+
+	@Override
+	public String getDateFormatFunction() {
+		// TODO Auto-generated method stub
+		return "to_char";
+	}
+
+	@Override
+	public String getDateFormatStr(String dateStr) {
+		String date_pattern=DateUtils.resolverDateFormat(dateStr);
+		String db_pattern=date_pattern_map.get(date_pattern);
+		if(db_pattern==null) {
+			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr);
+		}
+		//return new String[] {db_pattern};
+		return db_pattern;
 	}
 }
