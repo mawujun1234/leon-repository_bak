@@ -51,5 +51,17 @@ public class SqlServerDialect extends AbstractDialect{
 		//return new String[] {"varchar(100)",db_pattern};
 		return db_pattern;
 	}
+	
+	@Override
+	public DBAlias getAlias() {
+		// TODO Auto-generated method stub
+		return DBAlias.sqlserver;
+	}
+
+	@Override
+	public void addDateFormatStr(String java_pattern, String db_pattern) {
+		// TODO Auto-generated method stub
+		SqlServer2012Dialect.date_pattern_map.put(java_pattern, db_pattern);
+	}
 
 }

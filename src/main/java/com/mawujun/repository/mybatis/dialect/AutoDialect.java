@@ -257,10 +257,12 @@ public class AutoDialect {
     	if(properties!=null || properties.size()>0) {
     		for(Entry<Object,Object> entry:properties.entrySet()) {
     			String key=entry.getKey().toString();
-    			if(key.indexOf(dialect.getAlias())==0) {
-    				System.out.println("==========================================================");
-        			System.out.println(entry.getKey().toString().substring(dialect.getAlias().length()+1));
-        			System.out.println(entry.getValue());
+    			String alias=dialect.getAlias().toString();
+    			if(key.indexOf(alias)==0) {
+    				//System.out.println("==========================================================");
+        			System.out.println(key.substring(key.indexOf('.')));
+        			//System.out.println(entry.getValue());
+        			dialect.addDateFormatStr(key.substring(key.indexOf('.')+1), (String)entry.getValue());
     			}
     			
     		}

@@ -35,7 +35,7 @@ public abstract class AbstractDialect implements Dialect {
      * 返回数据库的别名
      * @return
      */
-    public abstract String getAlias();
+    public abstract DBAlias getAlias();
     /**
      * 添加日期解析格式，把java日期格式解析成数据库自己的日期格式
      * @param java_pattern

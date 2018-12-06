@@ -89,9 +89,9 @@ public class H2Dialect extends AbstractDialect {
 	}
 
 	@Override
-	public String getAlias() {
+	public DBAlias getAlias() {
 		// TODO Auto-generated method stub
-		return "h2";
+		return DBAlias.h2;
 	}
 
 	@Override

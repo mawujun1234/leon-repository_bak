@@ -40,6 +40,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
+import com.mawujun.repository.mybatis.expression.ConvertFunction;
 import com.mawujun.repository.mybatis.expression.VarcharLiteralExpression;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.PageInfo;
@@ -274,11 +275,12 @@ public class JpaDao {
 //				//加criteriaBuilder.lower()的原因是解决了criteriaBuilder.substring()后两个参数丢失的bug
 //				Expression<String> timeStr = criteriaBuilder.substring(criteriaBuilder.lower(convert),1,Integer.parseInt(formatArray[1]));
 				
-				Expression<String> convert=criteriaBuilder.function(date_format, String.class,varchar,path,criteriaBuilder.literal(formatArray[0]));
-				Expression<String> timeStr = criteriaBuilder.substring(convert,1,Integer.parseInt(formatArray[1]));
+//				Expression<String> convert=criteriaBuilder.function(date_format, String.class,varchar,path,criteriaBuilder.literal(formatArray[0]));
+//				Expression<String> timeStr = criteriaBuilder.substring(convert,1,Integer.parseInt(formatArray[1]));
 				
 				//ConvertFunction convert=new ConvertFunction((CriteriaBuilderImpl)criteriaBuilder,path,50,Integer.parseInt(formatArray[0]));
-				//Expression<String> timeStr = criteriaBuilder.substring(criteriaBuilder.lower(convert),1,Integer.parseInt(formatArray[1]));//
+				Expression<String> convert=criteriaBuilder.function(date_format, String.class,varchar,path,criteriaBuilder.literal(Integer.parseInt(formatArray[0])));
+				Expression<String> timeStr = criteriaBuilder.substring(criteriaBuilder.lower(convert),1,Integer.parseInt(formatArray[1]));//
 				return timeStr;
 			}	
 		}

@@ -68,5 +68,16 @@ public class HsqlDialect extends AbstractDialect{
 		throw new RuntimeException("暂时不支持hsqldb");
 	}
 
-    
+	@Override
+	public DBAlias getAlias() {
+		// TODO Auto-generated method stub
+		return DBAlias.hsql;
+	}
+
+	@Override
+	public void addDateFormatStr(String java_pattern, String db_pattern) {
+		throw new RuntimeException("暂时不支持hsqldb");
+		// TODO Auto-generated method stub
+		//date_pattern_map.put(java_pattern, db_pattern);
+	}
 }
