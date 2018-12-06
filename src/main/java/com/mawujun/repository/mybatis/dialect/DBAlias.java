@@ -5,8 +5,29 @@ package com.mawujun.repository.mybatis.dialect;
 * @createDate ：2018年12月6日 上午9:06:22
 */
 public enum DBAlias {
-	h2
-	,sqlserver,sqlserver2005,sqlserver2012 //这三个都是sql server，随便哪一个都可以
-	,db2,hsql,informix,mysql,oracle,postgresql;
+	h2(H2Dialect.class)
+	,sqlserver(SqlServerDialect.class),sqlserver2005(SqlServer2005Dialect.class),sqlserver2012(SqlServer2012Dialect.class) //这三个都是sql server，随便哪一个都可以
+	,db2(Db2Dialect.class),hsql(HsqlDialect.class),mysql(MySqlDialect.class),oracle(OracleDialect.class),postgresql(PostgreSQLDialect.class)
+	
+	,informix(InformixDialect.class),informix_sqli(InformixDialect.class)
+	,phoenix(HsqlDialect.class),mariadb(MySqlDialect.class),sqlite(MySqlDialect.class)
+	,derby(SqlServer2012Dialect.class)
+	,dm(OracleDialect.class)//达梦数据库
+	,edb(OracleDialect.class)//阿里云PPAS数据库
+	;
+	
+	private Class<? extends Dialect> dialectClass;
+	
+	DBAlias(Class<? extends Dialect> dialect){
+		this.dialectClass=dialect;
+	}
+
+	public Class<? extends Dialect> getDialectClass() {
+		return dialectClass;
+	}
+
+
+
+	
 
 }

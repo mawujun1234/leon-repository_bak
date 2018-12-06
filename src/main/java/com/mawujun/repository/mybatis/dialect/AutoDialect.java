@@ -37,6 +37,7 @@ import javax.sql.DataSource;
 import org.apache.ibatis.mapping.MappedStatement;
 
 import com.mawujun.repository.mybatis.interceptor.PageException;
+import com.mawujun.utils.DateUtils;
 import com.mawujun.utils.PropertiesUtils;
 import com.mawujun.utils.string.StringUtils;
 
@@ -46,40 +47,41 @@ import com.mawujun.utils.string.StringUtils;
  * @author mwj
  */
 public class AutoDialect {
+	private static final String date_pattern_file="date.pattern.properties";
 
-    private static Map<String, Class<? extends Dialect>> dialectAliasMap = new HashMap<String, Class<? extends Dialect>>();
-
-    public static void registerDialectAlias(String alias, Class<? extends Dialect> dialectClass){
-        dialectAliasMap.put(alias, dialectClass);
-    }
-
-    static {
-        //注册别名
-        registerDialectAlias("hsqldb", HsqlDialect.class);
-        registerDialectAlias("h2", H2Dialect.class);
-        registerDialectAlias("postgresql", HsqlDialect.class);
-        registerDialectAlias("phoenix", HsqlDialect.class);
-
-        registerDialectAlias("mysql", MySqlDialect.class);
-        registerDialectAlias("mariadb", MySqlDialect.class);
-        registerDialectAlias("sqlite", MySqlDialect.class);
-
-        registerDialectAlias("oracle", OracleDialect.class);
-        registerDialectAlias("db2", Db2Dialect.class);
-        registerDialectAlias("informix", InformixDialect.class);
-        //解决 informix-sqli #129，仍然保留上面的
-        registerDialectAlias("informix-sqli", InformixDialect.class);
-
-        registerDialectAlias("sqlserver", SqlServerDialect.class);
-        registerDialectAlias("sqlserver2005", SqlServer2005Dialect.class);
-        registerDialectAlias("sqlserver2012", SqlServer2012Dialect.class);
-
-        registerDialectAlias("derby", SqlServer2012Dialect.class);
-        //达梦数据库
-        registerDialectAlias("dm", OracleDialect.class);
-        //阿里云PPAS数据库
-        registerDialectAlias("edb", OracleDialect.class);
-    }
+//    private static Map<String, Class<? extends Dialect>> dialectAliasMap = new HashMap<String, Class<? extends Dialect>>();
+//    
+//    public static void registerDialectAlias(String alias, Class<? extends Dialect> dialectClass){
+//        dialectAliasMap.put(alias, dialectClass);
+//    }
+//
+//    static {
+//        //注册别名
+//        registerDialectAlias(DBAlias.hsql.toString(), HsqlDialect.class);
+//        registerDialectAlias(DBAlias.h2.toString(), H2Dialect.class);
+//        registerDialectAlias(DBAlias.postgresql.toString(), HsqlDialect.class);
+//        registerDialectAlias(DBAlias.phoenix.toString(), HsqlDialect.class);
+//
+//        registerDialectAlias(DBAlias.mysql.toString(), MySqlDialect.class);
+//        registerDialectAlias(DBAlias.mariadb.toString(), MySqlDialect.class);
+//        registerDialectAlias(DBAlias.sqlite.toString(), MySqlDialect.class);
+//
+//        registerDialectAlias(DBAlias.oracle.toString(), OracleDialect.class);
+//        registerDialectAlias(DBAlias.db2.toString(), Db2Dialect.class);
+//        registerDialectAlias(DBAlias.informix.toString(), InformixDialect.class);
+//        //解决 informix-sqli #129，仍然保留上面的
+//        registerDialectAlias("informix-sqli", InformixDialect.class);
+//
+//        registerDialectAlias("sqlserver", SqlServerDialect.class);
+//        registerDialectAlias("sqlserver2005", SqlServer2005Dialect.class);
+//        registerDialectAlias("sqlserver2012", SqlServer2012Dialect.class);
+//
+//        registerDialectAlias("derby", SqlServer2012Dialect.class);
+//        //达梦数据库
+//        registerDialectAlias("dm", OracleDialect.class);
+//        //阿里云PPAS数据库
+//        registerDialectAlias("edb", OracleDialect.class);
+//    }
 
 //    //自动获取dialect,如果没有setProperties或setSqlUtilConfig，也可以正常进行
 //    private boolean autoDialect = true;
@@ -117,32 +119,42 @@ public class AutoDialect {
 //        dialectThreadLocal.remove();
 //    }
 
-    private String getDialect_name(Connection conn) {
-    	String dialect_name=null;
+    private DBAlias getDialect_name(Connection conn) {
+    	//String dialect_name=null;
+    	DBAlias dbAlias_result=null;
     	try {
 			String jdbcUrl=conn.getMetaData().getURL();
 	        if (StringUtils.isEmpty(jdbcUrl)) {
 	          throw new PageException("无法自动获取jdbcUrl，请在分页插件中配置leon.mybatis.dialect参数!");
 	        }
 			
-	        for (String dialect : dialectAliasMap.keySet()) {
-	            if (jdbcUrl.indexOf(":" + dialect + ":") != -1) {
-	            	dialect_name= dialect;
-	            }
+//	        for (String dialect : dialectAliasMap.keySet()) {
+//	            if (jdbcUrl.indexOf(":" + dialect + ":") != -1) {
+//	            	dialect_name= dialect;
+//	            }
+//	        }
+	        for(DBAlias dbAlias:DBAlias.values()) {
+	        	 if (jdbcUrl.indexOf(":" + dbAlias.toString().replace("_", "-") + ":") != -1) {
+		            	//dialect_name= dbAlias.name();;
+	        		 	dbAlias_result=dbAlias;
+		            }
 	        }
 	        
-	        if("sqlserver".equals(dialect_name)) {
+	        if(DBAlias.sqlserver==dbAlias_result) {
 					//Connection dbConn =dataSource.getConnection();
 					DatabaseMetaData dmd = conn.getMetaData();
 					//https://www.cnblogs.com/SameZhao/p/6184924.html sql server的版本号
 					int marjorVersion= dmd.getDatabaseMajorVersion();
 					//11为 SQL SERVER 2012
 					if(marjorVersion>=11) {
-						dialect_name= "sqlserver2012";
+						//dialect_name= "sqlserver2012";
+						dbAlias_result=DBAlias.sqlserver2012;
 					} else if(marjorVersion>=9 && marjorVersion<11) {
-						dialect_name= "sqlserver2005";
+						//dialect_name= "sqlserver2005";
+						dbAlias_result=DBAlias.sqlserver2005;
 					} else if(marjorVersion<9){
-						dialect_name= "sqlserver";
+						//dialect_name= "sqlserver";
+						dbAlias_result=DBAlias.sqlserver;
 					}			
 //					System.out.println("当前数据库是：" + dmd.getDatabaseProductName());
 //					System.out.println("当前主版本：" + dmd.getDatabaseMajorVersion());
@@ -161,10 +173,10 @@ public class AutoDialect {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		};
-       if (dialect_name == null) {
+       if (dbAlias_result == null) {
 	      throw new PageException("无法自动获取数据库类型，请通过leon.mybatis.dialect 参数指定!");
 	   }
-       return dialect_name;
+       return dbAlias_result;
     	
     }
 //    private String fromJdbcUrl(String jdbcUrl,DataSource dataSource) {
@@ -211,89 +223,93 @@ public class AutoDialect {
 //        return dialect_name;
 //    }
 
-    /**
-     * 反射类
-     *
-     * @param className
-     * @return
-     * @throws Exception
-     */
-    private Class resloveDialectClass(String className) throws Exception {
-        if (dialectAliasMap.containsKey(className.toLowerCase())) {
-            return dialectAliasMap.get(className.toLowerCase());
-        } else {
-            return Class.forName(className);
-        }
-    }
+//    /**
+//     * 反射类
+//     *
+//     * @param className
+//     * @return
+//     * @throws Exception
+//     */
+//    private Class resloveDialectClass(String className) throws Exception {
+//        if (dialectAliasMap.containsKey(className.toLowerCase())) {
+//            return dialectAliasMap.get(className.toLowerCase());
+//        } else {
+//            return Class.forName(className);
+//        }
+//    }
 
-    /**
-     * 初始化 helper
-     *
-     * @param dialectClass
-     * @param properties
-     */
-    private AbstractDialect initDialect(String dialectClass, Properties properties) {
-        AbstractDialect dialect;
-        if (StringUtils.isEmpty(dialectClass)) {
-            throw new PageException("使用分页插件时，必须设置 helper 属性");
-        }
-        try {
-            Class sqlDialectClass = resloveDialectClass(dialectClass);
-            if (AbstractDialect.class.isAssignableFrom(sqlDialectClass)) {
-                dialect = (AbstractDialect) sqlDialectClass.newInstance();
-            } else {
-                throw new PageException("使用分页插件 时，方言必须是实现 " + AbstractDialect.class.getCanonicalName() + " 接口的实现类!");
-            }
-        } catch (Exception e) {
-            throw new PageException("初始化 helper [" + dialectClass + "]时出错:" + e.getMessage(), e);
-        }
-        //dialect.setProperties(properties);
-        initDatePattern(dialect);
-        return dialect;
-    }
+//    /**
+//     * 初始化 helper
+//     *
+//     * @param dialectClass
+//     * @param properties
+//     */
+//    private AbstractDialect initDialect(String dialectClass, Properties properties) {
+//        AbstractDialect dialect;
+//        if (StringUtils.isEmpty(dialectClass)) {
+//            throw new PageException("使用分页插件时，必须设置 helper 属性");
+//        }
+//        try {
+//            Class sqlDialectClass = resloveDialectClass(dialectClass);
+//            if (AbstractDialect.class.isAssignableFrom(sqlDialectClass)) {
+//                dialect = (AbstractDialect) sqlDialectClass.newInstance();
+//            } else {
+//                throw new PageException("使用分页插件 时，方言必须是实现 " + AbstractDialect.class.getCanonicalName() + " 接口的实现类!");
+//            }
+//        } catch (Exception e) {
+//            throw new PageException("初始化 helper [" + dialectClass + "]时出错:" + e.getMessage(), e);
+//        }
+//        //dialect.setProperties(properties);
+//        initDatePattern(dialect);
+//        return dialect;
+//    }
     
     public void initDatePattern(AbstractDialect dialect) {
-    	Properties properties=PropertiesUtils.load("date.pattern.properties").getProperties();
+    	Properties properties=PropertiesUtils.load(date_pattern_file).getProperties();
     	if(properties!=null || properties.size()>0) {
     		for(Entry<Object,Object> entry:properties.entrySet()) {
     			String key=entry.getKey().toString();
     			String alias=dialect.getAlias().toString();
     			if(key.indexOf(alias)==0) {
     				//System.out.println("==========================================================");
-        			System.out.println(key.substring(key.indexOf('.')));
+        			//System.out.println(key.substring(key.indexOf('.')));
         			//System.out.println(entry.getValue());
         			dialect.addDateFormatStr(key.substring(key.indexOf('.')+1), (String)entry.getValue());
     			}
     			
     		}
     	}
+    	
+    	
     }
 
-    /**
-     * 获取url
-     *
-     * @param dataSource
-     * @return
-     */
-    private String getUrl(DataSource dataSource) {
-        Connection conn = null;
-        try {
-            conn = dataSource.getConnection();
-            return conn.getMetaData().getURL();
-        } catch (SQLException e) {
-            throw new PageException(e);
-        } finally {
-            if (conn != null) {
-                try {
-                    if (closeConn) {
-                        conn.close();
-                    }
-                } catch (SQLException e) {
-                    //ignore
-                }
-            }
-        }
-    }
+//    /**
+//     * 获取url
+//     *
+//     * @param dataSource
+//     * @return
+//     */
+//    private String getUrl(DataSource dataSource) {
+//        Connection conn = null;
+//        try {
+//            conn = dataSource.getConnection();
+//            return conn.getMetaData().getURL();
+//        } catch (SQLException e) {
+//            throw new PageException(e);
+//        } finally {
+//            if (conn != null) {
+//                try {
+//                    if (closeConn) {
+//                        conn.close();
+//                    }
+//                } catch (SQLException e) {
+//                    //ignore
+//                }
+//            }
+//        }
+//    }
+    
+
 
     /**
      * 根据 jdbcUrl 获取数据库方言
@@ -306,10 +322,17 @@ public class AutoDialect {
     	Connection conn = null;
     	try {
 			conn = dataSource.getConnection();
-			String dialect_name=getDialect_name(conn);
-			AbstractDialect dialect = initDialect(dialect_name, properties);
+			//String dialect_name=getDialect_name(conn);
+			DBAlias dbAlias=getDialect_name(conn);
+			AbstractDialect dialect = (AbstractDialect) dbAlias.getDialectClass().newInstance();//initDialect(dialect_name, properties);
 			return dialect;
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -342,9 +365,19 @@ public class AutoDialect {
     }
     
     public AbstractDialect getDialect(Connection conn) {
-    	String dialectStr = getDialect_name(conn);
+    	//String dialectStr = getDialect_name(conn);
+    	DBAlias dbAlias= getDialect_name(conn);
     	
-    	AbstractDialect dialect = initDialect(dialectStr, properties);
+    	AbstractDialect dialect=null;
+		try {
+			dialect = (AbstractDialect) dbAlias.getDialectClass().newInstance();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//initDialect(dialectStr, properties);
         
         return dialect;
     }
