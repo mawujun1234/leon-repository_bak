@@ -50,7 +50,7 @@ import test.mawujun.model.Sex;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Transactional
 @Rollback(false)
-//@ActiveProfiles("sqlserver")//mysql,h2,sqlserver,oracle,db2,postgresql
+//@ActiveProfiles("sqlserver")//h2,hsqldb,derby,mysql,sqlserver,oracle,db2,postgresql
 @ActiveProfiles("h2")
 public class JpaMybatisTest {
 	@Autowired
@@ -676,6 +676,7 @@ public class JpaMybatisTest {
 	private static SimpleDateFormat yyyyMMddHHmmss=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private static SimpleDateFormat yyyyMMdd=new SimpleDateFormat("yyyy-MM-dd");
 	private static SimpleDateFormat yyyyMM=new SimpleDateFormat("yyyy-MM");
+	private static SimpleDateFormat yyyy=new SimpleDateFormat("yyyy-MM");
 	@Test
 	public void test8time() throws ParseException {
 		Params params = Params.of().eq("age", 50);
@@ -688,6 +689,10 @@ public class JpaMybatisTest {
 		params = Params.of().eq("createDate", yyyyMMdd.parse(yyyyMMdd.format(now)));
 		list=jpaMybatisMapper.listByMap(params);
 		Assert.assertEquals(0, list.size());//如果是以时间的形式比较的话，要完全相等才可以
+		
+		params = Params.of().eq("createDate", yyyy.format(now));
+		list=jpaMybatisMapper.listByMap(params);
+		Assert.assertEquals(2, list.size());
 		params = Params.of().eq("createDate", yyyyMM.format(now));
 		list=jpaMybatisMapper.listByMap(params);
 		Assert.assertEquals(2, list.size());

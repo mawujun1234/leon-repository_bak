@@ -21,6 +21,7 @@ public class Db2Dialect extends AbstractDialect{
 		this.put("yyyy-MM-dd HH:mm:ss","YYYY-MM-DD HH24:MI:SS");
 		this.put("HH:mm:ss","HH24:MI:Ss");
 		this.put("yyyy-MM","YYYY-MM");
+		this.put("yyyy","YYYY");
 		this.put("yyyy-MM-dd HH:mm", "YYYY-MM-DD HH24:MI");
 	}};
 	
@@ -59,7 +60,7 @@ public class Db2Dialect extends AbstractDialect{
 		String date_pattern=DateUtils.resolverDateFormat(dateStr);
 		String db_pattern=date_pattern_map.get(date_pattern);
 		if(db_pattern==null) {
-			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr);
+			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr+",需要新增的话，新建date.pattern.properties文件，按"+getAlias()+".yyyy-MM-dd=yyyy-MM-dd,同时添加regular.yyyy-MM-dd=^\\\\\\\\d{4}-\\\\\\\\d{1,2}-\\\\\\\\d{1,2}$模式编写");
 		}
 		//return new String[] {db_pattern};
 		return db_pattern;

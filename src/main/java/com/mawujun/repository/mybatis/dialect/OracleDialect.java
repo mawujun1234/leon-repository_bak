@@ -22,6 +22,7 @@ public class OracleDialect extends AbstractDialect{
 		this.put("yyyy-MM-dd HH:mm:ss","yyyy-MM-dd HH24:mi:ss");
 		this.put("HH:mm:ss","HH24:mi:ss");
 		this.put("yyyy-MM","yyyy-MM");
+		this.put("yyyy","yyyy");
 		this.put("yyyy-MM-dd HH:mm", "yyyy-MM-dd HH24:mi");
 	}};
 	
@@ -62,7 +63,7 @@ public class OracleDialect extends AbstractDialect{
 		String date_pattern=DateUtils.resolverDateFormat(dateStr);
 		String db_pattern=date_pattern_map.get(date_pattern);
 		if(db_pattern==null) {
-			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr);
+			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr+",需要新增的话，新建date.pattern.properties文件，按"+getAlias()+".yyyy-MM-dd=yyyy-MM-dd,同时添加regular.yyyy-MM-dd=^\\\\\\\\d{4}-\\\\\\\\d{1,2}-\\\\\\\\d{1,2}$模式编写");
 		}
 		return db_pattern;
 	}

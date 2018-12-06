@@ -6,12 +6,19 @@ package com.mawujun.repository.mybatis.dialect;
 */
 public enum DBAlias {
 	h2(H2Dialect.class)
+	,hsqldb(HsqldbDialect.class)
+	,derby(DerbyDialect.class)
+	
 	,sqlserver(SqlServerDialect.class),sqlserver2005(SqlServer2005Dialect.class),sqlserver2012(SqlServer2012Dialect.class) //这三个都是sql server，随便哪一个都可以
-	,db2(Db2Dialect.class),hsql(HsqlDialect.class),mysql(MySqlDialect.class),oracle(OracleDialect.class),postgresql(PostgreSQLDialect.class)
+	,db2(Db2Dialect.class)
+	
+	,mysql(MySqlDialect.class)
+	,oracle(OracleDialect.class)
+	,postgresql(PostgreSQLDialect.class)
 	
 	,informix(InformixDialect.class),informix_sqli(InformixDialect.class)
-	,phoenix(HsqlDialect.class),mariadb(MySqlDialect.class),sqlite(MySqlDialect.class)
-	,derby(SqlServer2012Dialect.class)
+	,phoenix(HsqldbDialect.class),mariadb(MySqlDialect.class),sqlite(MySqlDialect.class)
+	
 	,dm(OracleDialect.class)//达梦数据库
 	,edb(OracleDialect.class)//阿里云PPAS数据库
 	;

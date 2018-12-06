@@ -62,13 +62,13 @@ public abstract class AbstractDialect implements Dialect {
     	Matcher m = p.matcher(sql);
     	return m.find();
     }
-    /**
-     * 判断是不是sql server数据库
-     * @return true 是sql server
-     */
-    public boolean isSqlServer() {
-    	return false;
-    }
+//    /**
+//     * 判断是不是sql server数据库
+//     * @return true 是sql server
+//     */
+//    public boolean isSqlServer() {
+//    	return false;
+//    }
     /**
      * 判断sql的结尾是否存在order by子句
      * @param sql

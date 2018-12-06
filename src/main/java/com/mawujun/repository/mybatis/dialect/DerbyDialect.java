@@ -8,33 +8,31 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
-import com.mawujun.exception.BusinessException;
 import com.mawujun.utils.DateUtils;
 
 /**
- *
- *适用于sql server 2012之上的版本，
- *并且一定要在offset之前加上order by 子句才可以
- *
- *https://www.cnblogs.com/xunziji/archive/2012/08/06/2625563.html
- *https://www.cnblogs.com/fengxiaojiu/p/7994124.html
- * @author mwj
+ * 
+ * @author admin
  *
  */
-// Hibernate BUG: http://opensource.atlassian.com/projects/hibernate/browse/HHH-2655
-// TODO 完善并测试SQLServer2005Dialect
-public class SqlServer2012Dialect extends AbstractDialect{
+public class DerbyDialect extends AbstractDialect{
 	
-	//https://www.cnblogs.com/gallen-n/p/6599482.html
+	//http://db.apache.org/derby/docs/10.4/ref/
 	public static  Map<String, String> date_pattern_map=new LinkedHashMap<String,String>(){{
 		
-		this.put("yyyy-MM-dd","23");//"yyyy-mm-dd"
-		this.put("yyyy-MM-dd HH:mm:ss","120");//"yyyy-mm-dd hh:mi:ss"
-		this.put("HH:mm:ss","108");//"hh:mi:ss"
-		this.put("yyyy-MM","23,7");//后面的7意思是23的样式,然后取7位
-		this.put("yyyy","23,4");
-		this.put("yyyy-MM-dd HH:mm", "120,16");//后面的16意思是120的样式,然后取16位
+		this.put("yyyy-MM-dd","DATE");//"yyyy-mm-dd"
+		this.put("yyyy-MM-dd HH:mm:ss","TIMESTAMP");//"yyyy-mm-dd hh:mi:ss"
+		this.put("HH:mm:ss","TIME");//"hh:mi:ss"
+		this.put("yyyy-MM","yyyy-MM");//不能动，后面的7意思是23的样式,然后取7位
+		//this.put("yyyy-MM-dd HH:mm", "16");//后面的16意思是120的样式,然后取16位
+		this.put("yyyy","YEAR");
 	}};
+
+	@Override
+	public DBAlias getAlias() {
+		// TODO Auto-generated method stub
+		return DBAlias.derby;
+	}
 
 	/**
 	 * offset fetch next方式（SQL2012以上的版本才支持：推荐使用 ）
@@ -45,9 +43,9 @@ public class SqlServer2012Dialect extends AbstractDialect{
 			CacheKey pageKey) {
 		String sql = boundSql.getSql();
 		sql = sql.toLowerCase();
-		if(!super.existsEndOrderBy(sql)) {
-			throw new RuntimeException("sql的最后一定要加上order by子句，可以添加order by id");
-		}
+//		if(!super.existsEndOrderBy(sql)) {
+//			throw new RuntimeException("sql的最后一定要加上order by子句，可以添加order by id");
+//		}
 		 
 		StringBuilder sqlBuilder = new StringBuilder(sql.length() + 64);
         sqlBuilder.append(sql);
@@ -69,10 +67,13 @@ public class SqlServer2012Dialect extends AbstractDialect{
         return paramMap;
 	}
 
+	/**
+	 * 没有日期转换函数
+	 */
 	@Override
 	public String getDateFormatFunction() {
 		// TODO Auto-generated method stub
-		return "CONVERT";
+		return null;
 	}
 
 	@Override
@@ -86,16 +87,14 @@ public class SqlServer2012Dialect extends AbstractDialect{
 		return db_pattern;
 	}
 
-	@Override
-	public DBAlias getAlias() {
-		// TODO Auto-generated method stub
-		return DBAlias.sqlserver2012;
-	}
+
 
 	@Override
 	public void addDateFormatStr(String java_pattern, String db_pattern) {
 		// TODO Auto-generated method stub
-		date_pattern_map.put(java_pattern, db_pattern);
+		//date_pattern_map.put(java_pattern, db_pattern);
+		throw new IllegalArgumentException("derby不允许添加新的日期格式，请参考官方文档，自行使用函数进行判断");
+		
 	}
 
 	

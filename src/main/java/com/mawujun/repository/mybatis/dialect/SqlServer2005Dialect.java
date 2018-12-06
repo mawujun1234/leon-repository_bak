@@ -73,7 +73,7 @@ public class SqlServer2005Dialect extends AbstractDialect{
 		String date_pattern=DateUtils.resolverDateFormat(dateStr);
 		String db_pattern=SqlServer2012Dialect.date_pattern_map.get(date_pattern);
 		if(db_pattern==null) {
-			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr);
+			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr+",需要新增的话，新建date.pattern.properties文件，按"+getAlias()+".yyyy-MM-dd=yyyy-MM-dd,同时添加regular.yyyy-MM-dd=^\\\\\\\\d{4}-\\\\\\\\d{1,2}-\\\\\\\\d{1,2}$模式编写");
 		}
 		//return new String[] {"varchar(100)",db_pattern};
 		return db_pattern;

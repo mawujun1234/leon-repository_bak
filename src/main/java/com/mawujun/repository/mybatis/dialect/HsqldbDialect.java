@@ -1,6 +1,7 @@
 package com.mawujun.repository.mybatis.dialect;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,12 +13,24 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
+import com.mawujun.utils.DateUtils;
 
 /**
  * Dialect for HSQLDB
  * @author mwj
  */
-public class HsqlDialect extends AbstractDialect{
+public class HsqldbDialect extends AbstractDialect{
+	
+	//http://www.hsqldb.org/doc/2.0/guide/builtinfunctions-chapt.html#N14345
+		private  Map<String, String> date_pattern_map=new LinkedHashMap<String,String>(){{
+			
+			this.put("yyyy-MM-dd","YYYY-MM-DD");
+			this.put("yyyy-MM-dd HH:mm:ss","YYYY-MM-DD HH24:MI:SS");
+			this.put("HH:mm:ss","HH24:MI:SS");
+			this.put("yyyy-MM","YYYY-MM");
+			this.put("yyyy","YYYY");
+			this.put("yyyy-MM-dd HH:mm", "YYYY-MM-DD HH24:MI");
+		}};
 
 	@Override
 	public String getPageSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds,
@@ -60,24 +73,31 @@ public class HsqlDialect extends AbstractDialect{
 
 	@Override
 	public String getDateFormatFunction() {
-		throw new RuntimeException("暂时不支持hsqldb");
+		//throw new RuntimeException("暂时不支持hsqldb");
+		return "to_char";
 	}
 
 	@Override
 	public String getDateFormatStr(String dateStr) {
-		throw new RuntimeException("暂时不支持hsqldb");
+		//throw new RuntimeException("暂时不支持hsqldb");
+		String date_pattern=DateUtils.resolverDateFormat(dateStr);
+		String db_pattern=date_pattern_map.get(date_pattern);
+		if(db_pattern==null) {
+			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr+",需要新增的话，新建date.pattern.properties文件，按"+getAlias()+".yyyy-MM-dd=yyyy-MM-dd,同时添加regular.yyyy-MM-dd=^\\\\\\\\d{4}-\\\\\\\\d{1,2}-\\\\\\\\d{1,2}$模式编写");
+		}
+		return db_pattern;
 	}
 
 	@Override
 	public DBAlias getAlias() {
 		// TODO Auto-generated method stub
-		return DBAlias.hsql;
+		return DBAlias.hsqldb;
 	}
 
 	@Override
 	public void addDateFormatStr(String java_pattern, String db_pattern) {
-		throw new RuntimeException("暂时不支持hsqldb");
+		//throw new RuntimeException("暂时不支持hsqldb");
 		// TODO Auto-generated method stub
-		//date_pattern_map.put(java_pattern, db_pattern);
+		date_pattern_map.put(java_pattern, db_pattern);
 	}
 }

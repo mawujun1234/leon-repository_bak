@@ -24,6 +24,7 @@ public class InformixDialect extends AbstractDialect {
 		this.put("yyyy-MM-dd HH:mm:ss","%Y-%m-%d %H:%M:%S");
 		this.put("HH:mm:ss","%H:%M:%S");
 		this.put("yyyy-MM","%Y-%m");
+		this.put("yyyy","%Y");
 		this.put("yyyy-MM-dd HH:mm", "%Y-%m-%d %H:%M");
 	}};
 
@@ -83,7 +84,7 @@ public class InformixDialect extends AbstractDialect {
 		String date_pattern=DateUtils.resolverDateFormat(dateStr);
 		String db_pattern=date_pattern_map.get(date_pattern);
 		if(db_pattern==null) {
-			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr);
+			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr+",需要新增的话，新建date.pattern.properties文件，按"+getAlias()+".yyyy-MM-dd=yyyy-MM-dd,同时添加regular.yyyy-MM-dd=^\\\\\\\\d{4}-\\\\\\\\d{1,2}-\\\\\\\\d{1,2}$模式编写");
 		}
 		//return new String[] {db_pattern};
 		return db_pattern;

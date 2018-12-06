@@ -40,7 +40,8 @@ import org.springframework.stereotype.Repository;
 
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
-import com.mawujun.repository.mybatis.expression.ConvertFunction;
+import com.mawujun.repository.mybatis.dialect.DBAlias;
+import com.mawujun.repository.mybatis.expression.DerbyFunctionYYYYMM;
 import com.mawujun.repository.mybatis.expression.VarcharLiteralExpression;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.PageInfo;
@@ -254,12 +255,7 @@ public class JpaDao {
 		//Expression<String> timeStr = criteriaBuilder.function("FORMATDATETIME", String.class, path,criteriaBuilder.literal("yyyy-MM-dd"));
 		
 		String format=dialect.getDateFormatStr((String)value);
-		if(!dialect.isSqlServer()) {
-			//获取日期格式化函数
-			String date_format=dialect.getDateFormatFunction();
-			Expression<String> timeStr = criteriaBuilder.function(date_format, String.class, path,criteriaBuilder.literal(format));
-			return timeStr;
-		} else {
+		if(dialect.getAlias()==DBAlias.sqlserver || dialect.getAlias()==DBAlias.sqlserver2005 || dialect.getAlias()==DBAlias.sqlserver2012) {	
 			//获取日期格式化函数
 			String date_format=dialect.getDateFormatFunction();
 			VarcharLiteralExpression varchar=new VarcharLiteralExpression((CriteriaBuilderImpl)criteriaBuilder,50);
@@ -282,7 +278,27 @@ public class JpaDao {
 				Expression<String> convert=criteriaBuilder.function(date_format, String.class,varchar,path,criteriaBuilder.literal(Integer.parseInt(formatArray[0])));
 				Expression<String> timeStr = criteriaBuilder.substring(criteriaBuilder.lower(convert),1,Integer.parseInt(formatArray[1]));//
 				return timeStr;
-			}	
+			}
+		} else if(dialect.getAlias()==DBAlias.derby){
+			//String date_format=dialect.getDateFormatFunction();
+			if("yyyy-MM".equals(format)) {
+				//DerbyFunctionYYYYMM YYYYMM=new DerbyFunctionYYYYMM((CriteriaBuilderImpl)criteriaBuilder,path);
+				//return criteriaBuilder.substring(YYYYMM, 1,7);
+				Expression<String> timeStr = criteriaBuilder.function("varchar", String.class, path);
+				return criteriaBuilder.substring(timeStr, 1,7);
+			} else if("TIMESTAMP".equals(format)){
+				Expression<String> timeStr = criteriaBuilder.function("varchar", String.class,path);
+				return criteriaBuilder.substring(timeStr, 1,19);
+			}else {
+				Expression<String> timeStr = criteriaBuilder.function(format, String.class, path);
+				return criteriaBuilder.function("varchar", String.class,timeStr);
+			}
+			
+		} else {
+			//获取日期格式化函数
+			String date_format=dialect.getDateFormatFunction();
+			Expression<String> timeStr = criteriaBuilder.function(date_format, String.class, path,criteriaBuilder.literal(format));
+			return timeStr;	
 		}
 		
 	}
