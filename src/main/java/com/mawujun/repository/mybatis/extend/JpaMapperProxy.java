@@ -150,6 +150,10 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 			return newdao.getIdAttributeNames2Str(entityClass);
 		} 
 		
+		else if (method.getName().equals("getMapById")){
+			return newdao.getMapById(entityClass,args[0],(String[])args[1]);
+		
+		}
 		else if (method.getName().equals("clear")){
 			newdao.clear();
 			return true;

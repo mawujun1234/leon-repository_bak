@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.NonUniqueResultException;
 import javax.transaction.Transactional;
 
 import org.junit.Assert;
@@ -20,7 +21,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.mawujun.exception.NotOneRecordException;
 import com.mawujun.repository.mybatis.extend.JpaMapperListenerConfig;
+import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
 import com.mawujun.utils.DateUtils;
@@ -130,6 +133,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(2, coplxId2EntityMapper.getIdAttributeNames().size());
 	}
 	
+	
 	@Test
 	public void test1get() {
 		City city = jpaMybatisMapper.getById(id);
@@ -148,7 +152,6 @@ public class JpaMybatisTest {
 
 		// 测试参数绑定，构建一个ParamsUtils返回一个map作为参数
 		Params paramsUtils = Params.of().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
-		//city = jpaMybatisMapper.getByMap(paramsUtils.getParams());
 		city = jpaMybatisMapper.getByMap(paramsUtils);
 		Assert.assertNotNull(city);
 		Assert.assertEquals("宁波", city.getName());
@@ -1060,6 +1063,22 @@ public class JpaMybatisTest {
 	@Test
 	public void test9clear() {
 		jpaMybatisMapper.clear();
+	}
+	@Test(expected=NonUniqueResultException.class)
+	public void test9getByMap()  {	
+		City city = jpaMybatisMapper.getByMap(Params.of("age",50));
+	}
+	@Test
+	public void test9Tule() {
+		BeanMap tuple=jpaMybatisMapper.getMapById(id,"name","age");
+		Assert.assertEquals("宁波", tuple.get("name"));
+		Assert.assertEquals(50, tuple.get("age"));
+		Assert.assertEquals(new Double(50), tuple.getDouble("age"));
+		
+		tuple=jpaMybatisMapper.getMapById(id,"age","name");
+		Assert.assertEquals("宁波", tuple.get("name"));
+		Assert.assertEquals(50, tuple.get("age"));
+		Assert.assertEquals(new Double(50), tuple.getDouble("age"));
 	}
 	
 //	public void test8createBatch() {

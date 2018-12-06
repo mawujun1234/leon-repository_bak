@@ -11,6 +11,12 @@ import org.apache.ibatis.type.Alias;
 
 import com.mawujun.utils.DateUtils;
 
+/**
+ * 不区分大小写
+ * 同时有类型转换
+ * @author Administrator
+ *
+ */
 @Alias("beanmap")
 //public class BeanMap implements Map<String, Object>, Serializable{
 public class BeanMap extends CaseInsensitiveMap{
@@ -97,6 +103,11 @@ public class BeanMap extends CaseInsensitiveMap{
 //	}
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8219979051333472569L;
+
 	public Date getDate(Object var1) {
 		Object var2 = this.get(var1);
 		String var3 = var2.getClass().getSimpleName();

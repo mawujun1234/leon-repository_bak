@@ -13,6 +13,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.In;
@@ -23,6 +24,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
@@ -41,8 +43,8 @@ import org.springframework.stereotype.Repository;
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
-import com.mawujun.repository.mybatis.expression.DerbyFunctionYYYYMM;
 import com.mawujun.repository.mybatis.expression.VarcharLiteralExpression;
+import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
@@ -777,24 +779,15 @@ public class JpaDao {
 	}
 	
 
-	/**
-	 * 已经支持复合主键
-	 * @param entityClass
-	 * @param sets
-	 * @param id
-	 * @return
-	 */
-	public int updateById(Class entityClass,Map<String,Object> sets,Object id) {
+	private Predicate[] getIdPredicates(Class entityClass,CriteriaBuilder cb ,Root root,Object id) {
 		JpaEntityInformation entityInformation=getEntityInformation(entityClass);
-		
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaUpdate update = cb.createCriteriaUpdate(entityClass);
-		
-		Root root = update.from(entityClass);
 		Class id_javatype=entityInformation.getIdType();
 		Iterable<String> idAttributeNames = entityInformation.getIdAttributeNames();
 		if (!entityInformation.hasCompositeId()) {
-			update.where(cb.equal(root.get(idAttributeNames.iterator().next()),ConvertUtils.convert(id, id_javatype)));
+			Predicate[] predicatesList=new Predicate[1];
+			predicatesList[0]=cb.equal(root.get(idAttributeNames.iterator().next()),ConvertUtils.convert(id, id_javatype));
+			return predicatesList;
+			
 		} else {
 			Predicate[] predicatesList=new Predicate[((Collection)idAttributeNames).size()];
 			int i=0;
@@ -809,10 +802,49 @@ public class JpaDao {
 //				} 
 				predicatesList[i]=cb.equal(root.get(idAttributeName),ConvertUtils.convert(idAttributeValue, id_javatype));
 				i++;
-			}
-			update.where(predicatesList);	
+			}	
+			return predicatesList;
 		}
+	}
+	/**
+	 * 已经支持复合主键
+	 * @param entityClass
+	 * @param sets
+	 * @param id
+	 * @return
+	 */
+	public int updateById(Class entityClass,Map<String,Object> sets,Object id) {
+		//JpaEntityInformation entityInformation=getEntityInformation(entityClass);
+		
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaUpdate update = cb.createCriteriaUpdate(entityClass);
+		
+		Root root = update.from(entityClass);
+		update.where(getIdPredicates(entityClass, cb, root, id));
+		
+//		Class id_javatype=entityInformation.getIdType();
+//		Iterable<String> idAttributeNames = entityInformation.getIdAttributeNames();
+//		if (!entityInformation.hasCompositeId()) {
+//			update.where(cb.equal(root.get(idAttributeNames.iterator().next()),ConvertUtils.convert(id, id_javatype)));
+//		} else {
+//			Predicate[] predicatesList=new Predicate[((Collection)idAttributeNames).size()];
+//			int i=0;
+//			for (String idAttributeName : idAttributeNames) {
+//				Object idAttributeValue = entityInformation.getCompositeIdAttributeValue(id, idAttributeName);
+//
+//				//当复合id是以一个单独的类的形式存在的时候
+////				boolean complexIdParameterValueDiscovered = idAttributeValue != null&& !query.getParameter(idAttributeName).getParameterType().isAssignableFrom(idAttributeValue.getClass());
+////				if (complexIdParameterValueDiscovered) {
+////					update.where(cb.equal(root.get(idAttributeName),ConvertUtils.convert(id, id_javatype)));
+////					break;
+////				} 
+//				predicatesList[i]=cb.equal(root.get(idAttributeName),ConvertUtils.convert(idAttributeValue, id_javatype));
+//				i++;
+//			}
+//			update.where(predicatesList);	
+//		}
 
+		
 		
 		for(Entry<String,Object> set:sets.entrySet()) { 
 			Class javatype=root.get(set.getKey()).getJavaType();
@@ -932,25 +964,7 @@ public class JpaDao {
 		TypedQuery<Long> query= em.createQuery(criteriaQuery);
 
 		return query.getSingleResult();
-		
-//		Class id_javatype=entityInformation.getIdType();
-//		Iterable<String> idAttributeNames = entityInformation.getIdAttributeNames();
-//		if (!entityInformation.hasCompositeId()) {
-//			//criteriaQuery.where(cb.equal(root.get(idAttributeNames.iterator().next()),ConvertUtils.convert(id, id_javatype)));
-//			Expression<Long> selection=cb.count(root.get(idAttributeNames.iterator().next()));
-//			criteriaQuery.select(selection);
-//		} else {
-//			root.get(entityInformation.getIdAttribute())
-//			EntityTypeExpression exp=new EntityTypeExpression(cb,id_javatype);
-////			Predicate[] predicatesList=new Predicate[((Collection)idAttributeNames).size()];
-////			int i=0;
-////			for (String idAttributeName : idAttributeNames) {
-////				//Object idAttributeValue = entityInformation.getCompositeIdAttributeValue(id, idAttributeName);
-////				//predicatesList[i]=cb.equal(root.get(idAttributeName),ConvertUtils.convert(id, id_javatype));
-////				i++;
-////			}
-////			update.where(predicatesList);	
-//		}
+
 
 	}
 //	private static final class CountByMapSpecification<T> implements Specification<T> {
@@ -998,167 +1012,52 @@ public class JpaDao {
 	public boolean existsByMap(Class entityClass,Map<String,Object> params) {
 		long count=countByMap(entityClass,params);
 		return count >= 1;
-		
-//		JpaEntityInformation entityInformation=getEntityInformation(entityClass).get(entityClass);
-//		
-//		String placeholder ="";// provider.getCountQueryPlaceholder();
-//		String entityName = entityInformation.getEntityName();
-//		Iterable<String> idAttributeNames = entityInformation.getIdAttributeNames();
-//		if(idAttributeNames!=null) {
-//			Iterator<String> iterator=idAttributeNames.iterator();
-//			while(iterator.hasNext()) {
-//				String str=iterator.next();
-//				placeholder=placeholder+","+str;
-//			}
-//		}
-//		if(placeholder!=null) {
-//			placeholder=placeholder.substring(1, placeholder.length());
-//		} else {
-//			placeholder="*";
-//		}
-//		
-//		String existsQuery = QueryUtils.getExistsQueryString(entityName, placeholder, idAttributeNames);
-//		
-//		String COUNT_QUERY_STRING = "select count(%s) from %s x";
-//		
-//		String aa=String.format(COUNT_QUERY_STRING, placeholder,entityName);
-//		System.out.println(aa);
-//		
-//		params.str
-//		return false;
-		
 	}
 
 
+	private BeanMap tuple2BeanMap(Tuple tuple,String[] fields) {
+		BeanMap map=new BeanMap();
+		for(int i=0;i<fields.length;i++) {
+			map.put(fields[i], tuple.get(i));
+		}
+		return map;
+	}
+	private BeanMap tuple2BeanMap(Object[] tuple,String[] fields) {
+		BeanMap map=new BeanMap();
+		for(int i=0;i<fields.length;i++) {
+			map.put(fields[i], tuple[i]);
+		}
+		return map;
+	}
 	
-	
-//	//============================example相关的
-//	public  List findAll(Example example) {
-//		return getQuery(new ExampleSpecification(example), example.getProbeType(), Sort.unsorted()).getResultList();
-//	}
-//	
-//	public  long count(Example example) {
-//		return executeCountQuery(getCountQuery(new ExampleSpecification(example), example.getProbeType()));
-//	}
-//	private static long executeCountQuery(TypedQuery<Long> query) {
-//
-//		Assert.notNull(query, "TypedQuery must not be null!");
-//
-//		List<Long> totals = query.getResultList();
-//		long total = 0L;
-//
-//		for (Long element : totals) {
-//			total += element == null ? 0 : element;
+	public BeanMap getMapById(Class entityClass,Object id,String[] fields) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> criteriaQuery = cb.createQuery(Object[].class);
+		Root root = criteriaQuery.from(entityClass);
+		
+		Selection[] selections=new Selection[fields.length];
+		for(int i=0;i<fields.length;i++) {
+			selections[i]=root.get(fields[i]);
+		}
+
+		criteriaQuery.multiselect(selections).where(getIdPredicates(entityClass, cb, root, id));
+		TypedQuery<Object[]> q=em.createQuery(criteriaQuery);
+		
+		return tuple2BeanMap(q.getSingleResult(),fields); 
+		
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<Tuple> criteriaQuery = cb.createTupleQuery();
+//		Root root = criteriaQuery.from(entityClass);
+//		
+//		Selection[] selections=new Selection[fields.length];
+//		for(int i=0;i<fields.length;i++) {
+//			selections[i]=root.get(fields[i]);
 //		}
-//
-//		return total;
-//	}
-//	protected  TypedQuery<Long> getCountQuery(@Nullable Specification spec, Class domainClass) {
-//
-//		CriteriaBuilder builder = em.getCriteriaBuilder();
-//		CriteriaQuery<Long> query = builder.createQuery(Long.class);
-//
-//		Root root = applySpecificationToCriteria(spec, domainClass, query);
-//
-//		if (query.isDistinct()) {
-//			query.select(builder.countDistinct(root));
-//		} else {
-//			query.select(builder.count(root));
-//		}
-//
-//		// Remove all Orders the Specifications might have applied
-//		query.orderBy(Collections.<Order> emptyList());
-//
-//		return em.createQuery(query);
-//	}
-//	
-//	public  boolean exists(Example example) {
-//		return !getQuery(new ExampleSpecification(example), example.getProbeType(), Sort.unsorted()).getResultList()
-//				.isEmpty();
-//	}
-//	
-//	public  Optional findOne(Example example) {
-//
-//		try {
-//			return Optional.of(getQuery(new ExampleSpecification(example), example.getProbeType(), Sort.unsorted()).getSingleResult());
-//		} catch (NoResultException e) {
-//			return Optional.empty();
-//		}
-//	}
-//	protected  TypedQuery getQuery(@Nullable Specification spec, Class domainClass, Sort sort) {
-//
-//		CriteriaBuilder builder = em.getCriteriaBuilder();
-//		CriteriaQuery query = builder.createQuery(domainClass);
-//
-//		Root root = applySpecificationToCriteria(spec, domainClass, query);
-//		query.select(root);
-//
-//		if (sort.isSorted()) {
-//			query.orderBy(toOrders(sort, root, builder));
-//		}
-//		return em.createQuery(query);
-//		//return applyRepositoryMethodMetadata(em.createQuery(query));
-//	}
-//	private  Root applySpecificationToCriteria(@Nullable Specification spec, Class domainClass,
-//			CriteriaQuery query) {
-//
-//		Assert.notNull(domainClass, "Domain class must not be null!");
-//		Assert.notNull(query, "CriteriaQuery must not be null!");
-//
-//		Root root = query.from(domainClass);
-//
-//		if (spec == null) {
-//			return root;
-//		}
-//
-//		CriteriaBuilder builder = em.getCriteriaBuilder();
-//		Predicate predicate = spec.toPredicate(root, query, builder);
-//
-//		if (predicate != null) {
-//			query.where(predicate);
-//		}
-//
-//		return root;
-//	}
-////	private  TypedQuery applyRepositoryMethodMetadata(TypedQuery query) {
-////
-////		if (metadata == null) {
-////			return query;
-////		}
-////
-////		LockModeType type = metadata.getLockModeType();//LockModeType.READ;//
-////		TypedQuery toReturn = type == null ? query : query.setLockMode(type);
-////
-////		//applyQueryHints(toReturn);
-////
-////		return toReturn;
-////	}
-//
-//	
-//	private static class ExampleSpecification<T> implements Specification<T> {
-//
-//		private final Example<T> example;
-//
-//		/**
-//		 * Creates new {@link ExampleSpecification}.
-//		 *
-//		 * @param example
-//		 */
-//		ExampleSpecification(Example<T> example) {
-//
-//			Assert.notNull(example, "Example must not be null!");
-//			this.example = example;
-//		}
-//
-//		/*
-//		 * (non-Javadoc)
-//		 * @see org.springframework.data.jpa.domain.Specification#toPredicate(javax.persistence.criteria.Root, javax.persistence.criteria.CriteriaQuery, javax.persistence.criteria.CriteriaBuilder)
-//		 */
-//		@Override
-//		public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-//			return QueryByExamplePredicateBuilder.getPredicate(root, cb, example);
-//		}
-//	}
-//	//================================example相关的
+//		
+//		criteriaQuery.multiselect(selections).where(cb.equal(root.get("id"), id));
+//		TypedQuery<Tuple> q=em.createQuery(criteriaQuery);
+//		
+//		return tuple2BeanMap(q.getSingleResult(),fields); 
+	}
 
 }

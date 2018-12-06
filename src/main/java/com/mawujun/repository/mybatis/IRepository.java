@@ -3,6 +3,9 @@ package com.mawujun.repository.mybatis;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.NonUniqueResultException;
+
+import com.mawujun.exception.NotOneRecordException;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.PageInfo;
 
@@ -71,18 +74,20 @@ public interface IRepository<T,ID> {
 	
 	public T getById(ID id);
 	/**
-	 * 如果有多条记录就返回第一条,如果有多个，将爆出异常
+	 * 如果有多个，将爆出异常
 	 * @param params
 	 * @return
+	 * @throws NonUniqueResultException
 	 */
-	public T getByMap(Map<String,Object> params);
+	public T getByMap(Map<String,Object> params)  throws NonUniqueResultException;
 	/**
 	 * 如果有多条记录就返回第一条,如果有多个，将爆出异常
 	 * Example还可以扩展，例如某个属性的名字不是=，而是使用like
 	 * @param params
 	 * @return
+	 * @throws NonUniqueResultException
 	 */
-	public T getByExample(T params);
+	public T getByExample(T params)  throws NonUniqueResultException;
 	
 	
 	
@@ -238,24 +243,17 @@ public interface IRepository<T,ID> {
 	
 	
 	
-	
-
-	
-	
-	
-	public BeanMap getMapById(ID id);
+	public BeanMap getMapById(ID id,String... fields);
 	/**
-	 * 如果有多条记录就返回第一条
+	 * 如果有多条，就抛出异常
 	 * @param params
+	 * @param fields
 	 * @return
+	 * @throws NonUniqueResultException
 	 */
-	public BeanMap getMapByMap(Map<String,Object> params);
-	/**
-	 * 如果有多条记录就返回第一条
-	 * @param params
-	 * @return
-	 */
-	public BeanMap getMapByEntity(T params);
+	public BeanMap getMapByMap(Map<String,Object> params,String... fields) throws NonUniqueResultException;
+	
+	public BeanMap listMapByMap(Map<String,Object> params,String... fields);
 
 
 }
