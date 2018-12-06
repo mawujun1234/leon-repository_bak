@@ -50,7 +50,7 @@ import test.mawujun.model.Sex;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Transactional
 @Rollback(false)
-//@ActiveProfiles("sqlserver")//h2,hsqldb,derby,mysql,sqlserver,oracle,db2,postgresql
+//@ActiveProfiles("sqlserver")//h2,hsqldb,derby,sqlserver,mysql,oracle,db2,postgresql
 @ActiveProfiles("h2")
 public class JpaMybatisTest {
 	@Autowired
