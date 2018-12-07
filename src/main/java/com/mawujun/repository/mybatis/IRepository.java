@@ -5,7 +5,8 @@ import java.util.Map;
 
 import javax.persistence.NonUniqueResultException;
 
-import com.mawujun.exception.NotOneRecordException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.PageInfo;
 
@@ -79,15 +80,15 @@ public interface IRepository<T,ID> {
 	 * @return
 	 * @throws NonUniqueResultException
 	 */
-	public T getByMap(Map<String,Object> params)  throws NonUniqueResultException;
+	public T getByMap(Map<String,Object> params)  throws IncorrectResultSizeDataAccessException;
 	/**
 	 * 如果有多条记录就返回第一条,如果有多个，将爆出异常
 	 * Example还可以扩展，例如某个属性的名字不是=，而是使用like
 	 * @param params
 	 * @return
-	 * @throws NonUniqueResultException
+	 * @throws IncorrectResultSizeDataAccessException
 	 */
-	public T getByExample(T params)  throws NonUniqueResultException;
+	public T getByExample(T params)  throws IncorrectResultSizeDataAccessException;
 	
 	
 	
@@ -143,13 +144,13 @@ public interface IRepository<T,ID> {
 	 * @param t
 	 * @return
 	 */
-	public int updateBatch(List<T> list);
+	public List<T> updateBatch(List<T> list);
 	/**
 	 * 更新id为array中的t.id的对象
 	 * @param t
 	 * @return
 	 */
-	public int updateBatchByArray(T... list);
+	public List<T> updateBatchByArray(T... list);
 	/**
 	 * sets就是要更新的值
 	 * params是条件
@@ -242,18 +243,43 @@ public interface IRepository<T,ID> {
 	
 	
 	
-	
+	/**
+	 * 
+	 * @param id
+	 * @param fields 要查询的属性名
+	 * @return
+	 */
 	public BeanMap getMapById(ID id,String... fields);
 	/**
 	 * 如果有多条，就抛出异常
 	 * @param params
-	 * @param fields
+	 * @param fields 要查询的属性名称
 	 * @return
-	 * @throws NonUniqueResultException
+	 * @throws IncorrectResultSizeDataAccessException
 	 */
-	public BeanMap getMapByMap(Map<String,Object> params,String... fields) throws NonUniqueResultException;
-	
-	public BeanMap listMapByMap(Map<String,Object> params,String... fields);
+	public BeanMap getMapByMap(Map<String,Object> params,String... fields) throws IncorrectResultSizeDataAccessException;
+	/**
+	 * 
+	 * @param params
+	 * @param fields 要查询的属性名称
+	 * @return
+	 */
+	public List<BeanMap> listMapByMap(Map<String,Object> params,String... fields);
+//	/**
+//	 * 
+//	 * @param field 统计某个属性
+//	 * @param params 条件
+//	 * @return
+//	 */
+//	public Long sumAsLong(String field,Map<String,Object> params);
+//	
+//	/**
+//	 * 
+//	 * @param field 统计某个属性
+//	 * @param params 条件
+//	 * @return
+//	 */
+//	public Double sumAsDouble(String field,Map<String,Object> params);
 
 
 }

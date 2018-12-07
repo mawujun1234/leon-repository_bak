@@ -871,7 +871,7 @@ public class JpaDao {
 	}
 	
 	public boolean removeAll(Class entityClass) {
-		getSimpleJpaRepository(entityClass).deleteAll();
+		getSimpleJpaRepository(entityClass).deleteAllInBatch();//.deleteAll();
 		return true;
 	}
 	
@@ -1051,7 +1051,7 @@ public class JpaDao {
 //		
 //		Selection[] selections=new Selection[fields.length];
 //		for(int i=0;i<fields.length;i++) {
-//			selections[i]=root.get(fields[i]);
+//			selections[i]=root.get(fields[i]).alias(fields[i]);
 //		}
 //		
 //		criteriaQuery.multiselect(selections).where(cb.equal(root.get("id"), id));
@@ -1059,5 +1059,75 @@ public class JpaDao {
 //		
 //		return tuple2BeanMap(q.getSingleResult(),fields); 
 	}
+	
+	public BeanMap getMapByMap(Class entityClass,Map<String,Object> params,String... fields) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> criteriaQuery = cb.createQuery(Object[].class);
+		Root root = criteriaQuery.from(entityClass);
+		
+		Selection[] selections=new Selection[fields.length];
+		for(int i=0;i<fields.length;i++) {
+			selections[i]=root.get(fields[i]);
+		}
+		criteriaQuery.multiselect(selections);
+		
+		Predicate[] predicatesList=genPredicates(cb,root,params);
+		criteriaQuery.where(predicatesList);
+        TypedQuery<Object[]> typedQuery = em.createQuery(criteriaQuery);
 
+        return tuple2BeanMap(typedQuery.getSingleResult(),fields);
+	}
+
+	public List<BeanMap> listMapByMap(Class entityClass,Map<String,Object> params,String... fields) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Object[]> criteriaQuery = cb.createQuery(Object[].class);
+		Root root = criteriaQuery.from(entityClass);
+		
+		Selection[] selections=new Selection[fields.length];
+		for(int i=0;i<fields.length;i++) {
+			selections[i]=root.get(fields[i]);
+		}
+		criteriaQuery.multiselect(selections);
+		
+		Predicate[] predicatesList=genPredicates(cb,root,params);
+		criteriaQuery.where(predicatesList);
+        TypedQuery<Object[]> typedQuery = em.createQuery(criteriaQuery);
+
+        List<Object[]> list=typedQuery.getResultList();
+        List<BeanMap> result=new ArrayList<BeanMap>(list.size());
+        for(Object[] objArry:list) {
+        	result.add(tuple2BeanMap(objArry,fields));
+        }
+        return result;
+	}
+	
+	
+//	public Long sumAsLong(Class entityClass,String field,Map<String,Object> params) {
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<Long> criteriaQuery = cb.createQuery(Long.class);
+//		Root root = criteriaQuery.from(entityClass);
+//		
+//		criteriaQuery.select(cb.sumAsLong(root.get(field)));
+//		
+//		Predicate[] predicatesList=genPredicates(cb,root,params);
+//		criteriaQuery.where(predicatesList);
+//		
+//		TypedQuery typedQuery = em.createQuery(criteriaQuery);
+//		return (Long)typedQuery.getSingleResult();
+//		
+//	}
+//	public Double sumAsDouble(Class entityClass,String field,Map<String,Object> params) {
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<Double> criteriaQuery = cb.createQuery(Double.class);
+//		Root root = criteriaQuery.from(entityClass);
+//		
+//		criteriaQuery.select(cb.sumAsDouble(root.get(field)));
+//		
+//		Predicate[] predicatesList=genPredicates(cb,root,params);
+//		criteriaQuery.where(predicatesList);
+//		
+//		TypedQuery typedQuery = em.createQuery(criteriaQuery);
+//		return (Double)typedQuery.getSingleResult();
+//		
+//	}
 }

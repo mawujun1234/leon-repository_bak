@@ -152,8 +152,18 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		
 		else if (method.getName().equals("getMapById")){
 			return newdao.getMapById(entityClass,args[0],(String[])args[1]);
-		
+		} else if (method.getName().equals("getMapByMap")){
+			return newdao.getMapByMap(entityClass,(Map<String,Object>)args[0],(String[])args[1]);
+		}else if (method.getName().equals("listMapByMap")){
+			return newdao.listMapByMap(entityClass,(Map<String,Object>)args[0],(String[])args[1]);
 		}
+		
+//		else if (method.getName().equals("sumAsLong")){
+//			return newdao.sumAsLong(entityClass,(String)args[0],(Map<String,Object>)args[2]);
+//		} else if (method.getName().equals("sumAsDouble")){
+//			return newdao.sumAsDouble(entityClass,(String)args[0],(Map<String,Object>)args[2]);
+//		}
+		
 		else if (method.getName().equals("clear")){
 			newdao.clear();
 			return true;
