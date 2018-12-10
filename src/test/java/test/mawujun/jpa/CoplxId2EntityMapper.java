@@ -8,7 +8,7 @@ import test.mawujun.model.CoplxId2;
 import test.mawujun.model.CoplxId2Entity;
 
 @Mapper
-public interface CoplxId2EntityMapper extends IRepository<CoplxId2Entity,CoplxId2>{
+public interface CoplxId2EntityMapper extends IRepository<CoplxId2Entity>{
 
 
 }

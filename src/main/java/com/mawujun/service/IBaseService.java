@@ -1,4 +1,4 @@
-package com.mawujun.repository.mybatis;
+package com.mawujun.service;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,14 +11,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.PageInfo;
 
-/**
- * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
- * 如果要使用mybatis进行分页查询，那必须参数是PageInfo<T>,返回值也是PageInfo<T>(返回值其实不是pageinfo也可以)，因为参数时引用传递。
- * @author admin
- *
- * @param <T>
- */
-public interface IRepository<T> {
+public interface IBaseService<T> {
 	/**
 	 * 获取id的类型
 	 * @return
@@ -34,10 +27,10 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	public String getIdAttributeNames2Str();
-	/**
-	 * 清空持久化上下文中的内容
-	 */
-	public boolean clear();
+//	/**
+//	 * 清空持久化上下文中的内容
+//	 */
+//	public boolean clear();
 	
 	public T create(T t);
 	/**
@@ -265,21 +258,4 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	public List<BeanMap> listMapByMap(Map<String,Object> params,String... fields);
-//	/**
-//	 * 
-//	 * @param field 统计某个属性
-//	 * @param params 条件
-//	 * @return
-//	 */
-//	public Long sumAsLong(String field,Map<String,Object> params);
-//	
-//	/**
-//	 * 
-//	 * @param field 统计某个属性
-//	 * @param params 条件
-//	 * @return
-//	 */
-//	public Double sumAsDouble(String field,Map<String,Object> params);
-
-
 }

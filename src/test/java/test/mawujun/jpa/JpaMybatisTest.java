@@ -22,7 +22,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.mawujun.repository.mybatis.extend.JpaMapperListenerConfig;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
@@ -45,7 +44,7 @@ import test.mawujun.model.Sex;
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes={JpaMybatisApp.class,JpaMapperListenerConfig.class})
+@SpringBootTest(classes={JpaMybatisApp.class})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Transactional
 @Rollback(false)

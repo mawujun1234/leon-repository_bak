@@ -8,6 +8,7 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.session.SqlSession;
 
+import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.utils.ReflectUtils;
 
@@ -39,8 +40,9 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		super(sqlSession, mapperInterface, methodCache);
 		sqlSession_=sqlSession;
 		
-		//this.entityManager=NewApplicationListener.context.getBean(EntityManager.class);
-		this.newdao=JpaMapperListener.context.getBean(JpaDao.class);
+		
+		//this.newdao=JpaMapperListener.context.getBean(JpaDao.class);
+		this.newdao=SpringContextUtils.getBean(JpaDao.class);
 		this.entityClass = ReflectUtils.getGenericInterfaces(mapperInterface,0);
 		//System.out.println(entityManager);
 

@@ -20,9 +20,9 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.Dialect;
-import com.mawujun.repository.mybatis.extend.JpaMapperListener;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.utils.StringUtils;
 
@@ -49,7 +49,7 @@ public class PageInfoInterceptor implements Interceptor {
             Object[] args = invocation.getArgs();
             MappedStatement ms = (MappedStatement) args[0];
             if(dialect==null) {	
-            	String dialect_classname=JpaMapperListener.context.getEnvironment().getProperty("leon.mybatis.dialect");
+            	String dialect_classname=SpringContextUtils.getEnvironment().getProperty("leon.mybatis.dialect");
             	if(StringUtils.hasText(dialect_classname)) {
 					try {
 						Class<?> aClass = Class.forName(dialect_classname);
