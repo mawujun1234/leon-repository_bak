@@ -7,8 +7,8 @@ import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.session.SqlSession;
 
 public class JpaMapperProxyFactory<T> extends MapperProxyFactory<T> {
-	public JpaMapperProxyFactory(Class<Object> mapperInterface) {
-		super((Class<T>)mapperInterface);
+	public JpaMapperProxyFactory(Class<T> type) {
+		super((Class<T>)type);
 		// TODO Auto-generated constructor stub
 	}
 

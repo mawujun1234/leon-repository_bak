@@ -3,6 +3,7 @@ package test.mawujun.jpa;
 
 import java.sql.SQLException;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +14,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EntityScan("test.mawujun.model")
-@ComponentScan(basePackages= {"com.mawujun","test.mawujun.service","test.mawujun.jpa"})
+@ComponentScan(basePackages= {"com.mawujun"})
+//@MapperScan("test.mawujun.jpa")
 public class JpaMybatisApp  implements CommandLineRunner {
 //	@Autowired
 //	private CityMapper cityMapper;
