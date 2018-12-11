@@ -15,6 +15,8 @@ import org.apache.ibatis.type.Alias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mawujun.repository.identity.UUIDEntityValidate;
 
+import lombok.Data;
+
 /**
  * 1：时间映射,@Temporal注解
  *  CreationTimestamp创建时的默认值，UpdateTimestamp在更新的时候会生成默认值
@@ -34,6 +36,7 @@ import com.mawujun.repository.identity.UUIDEntityValidate;
 @Alias("city")
 @Entity
 @Table(name="t_city")
+@Data
 public class City extends UUIDEntityValidate{
 	
 	/**
@@ -59,52 +62,4 @@ public class City extends UUIDEntityValidate{
 	private Sex sex;
 	
 	
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Integer getAge() {
-		return age;
-	}
-	public void setAge(Integer age) {
-		this.age = age;
-	}
-	public Double getPrice() {
-		return price;
-	}
-	public void setPrice(Double price) {
-		this.price = price;
-	}
-	public Date getCreateDate() {
-		return createDate;
-	}
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-	public Sex getSex() {
-		return sex;
-	}
-	public void setSex(Sex sex) {
-		this.sex = sex;
-	}
-
 }
-
-//enum Sex {
-//	Man("男"),Women("女");
-//	
-//	private String name;
-//	Sex(String name ){
-//		this.name=name;
-//	}
-//	public String getName() {
-//		return name;
-//	}
-//	public void setName(String name) {
-//		this.name = name;
-//	}
-//	
-//}
