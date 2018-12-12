@@ -38,7 +38,7 @@ public class CityController {
 	public R list() {//括号里面写参数
 		Params params=Params.of();//Params.of().like(M.City.name, "test");
 		List<City> cityes=cityService.listByMap(params);
-		return R.ok(citycityes);
+		return R.ok(cityes);
 	}
 
 	/**

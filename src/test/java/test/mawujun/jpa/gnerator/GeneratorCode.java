@@ -17,16 +17,9 @@ public class GeneratorCode {
 	static GeneratorService generatorService=new GeneratorService();
 
 	public static void main(String[] args) throws TemplateException, IOException, ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
-
-//		// 这里弄成更加好用的方式，弄成级联的方式，例如getExtjsConfig.set。。。
-//		ExtenConfig aa = new ExtenConfig();
-//		aa.extjs_treeForm_model = true;
-//		aa.extjs_packagePrefix = "y";
-//		aa.extjs_form_layoutColumns = -1;
-//
-//		aa.extjs_grid_store_userModel = false;
-//		aa.extjs_grid_createDelUpd_button = true;
-//		generatorService.setExtenConfig(aa);
+		//指定模板搜索路径
+		//generatorService.setClasspathftldir("template/2.0");
+		generatorService.setOutputdir("d:/webapp-generator-output");//输出文件目录
 
 		generatorService.generatorAllFile(City.class);
 
