@@ -49,6 +49,16 @@ public class R extends HashMap<String, Object> {
 	public static R ok() {
 		return new R();
 	}
+	/**
+	 * 直接放进去data数据
+	 * @param data
+	 * @return
+	 */
+	public static R ok(Object data) {
+		R r= new R();
+		r.setData(data);
+		return r;
+	}
 
 	@Override
 	public R put(String key, Object value) {
@@ -56,12 +66,15 @@ public class R extends HashMap<String, Object> {
 		return this;
 	}
 	
-	public R putData(Object value) {
+	public R data(Object value) {
 		super.put("data", value);
 		return this;
 	}
+	public R putData(Object value) {
+		return this.data(value);
+	}
 	public R setData(Object value) {
-		return this.putData(value);
+		return this.data(value);
 	}
 	
 	public R putCode(Object value) {

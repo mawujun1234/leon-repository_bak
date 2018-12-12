@@ -1,4 +1,4 @@
-package test.mawujun.repository;
+package test.mawujun.mybatis;
 
 
 import java.sql.SQLException;

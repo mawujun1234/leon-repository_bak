@@ -3,7 +3,7 @@ package com.mawujun.repository.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Params extends HashMap<String,Object>{
+public class Params extends HashMap<String,Object>  implements IParams{
 	/**
 	 * 
 	 */
@@ -123,9 +123,9 @@ public class Params extends HashMap<String,Object>{
 		
 	}
 	
-	public Map<String,Object> getParams() {
-		return this;
-	}
+//	public Map<String,Object> getParams() {
+//		return this;
+//	}
 	/**
 	 *等于eq方法
 	 * @param key
@@ -326,36 +326,36 @@ public class Params extends HashMap<String,Object>{
 		return this;
 	}
 	
-	/**
-	 * 会把key相同的值组装成sql中in的形式,'a','b','c'
-	 * 同个key不能和其他方法混合调用，但是同个key可以多次调用addin()方法.addIn(....).addIn(...)
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public Params addIn(String key,Object... values) {
-		if(values!=null && values.length>0) {
-			StringBuilder builder=new StringBuilder();
-			boolean hasfirstcomma=true;
-			if(this.containsKey(key)) {
-				builder.append(this.get(key));
-				hasfirstcomma=false;
-			} 
-
-			for(Object obj:values) {
-				if(obj==null) {
-					continue;
-				}
-				builder.append(",'");
-				builder.append(obj.toString());
-				builder.append("'");			
-			}
-			if(hasfirstcomma && builder.length()>1) {
-				this.put(key, builder.substring(1));
-			}
-		}
-		return this;
-	}
+//	/**
+//	 * 会把key相同的值组装成sql中in的形式,'a','b','c'
+//	 * 同个key不能和其他方法混合调用，但是同个key可以多次调用addin()方法.addIn(....).addIn(...)
+//	 * @param key
+//	 * @param value
+//	 * @return
+//	 */
+//	public Params addIn(String key,Object... values) {
+//		if(values!=null && values.length>0) {
+//			StringBuilder builder=new StringBuilder();
+//			boolean hasfirstcomma=true;
+//			if(this.containsKey(key)) {
+//				builder.append(this.get(key));
+//				hasfirstcomma=false;
+//			} 
+//
+//			for(Object obj:values) {
+//				if(obj==null) {
+//					continue;
+//				}
+//				builder.append(",'");
+//				builder.append(obj.toString());
+//				builder.append("'");			
+//			}
+//			if(hasfirstcomma && builder.length()>1) {
+//				this.put(key, builder.substring(1));
+//			}
+//		}
+//		return this;
+//	}
 //	/**
 //	 * 会再value的两边都加上%号
 //	 * @param key

@@ -1,4 +1,4 @@
-package test.mawujun.jpa;
+package test.mawujun.jpa.gnerator;
 
 import com.mawujun.generator.MT.GeneratorMT;
 

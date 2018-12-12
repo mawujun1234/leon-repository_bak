@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EntityScan("test.mawujun.model")
-@ComponentScan(basePackages= {"com.mawujun"})
+@ComponentScan(basePackages= {"com.mawujun","test.mawujun.jpa"})
 //@MapperScan("test.mawujun.jpa")
 public class JpaMybatisApp  implements CommandLineRunner {
 //	@Autowired

@@ -1,4 +1,4 @@
-package test.mawujun.repository;
+package test.mawujun.mybatis;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
+import com.mawujun.repository.utils.IParams;
 import com.mawujun.repository.utils.Params;
 
 import test.mawujun.model.City;
@@ -100,7 +101,7 @@ public class CityMapperTest {
 		Assert.assertEquals(now.getTime(), ((Date)city.get("createDate")).getTime());
 		
 		Params paramsUtils = Params.of().add("name", "宁波").add("sex", Sex.Man).add("createDate", now);
-		city = cityMapper.getMapByMap(paramsUtils.getParams());
+		city = cityMapper.getMapByMap(paramsUtils);
 		Assert.assertEquals("宁波", city.get("name"));
 		Assert.assertEquals((Double) 10.253, (Double)city.get("price"));
 		Assert.assertEquals((Integer) 50, (Integer)city.get("Age"));

@@ -13,7 +13,7 @@ import com.mawujun.repository.utils.PageInfo;
 
 public class BaseService<M extends IRepository<T>, T> implements IBaseService<T> {
 
-	 //@Autowired
+	 @Autowired
 	 protected M repository;
 
 	@Override

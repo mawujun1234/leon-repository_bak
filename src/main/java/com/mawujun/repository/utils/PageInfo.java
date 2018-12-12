@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import com.mawujun.utils.page.Pager;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 继承List的原因是mybatis的接口只能返回list，继承list就可以以PageInfo的形式返回了
@@ -17,14 +17,14 @@ import com.mawujun.utils.page.Pager;
  *
  * @param <T>
  */
-public class PageInfo<T> implements List<T>{
+public class PageInfo<T> implements List<T>,IParams{
 	
 	protected int page = -1;//当前第几页
 	protected int limit = 50;// 默认是每页50条
 	protected int start = 0;
 	protected int total = -1;//总共有几条记录
-	private Boolean success=true;
-	private String message;
+	//private Boolean success=true;
+	//private String message;
 	
 	private String countColumn;
 	protected List<T> root = null;
@@ -50,10 +50,27 @@ public class PageInfo<T> implements List<T>{
 //		param.setLimit(limit);
 //		return param;
 //	}
-	
-	public static PageInfo of(int page,int limit){
+	/**
+	 * 
+	 * @param page 第几页
+	 * @param limit 每页多少
+	 * @return
+	 */
+	public static PageInfo of_1(int page,int limit){
 		PageInfo param = new PageInfo();
 		param.setPage(page);
+		param.setLimit(limit);
+		return param;
+	}
+	/**
+	 * 
+	 * @param start 哪一行开始
+	 * @param limit 每页多少
+	 * @return
+	 */
+	public static PageInfo of(int start,int limit){
+		PageInfo param = new PageInfo();
+		param.setStart(start);
 		param.setLimit(limit);
 		return param;
 	}
@@ -64,8 +81,9 @@ public class PageInfo<T> implements List<T>{
 	 * 只在mybatis中有效
 	 * @param countColumn
 	 */
-	public void setCountColumn(String countColumn) {
+	public PageInfo<T> setCountColumn(String countColumn) {
 		this.countColumn = countColumn;
+		return this;
 	}
 	
 	/**
@@ -106,7 +124,7 @@ public class PageInfo<T> implements List<T>{
 	}
 	/**
 	 * 设置参数，一般是作为where条件的，可以是map，bean等各种类型
-	 * 和addParams是冲突的，只能选一个
+	 * 
 	 * @author mawujun email:160649888@163.com qq:16064988
 	 * @param params
 	 */
@@ -114,58 +132,63 @@ public class PageInfo<T> implements List<T>{
 		this.params = params;
 		return this;
 	}
-	/**
-	 * 调用这个方法，就默认参数Map类型的,
-	 * 默认null和空字符串不会添加进去
-	 * 和setParams是冲突的，只能选一个
-	 * @author mawujun email:160649888@163.com qq:16064988
-	 * @param key
-	 * @param params
-	 * @return
-	 */
-	public PageInfo<T> addParam(String key,Object value) {
-		if(value==null || "".equals(value)){
-			return this;
-		}
-		if(this.params==null || !(this.params instanceof Map)){
-			this.params=new HashMap<String,Object>();
-		}
-		((Map<String,Object>)this.params).put(key, value);
-		return this;
-	}
+//	/**
+//	 * 获取map类型的params，然后添加参数
+//	 * PageInfo.of(start,limit).ofParams().eq(key,value)
+//	 * @return
+//	 */
+//	public IParams setParams(Params params) {
+//		if(this.params==null || !(this.params instanceof Map)){
+//			this.params=Params.of();
+//		}
+//		return (IParams)this.params;
+//	}
 
-	public void setPage(int page) {
+//	/**
+//	 * 调用这个方法，就默认参数Map类型的,
+//	 * 默认null和空字符串不会添加进去
+//	 * 和setParams是冲突的，只能选一个
+//	 * @author mawujun email:160649888@163.com qq:16064988
+//	 * @param key
+//	 * @param params
+//	 * @return
+//	 */
+//	public PageInfo<T> addParam(String key,Object value) {
+//		if(value==null || "".equals(value)){
+//			return this;
+//		}
+//		if(this.params==null || !(this.params instanceof Map)){
+//			this.params=new HashMap<String,Object>();
+//		}
+//		((Map<String,Object>)this.params).put(key, value);
+//		return this;
+//	}
+
+	public PageInfo<T> setPage(int page) {
 		this.page = page;
+		return this;
 	}
 	public int getLimit() {
 		return limit;
 	}
-	public void setLimit(int limit) {
+	public PageInfo<T> setLimit(int limit) {
 		this.limit = limit;
+		return this;
 	}
 	public int getTotal() {
 		return total;
 	}
-	public void setTotal(int total) {
+	public PageInfo<T> setTotal(int total) {
 		this.total = total;
+		return this;
 	}
-	public Boolean getSuccess() {
-		return success;
-	}
-	public void setSuccess(Boolean success) {
-		this.success = success;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
+	
 	public List<T> getRoot() {
 		return root;
 	}
-	public void setRoot(List<T> root) {
+	public PageInfo<T> setRoot(List<T> root) {
 		this.root = root;
+		return this;
 	}
 
 
@@ -442,5 +465,167 @@ public class PageInfo<T> implements List<T>{
 	}
 	
 	
+	//=============================================================================================
+	//下面的都是参数相关的修改
+	private Params getParamsMap() {
+		if(params==null) {
+			params=Params.of();
+			return (Params)params;
+		}
+		if(!(params instanceof Params)) {
+			throw new RuntimeException("当前分页的参数不是Params类型，不能调用该方法!");
+		} 
+		return (Params)params;
+	}
+
+	@Override
+	public PageInfo<T> put(String key, Object value) {
+		getParamsMap().put(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> add(String key, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().add(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> add(String key, OpEnum opEnum, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().add(key, opEnum, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> eq(String key, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().eq(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> eq_i(String key, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().eq_i(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> noteq(String key, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().noteq(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> noteq_i(String key, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().noteq_i(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> gt(String key, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().gt(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> ge(String key, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().ge(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> lt(String key, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().lt(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> le(String key, Object value) {
+		// TODO Auto-generated method stub
+		getParamsMap().le(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> between(String key, Object value1, Object value2) {
+		// TODO Auto-generated method stub
+		getParamsMap().between(key, value1, value2);
+		return this;
+	}
+	@Override
+	public PageInfo<T> in(String key, Object... value) {
+		// TODO Auto-generated method stub
+		getParamsMap().in(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> notin(String key, Object... value) {
+		// TODO Auto-generated method stub
+		getParamsMap().notin(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> isnull(String key) {
+		// TODO Auto-generated method stub
+		getParamsMap().isnull(key);
+		return this;
+	}
+	@Override
+	public PageInfo<T> isnotnull(String key) {
+		// TODO Auto-generated method stub
+		getParamsMap().isnotnull(key);
+		return this;
+	}
+	@Override
+	public PageInfo<T> like(String key, String value) {
+		// TODO Auto-generated method stub
+		getParamsMap().like(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> likeprefix(String key, String value) {
+		// TODO Auto-generated method stub
+		getParamsMap().likeprefix(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> likesuffix(String key, String value) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+	@Override
+	public PageInfo<T> like_i(String key, String value) {
+		// TODO Auto-generated method stub
+		getParamsMap().like_i(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> likeprefix_i(String key, String value) {
+		// TODO Auto-generated method stub
+		getParamsMap().likeprefix_i(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> likesuffix_i(String key, String value) {
+		// TODO Auto-generated method stub
+		getParamsMap().likesuffix_i(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> notlike(String key, String value) {
+		// TODO Auto-generated method stub
+		getParamsMap().notlike(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> notlikeprefix(String key, String value) {
+		// TODO Auto-generated method stub
+		getParamsMap().notlikeprefix(key, value);
+		return this;
+	}
+	@Override
+	public PageInfo<T> notlikesuffix(String key, String value) {
+		// TODO Auto-generated method stub
+		getParamsMap().notlikesuffix(key, value);
+		return this;
+	}
+
 	
 }

@@ -1,4 +1,4 @@
-package test.mawujun.service;
+package test.mawujun.jpa.service;
 
 import javax.transaction.Transactional;
 

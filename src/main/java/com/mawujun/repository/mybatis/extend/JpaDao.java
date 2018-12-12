@@ -45,6 +45,7 @@ import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
 import com.mawujun.repository.mybatis.expression.VarcharLiteralExpression;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
+import com.mawujun.repository.utils.IParams;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
