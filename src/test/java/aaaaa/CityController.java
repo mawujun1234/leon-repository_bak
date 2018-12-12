@@ -12,7 +12,6 @@ import com.mawujun.mvc.R;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.repository.utils.Params;
 
-import test.mawujun.jpa.utils.M;
 import test.mawujun.model.City;
 
 /**
@@ -36,10 +35,10 @@ public class CityController {
 	 */
 	@RequestMapping("/city/list")
 	@ResponseBody
-	public R list(String id) {
-		Params params=Params.of().like(M.City.name, "test");
+	public R list() {//括号里面写参数
+		Params params=Params.of();//Params.of().like(M.City.name, "test");
 		List<City> cityes=cityService.listByMap(params);
-		return R.ok(cityes);
+		return R.ok(citycityes);
 	}
 
 	/**
@@ -52,8 +51,9 @@ public class CityController {
 	 */
 	@RequestMapping("/city/listPage")
 	@ResponseBody
-	public R listPage(Integer start,Integer limit,String sampleName){
-		PageInfo<City> pageinfo=PageInfo.of(start,limit).eq(M.City.name, "宁波");
+	public R listPage(Integer start,Integer limit){
+		//PageInfo<City> pageinfo=PageInfo.of(start,limit).eq(M.City.name, "宁波");
+		PageInfo<City> pageinfo=PageInfo.of(start,limit);
 		cityService.listPageByPageInfo(pageinfo);
 		return R.ok().data(pageinfo);
 	}
@@ -67,6 +67,7 @@ public class CityController {
 	
 
 	@RequestMapping("/city/get")
+	@ResponseBody
 	public R get(java.lang.String id) {
 		City city=cityService.getById(id);
 		return R.ok().data(city);

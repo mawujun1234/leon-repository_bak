@@ -1,8 +1,9 @@
 package aaaaa;
 
-import org.apache.ibatis.annotations.Mapper;
-
+import org.springframework.stereotype.Repository;
+import java.util.UUID;
 import com.mawujun.repository.mybatis.IRepository;
+import org.apache.ibatis.annotations.Mapper;
 
 import test.mawujun.model.City;
 /**
