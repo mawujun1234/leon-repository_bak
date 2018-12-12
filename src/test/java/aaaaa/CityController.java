@@ -50,9 +50,9 @@ public class CityController {
 	 * @param userName
 	 * @return
 	 */
-	@RequestMapping("/city/query")
+	@RequestMapping("/city/listPage")
 	@ResponseBody
-	public R query(Integer start,Integer limit,String sampleName){
+	public R listPage(Integer start,Integer limit,String sampleName){
 		PageInfo<City> pageinfo=PageInfo.of(start,limit).eq(M.City.name, "宁波");
 		cityService.listPageByPageInfo(pageinfo);
 		return R.ok().data(pageinfo);
@@ -60,43 +60,44 @@ public class CityController {
 
 	@RequestMapping("/city/listAll")
 	@ResponseBody
-	public List<City> listAll() {	
+	public R listAll() {	
 		List<City> cityes=cityService.listAll();
-		return cityes;
+		return R.ok().data(cityes);
 	}
 	
 
 	@RequestMapping("/city/get")
-	public City get(java.lang.String id) {
-		return cityService.getById(id);
+	public R get(java.lang.String id) {
+		City city=cityService.getById(id);
+		return R.ok().data(city);
 	}
 	
 	@RequestMapping("/city/create")
 	@ResponseBody
-	public City create(@RequestBody City city) {
+	public R create(@RequestBody City city) {
 		cityService.create(city);
-		return city;
+		return R.ok().data(city);
 	}
 	
 	@RequestMapping("/city/update")
 	@ResponseBody
-	public  City update(@RequestBody City city) {
+	public  R update(@RequestBody City city) {
 		cityService.update(city);
-		return city;
+		return R.ok().data(city);
 	}
 	
 	@RequestMapping("/city/removeById")
 	@ResponseBody
-	public java.lang.String removeById(java.lang.String id) {
+	public R removeById(java.lang.String id) {
 		cityService.removeById(id);
-		return id;
+		return R.ok().data(id);
 	}
 	
-	@RequestMapping("/city/removeById")
+	@RequestMapping("/city/removeByIds")
 	@ResponseBody
-	public java.lang.String removeById(String[] ids) {
+	public R removeByIds(String[] ids) {
 		cityService.removeByIds(ids);
-		return id;
+		return R.ok().data(ids);
 	}
 	
 	@RequestMapping("/city/remove")

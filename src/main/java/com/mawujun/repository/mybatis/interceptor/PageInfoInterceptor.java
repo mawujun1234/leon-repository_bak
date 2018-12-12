@@ -117,9 +117,6 @@ public class PageInfoInterceptor implements Interceptor {
             List list = ExecutorUtil.pageQuery(dialect, executor,
                     ms, parameter, rowBounds, resultHandler, boundSql, cacheKey);
             pageinfo.setRoot(list);
-            pageinfo.setMessage("成功返回");
-            
-         
             
             return pageinfo;
     }
