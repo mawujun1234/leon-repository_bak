@@ -18,7 +18,7 @@ public class GeneratorCode {
 
 	public static void main(String[] args) throws TemplateException, IOException, ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
 		//指定模板搜索路径
-		//generatorService.setClasspathftldir("template/2.0");
+		generatorService.setFtldir("classpath:/templates/2.0");
 		generatorService.setOutputdir("d:/webapp-generator-output");//输出文件目录
 
 		generatorService.generatorAllFile(City.class);

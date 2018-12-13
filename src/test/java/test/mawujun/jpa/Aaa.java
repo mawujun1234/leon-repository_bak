@@ -1,12 +1,13 @@
 package test.mawujun.jpa;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.File;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
+
+import org.springframework.util.StringUtils;
+
+import com.mawujun.generator.GeneratorService;
+import com.mawujun.utils.file.FileUtils;
 
 /**
  * @author mawujun 16064988
@@ -15,43 +16,57 @@ import java.util.regex.Pattern;
 public class Aaa {
 
 	public static void main(String[] args) {
-		//String hql="select * from (select * from aaaa where 1=1 order  by bbb) where 2=2 order by   id  ";
-		String hql="select * from (select * from aaaa where 1=1 and a.bb=c.gg order  by bbb asc,a.ccc desc ) where 2=2 order by   id desc    ";
-		//Pattern p = Pattern.compile("order\\s*by([\\s*|,].+(asc|desc|\\s*)*)+", Pattern.CASE_INSENSITIVE);
-		//Pattern p = Pattern.compile("order\\s*by([\\s*|,].+(asc|desc|\\s*)*)+\\){1}", Pattern.CASE_INSENSITIVE);
-		//匹配所有的order by子句
-		String regex="order\\s+by\\s+([\\w*|\\w+\\.\\w+](asc|desc|\\s*){1},?)+";
-		Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-		Matcher m = p.matcher(hql);
-		StringBuffer sb = new StringBuffer();
+		//System.out.println(StringUtils.class.getClass().getResource(".").getPath());
 		
-	
-
-		System.out.println(hql.matches(regex));
-		System.out.println(hql.length());
-		System.out.println(m.groupCount());
-		while (m.find()) {
-			System.out.println( " matches \"" + m.group(0) );
-	        System.out.println("start:" + m.start() + " end:" + m.end());
-	            
-			m.appendReplacement(sb, "");
-		}
-		m.appendTail(sb);
-		System.out.println(sb.toString());
+		ProtectionDomain pd = GeneratorService.class.getProtectionDomain();  
+		  CodeSource cs = pd.getCodeSource();  
+		  System.out.println(cs.getLocation()); 
+		System.out.println("=======");
 		
-		System.out.println("=============================================");
-		m = p.matcher(hql);
-		MatchResult ms = null;
-        while (m.find()) {
-            ms = m.toMatchResult();
-           // System.out.print("匹配对象的组结果：");
-            for (int i = 0; i < ms.groupCount(); i++) {
-                //System.out.print(String.format("\n\t第%s组的结果是:%s",i+1,ms.group(i + 1)));
-            	System.out.println(ms.group(i));
-            }
-            //System.out.print("\n匹配的整个结果:");
-            //System.out.println(ms.group());
-        }
+		System.out.println(FileUtils.getClassRootPath(GeneratorService.class));
+		System.out.println(FileUtils.getClassRootPath(StringUtils.class));
+		
+		System.out.println(FileUtils.getJarAbstractPath(StringUtils.class));
+		
+		System.out.println("src/main/resources".replaceAll("\\\\/", File.separator));
+		
+//		//String hql="select * from (select * from aaaa where 1=1 order  by bbb) where 2=2 order by   id  ";
+//		String hql="select * from (select * from aaaa where 1=1 and a.bb=c.gg order  by bbb asc,a.ccc desc ) where 2=2 order by   id desc    ";
+//		//Pattern p = Pattern.compile("order\\s*by([\\s*|,].+(asc|desc|\\s*)*)+", Pattern.CASE_INSENSITIVE);
+//		//Pattern p = Pattern.compile("order\\s*by([\\s*|,].+(asc|desc|\\s*)*)+\\){1}", Pattern.CASE_INSENSITIVE);
+//		//匹配所有的order by子句
+//		String regex="order\\s+by\\s+([\\w*|\\w+\\.\\w+](asc|desc|\\s*){1},?)+";
+//		Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+//		Matcher m = p.matcher(hql);
+//		StringBuffer sb = new StringBuffer();
+//		
+//	
+//
+//		System.out.println(hql.matches(regex));
+//		System.out.println(hql.length());
+//		System.out.println(m.groupCount());
+//		while (m.find()) {
+//			System.out.println( " matches \"" + m.group(0) );
+//	        System.out.println("start:" + m.start() + " end:" + m.end());
+//	            
+//			m.appendReplacement(sb, "");
+//		}
+//		m.appendTail(sb);
+//		System.out.println(sb.toString());
+//		
+//		System.out.println("=============================================");
+//		m = p.matcher(hql);
+//		MatchResult ms = null;
+//        while (m.find()) {
+//            ms = m.toMatchResult();
+//           // System.out.print("匹配对象的组结果：");
+//            for (int i = 0; i < ms.groupCount(); i++) {
+//                //System.out.print(String.format("\n\t第%s组的结果是:%s",i+1,ms.group(i + 1)));
+//            	System.out.println(ms.group(i));
+//            }
+//            //System.out.print("\n匹配的整个结果:");
+//            //System.out.println(ms.group());
+//        }
 		
 		
 //		// TODO Auto-generated method stub
