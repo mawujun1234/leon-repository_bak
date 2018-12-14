@@ -3,7 +3,7 @@ package test.mawujun.jpa.gnerator;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import com.mawujun.generator.GeneratorService;
+import com.mawujun.generator.GeneratorCodeService;
 
 import freemarker.template.TemplateException;
 import test.mawujun.model.City;
@@ -14,14 +14,14 @@ import test.mawujun.model.City;
  *
  */
 public class GeneratorCode {
-	static GeneratorService generatorService=new GeneratorService();
+	static GeneratorCodeService generatorService=new GeneratorCodeService();
 
 	public static void main(String[] args) throws TemplateException, IOException, ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
 		//指定模板搜索路径
 		generatorService.setFtldir("classpath:/templates/2.0");
 		generatorService.setOutputdir("d:/webapp-generator-output");//输出文件目录
 
-		generatorService.generatorAllFile(City.class);
+		generatorService.generator(City.class);
 
 	}
 	

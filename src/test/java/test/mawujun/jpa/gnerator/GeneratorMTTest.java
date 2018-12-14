@@ -1,8 +1,6 @@
 package test.mawujun.jpa.gnerator;
 
-import com.mawujun.generator.MT.GeneratorMT;
-
-import test.mawujun.jpa.utils.M;
+import com.mawujun.generator.MT.GeneratorMTService;
 
 /**
 * @author mawujun 16064988
@@ -12,9 +10,11 @@ public class GeneratorMTTest {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		GeneratorMT.generateMT("test.mawujun", "E:\\eclipse-workspace\\leon-repository\\src\\test\\java","test.mawujun.jpa.utils");
+		//GeneratorMTService.generateMT("test.mawujun","test.mawujun.jpa.utils");
 		
+		GeneratorMTService.generateMT("test.mawujun","E:\\my-workspace\\leon-repository\\src\\test\\java\\","test.mawujun.jpa.utils");
 		
+
 
 	}
 

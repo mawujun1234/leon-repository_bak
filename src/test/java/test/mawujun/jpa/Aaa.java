@@ -6,7 +6,7 @@ import java.security.ProtectionDomain;
 
 import org.springframework.util.StringUtils;
 
-import com.mawujun.generator.GeneratorService;
+import com.mawujun.generator.GeneratorCodeService;
 import com.mawujun.utils.file.FileUtils;
 
 /**
@@ -18,12 +18,12 @@ public class Aaa {
 	public static void main(String[] args) {
 		//System.out.println(StringUtils.class.getClass().getResource(".").getPath());
 		
-		ProtectionDomain pd = GeneratorService.class.getProtectionDomain();  
+		ProtectionDomain pd = GeneratorCodeService.class.getProtectionDomain();  
 		  CodeSource cs = pd.getCodeSource();  
 		  System.out.println(cs.getLocation()); 
 		System.out.println("=======");
 		
-		System.out.println(FileUtils.getClassRootPath(GeneratorService.class));
+		System.out.println(FileUtils.getClassRootPath(GeneratorCodeService.class));
 		System.out.println(FileUtils.getClassRootPath(StringUtils.class));
 		
 		System.out.println(FileUtils.getJarAbstractPath(StringUtils.class));

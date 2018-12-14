@@ -13,9 +13,11 @@ import javax.persistence.TemporalType;
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mawujun.generator.FK;
 import com.mawujun.repository.identity.UUIDEntityValidate;
 
 import lombok.Data;
+import test.mawujun.jpa.utils.T;
 
 /**
  * 1：时间映射,@Temporal注解
@@ -46,6 +48,7 @@ public class City extends UUIDEntityValidate{
 	@Column(length=30)
 	private String name;
 	
+	@FK(table=T.t_city.tablename__)
 	private Integer age;
 	
 	@Column(precision = 10,scale = 2)
