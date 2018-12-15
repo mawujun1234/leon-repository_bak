@@ -13,7 +13,7 @@ import javax.persistence.TemporalType;
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mawujun.generator.FK;
+import com.mawujun.generator.code.FK;
 import com.mawujun.repository.identity.UUIDEntityValidate;
 
 import lombok.Data;
