@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
+import com.mawujun.generator.code.Coldefine;
+
 import lombok.Data;
 
 /**
@@ -19,6 +21,7 @@ import lombok.Data;
 @Data
 public class CoplxId2Entity  implements Serializable{
 	@Id
+	@Coldefine(comment="id1注释0000")
 	private String id1;
 	@Id
 	private String id2;
