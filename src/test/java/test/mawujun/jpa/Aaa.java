@@ -6,7 +6,7 @@ import java.security.ProtectionDomain;
 
 import org.springframework.util.StringUtils;
 
-import com.mawujun.generator.GeneratorCodeService;
+import com.mawujun.generator.code.GeneratorCodeService;
 import com.mawujun.utils.file.FileUtils;
 
 /**

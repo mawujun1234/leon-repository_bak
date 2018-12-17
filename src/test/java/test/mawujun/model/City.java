@@ -13,7 +13,8 @@ import javax.persistence.TemporalType;
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mawujun.generator.FK;
+import com.mawujun.generator.code.Coldefine;
+import com.mawujun.generator.code.FK;
 import com.mawujun.repository.identity.UUIDEntityValidate;
 
 import lombok.Data;
@@ -38,6 +39,7 @@ import test.mawujun.jpa.utils.T;
 @Alias("city")
 @Entity
 @Table(name="t_city")
+@org.hibernate.annotations.Table(comment="表注释", appliesTo = "t_city") 
 @Data
 public class City extends UUIDEntityValidate{
 	
@@ -46,22 +48,27 @@ public class City extends UUIDEntityValidate{
 	 */
 	private static final long serialVersionUID = 3172844311839975513L;
 	@Column(length=30)
+	@Coldefine(comment="名称",defaultValue="")
 	private String name;
 	
 	@FK(table=T.t_city.tablename__)
+	@Coldefine(comment="年龄",defaultValue="18")
 	private Integer age;
 	
 	@Column(precision = 10,scale = 2)
+	@Coldefine(comment="价格",defaultValue="0.0")
 	private Double price;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
 	//@CreationTimestamp
 	//@UpdateTimestamp
+	@Coldefine(comment="创建时间")
 	private Date createDate;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(length=10)
+	@Coldefine(comment="创建时间",defaultValue="Man")
 	private Sex sex;
 	
 	

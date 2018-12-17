@@ -3,7 +3,7 @@ package test.mawujun.jpa.gnerator;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import com.mawujun.generator.GeneratorCodeService;
+import com.mawujun.generator.code.GeneratorCodeService;
 
 import freemarker.template.TemplateException;
 import test.mawujun.model.City;
@@ -14,95 +14,14 @@ import test.mawujun.model.City;
  *
  */
 public class GeneratorCode {
-	static GeneratorCodeService generatorService=new GeneratorCodeService();
+	//static GeneratorCodeService generatorService=new GeneratorCodeService();
 
 	public static void main(String[] args) throws TemplateException, IOException, ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {	
 		//指定模板搜索路径
-		generatorService.setFtldir("classpath:/templates/2.0");
-		generatorService.setOutputdir("d:/webapp-generator-output");//输出文件目录
-
-		generatorService.generator(City.class);
+		GeneratorCodeService.generator("classpath*:/templates/2.0","d:/webapp-generator-output","com.mawujun",City.class);
 
 	}
 	
 
-//	public static void generateAllFile(Class<?> clazz,String dirPath) throws ClassNotFoundException, TemplateException, IOException {
-//		generateAllFile( clazz, dirPath);
-//	}
-//	/**
-//	 * 生成�?有FtlFile配置了的文件,
-//	 * 不建议生成放在正式开发的地方，因为会覆盖源文件，万一覆盖了修改过的，就悲剧了
-//	 * @author mawujun email:160649888@163.com qq:16064988
-//	 * @throws IOException 
-//	 * @throws TemplateException 
-//	 * @throws ClassNotFoundException 
-//	 */
-//	public static void generateAllFile(Class<?> clazz) throws ClassNotFoundException, TemplateException, IOException {
-//		String classpathftldir=PropertiesUtils.load("generator.properties").getProperty("classpathftldir");
-//		String output=PropertiesUtils.load("generator.properties").getProperty("output");
-//
-//		FtlFile[] allFtlFile = FtlFile.values();
-//		for (FtlFile ftlFile : allFtlFile) {	
-//			generatorService.generatorFile(clazz,ftlFile.toString(),output);	
-//		}
-//		//打开文件�?
-//		Runtime.getRuntime().exec("cmd.exe /c start "+output);
-//	}
-	
-//	public static void generateAllFile(Class<?> clazz,String dirPath,ExtenConfig cofig) throws ClassNotFoundException, TemplateException, IOException {
-//	if(cofig==null){
-//		cofig=new ExtenConfig();
-//	}
-//	String fileName=generatorService.generatorFileName(clazz,FtlFile.Repository.toString());		
-//	generatorService.generatorFile(Menu.class,FtlFile.Repository.toString(),dirPath+fileName,cofig);	
-//	
-//	fileName=generatorService.generatorFileName(clazz,FtlFile.Repository.toString());		
-//	generatorService.generatorFile(Menu.class,FtlFile.Repository.toString(),dirPath+fileName,cofig);	
-//	
-//	
-//	Runtime.getRuntime().exec("cmd.exe /c start "+dirPath);
-//}
-	
-//	private static void fileDemo() throws ClassNotFoundException, TemplateException, IOException{	
-//		generatorService.generatorFile(Menu.class,FtlFile.Repository.toString(),"D:/",null);	
-//	}
-//	
-//	private static void strDemo() throws TemplateException, IOException{
-//		String str=generatorService.generatorToString(Menu.class,FtlFile.Repository.toString(),null);	
-//		System.out.println(str);
-//	}
-	
-//	public enum FtlFile {
-//		Repository("${simpleClassName}Repository.java.ftl"),
-//		Service("${simpleClassName}Service.java.ftl"),
-//		Controller("${simpleClassName}Controller.java.ftl"),
-//		MybatisXml("${simpleClassName}Repository.xml.ftl"),
-//		//js的领域模�?
-//		JsModel("${simpleClassName}.js.ftl"),
-//		JsApp("${simpleClassName}App.js.ftl"),
-//		JspApp("${simpleClassName}App.jsp.ftl"),
-//		JsTree("${simpleClassName}Tree.js.ftl"),
-//		JsTreeQuery("${simpleClassName}TreeQuery.js.ftl"),
-//		JsForm("${simpleClassName}Form.js.ftl"),
-//		JsGrid("${simpleClassName}Grid.js.ftl"),
-//		JsGridQuery("${simpleClassName}GridQuery.js.ftl");
-//		
-//		private String fileName;
-//		FtlFile(String fileName){
-//			this.fileName=fileName;
-//		}
-//		
-//		public String toString(){
-//			return this.fileName;
-//		}
-//		
-//	}
-
-//	public static void init(){
-//		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("com/mawujun/generator/generatorContext.xml");  
-//		generatorService=context.getBean(GeneratorService.class);
-//		
-//		//context.close();  
-//	}
 
 }
