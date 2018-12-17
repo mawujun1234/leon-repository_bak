@@ -26,7 +26,6 @@ public class JpaMybatisApp  implements CommandLineRunner {
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(JpaMybatisApp.class)
 	    .web(WebApplicationType.NONE)
 	    .run(args);
-		
 //		//JdbcTemplate jdbctemplate=context.getBean(JdbcTemplate.class;)
 //		DataSource dataSource=context.getBean(DataSource.class);
 //		System.out.println(dataSource.getConnection());
