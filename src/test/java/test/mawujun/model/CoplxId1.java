@@ -16,8 +16,8 @@ public class CoplxId1 implements Serializable {
 	private String id1;
 	@Coldefine(comment="id2注释")
 	private String id2;
-	@Coldefine(comment="idAaaaa注释")
-	private String idAaaaa;//测试id的驼峰变下划线后，能不能取得注释
+//	@Coldefine(comment="idAaaaa注释")
+//	private String idAaaaa;//测试id的驼峰变下划线后，能不能取得注释
 	public String getId1() {
 		return id1;
 	}

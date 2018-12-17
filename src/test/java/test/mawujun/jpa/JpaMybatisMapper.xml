@@ -2,9 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="test.mawujun.jpa.JpaMybatisMapper">
-	<select id="listPageByMybatis" resultType="city" >
-        select * from t_city
-        <where>
+<sql id="BaseColumns">
+		id as id,name as name,age as age,price as price,create_date as createDate,sex as sex
+	</sql>
+	<sql id="WhereColumns">
+		<where>
 			<if test="id != null">
 				id = #{id}
 			</if>
@@ -24,6 +26,11 @@
 				and sex= #{sex}
 			</if>
 		</where>
+	</sql>
+	
+	<select id="listPageByMybatis" resultType="city" >
+        select * from t_city
+        <include refid="WhereColumns" />
 		order by id
     </select>
     
@@ -33,6 +40,26 @@
     <select id="listPageByMybatis1_count" resultType="long" >
     	select count(id) from t_city
     </select>
+    
+	
+    <select id="getById__" resultType="city" >
+        select
+		<include refid = "BaseColumns" />
+		from t_city where id = #{id}
+    </select>
+    <select id="getMapById__" resultType="beanmap">
+       select
+		<include refid = "BaseColumns" />
+		from t_city where id = #{id}
+    </select>
+    
+    <select id="listByParams__" resultType="city" >
+        select
+		<include refid="BaseColumns" />
+		from t_city
+		<include refid="WhereColumns" />
+    </select>
+
 </mapper>
 
  

@@ -148,12 +148,12 @@
 
 	</dependencies>
 	<build>
-		<plugins>
+		<!--<plugins>
 			<plugin>
 				<groupId>com.mawujun</groupId>
 				<artifactId>gen-maven-plugin</artifactId>
 				<version>1.0</version>
-				<!-- <executions>
+				 <executions>
 					<execution>
 						<phase>compile</phase>
 						<goals>
@@ -161,8 +161,8 @@
 						</goals>
 					</execution>					 
 				</executions>
-				 -->
+				 
 			</plugin>
-		</plugins>
+		</plugins>-->
 	</build>
 </project>

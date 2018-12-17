@@ -1229,6 +1229,25 @@ public class JpaMybatisTest {
 		Assert.assertEquals(now.getTime(), city4.getCreateDate().getTime());
 	}
 	
+	@Test
+	public void test9_updateBatch() {
+		City city=jpaMybatisMapper.getById(id);
+		Assert.assertNotNull(city);
+		BeanMap bm=jpaMybatisMapper.getMapById__(id);
+		Assert.assertNotNull(city);
+		Assert.assertEquals("宁波", bm.get("name"));
+		Assert.assertEquals("宁波", bm.get("Name"));
+		Assert.assertEquals("宁波", bm.get("NAME"));
+		
+		
+		List<City> list=jpaMybatisMapper.listByParams__(Params.of("name", "宁波"));
+		Assert.assertEquals(1, list.size());
+		City param=new City();
+		param.setName("宁波");
+		list=jpaMybatisMapper.listByParams__(param);
+		Assert.assertEquals(1, list.size());
+	}
+	
 	
 	
 	
