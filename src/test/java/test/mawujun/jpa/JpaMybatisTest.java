@@ -371,7 +371,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(0, pageinfo_result.getRootSize());
 		
 		//mybatis中的分页测试
-		pageInfo=PageInfo.of_1(0, 10).eq("name", "宁波");
+		pageInfo=PageInfo.of_1(0, 10).eq("name", "宁波").eq("age", 50);
 		pageinfo_result=jpaMybatisMapper.listPageByMybatis(pageInfo);
 		Assert.assertEquals(pageInfo, pageinfo_result);
 		Assert.assertEquals(1, pageinfo_result.getTotal());

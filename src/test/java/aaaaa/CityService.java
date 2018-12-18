@@ -17,7 +17,7 @@ import test.mawujun.model.City;
 @Service
 @Transactional(propagation=Propagation.REQUIRED)
 @Slf4j
-public class CityService  extends BaseService<CityRepository, City>{
+public class CityService  extends BaseService<CityRepository, City> implements ICityService{
 
 
 }
