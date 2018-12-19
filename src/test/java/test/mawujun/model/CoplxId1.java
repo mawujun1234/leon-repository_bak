@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import com.mawujun.generator.code.Coldefine;
+import com.mawujun.generator.code.ColDefine;
 
 /**
 * @author mawujun 16064988
@@ -12,9 +12,9 @@ import com.mawujun.generator.code.Coldefine;
 */
 @Embeddable
 public class CoplxId1 implements Serializable {
-	@Coldefine(comment="id1注释")
+	@ColDefine(comment="id1注释")
 	private String id1;
-	@Coldefine(comment="id2注释")
+	@ColDefine(comment="id2注释")
 	private String id2;
 //	@Coldefine(comment="idAaaaa注释")
 //	private String idAaaaa;//测试id的驼峰变下划线后，能不能取得注释

@@ -51,6 +51,7 @@ public static final class t_city {
 	* 
 	*/
 public static final class t_coplxid1entity {
+	
 	 /**
 	 *  这个是表的名称
 	 */
@@ -95,6 +96,7 @@ public static final class t_coplxid1entity {
 	* 
 	*/
 	public static final String name="name";
+
 }
 	/**
 	* 对应的类名是：test.mawujun.model.CoplxId2Entity 

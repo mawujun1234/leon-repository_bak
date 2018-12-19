@@ -3,21 +3,20 @@ package test.mawujun.model;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ForeignKey;
-import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.mawujun.generator.code.Coldefine;
+import com.mawujun.generator.code.ColDefine;
 import com.mawujun.generator.code.FK;
+import com.mawujun.generator.code.TableDefine;
 import com.mawujun.repository.identity.UUIDEntityValidate;
 
 import lombok.Data;
@@ -41,8 +40,9 @@ import test.mawujun.jpa.utils.T;
  */
 @Alias("city")
 @Entity
-@Table(name="t_city")
-@org.hibernate.annotations.Table(comment="表注释", appliesTo = "t_city") 
+@Table(name="t_city")//,uniqueConstraints= {@UniqueConstraint(columnNames= {T.t_city.age})}
+@TableDefine(comment="表注释",fks= {@FK(columnNames= {T.t_city.name},refTable= T.t_coplxid1entity.tablename__,refColumnNames= {T.t_coplxid1entity.id1})})
+//@org.hibernate.annotations.Table(comment="表注释", appliesTo = "t_city") 
 @Data
 public class City extends UUIDEntityValidate{
 	
@@ -51,27 +51,26 @@ public class City extends UUIDEntityValidate{
 	 */
 	private static final long serialVersionUID = 3172844311839975513L;
 	@Column(length=30)
-	@Coldefine(comment="名称",defaultValue="")
+	@ColDefine(comment="名称",defaultValue="")
 	private String name;
 	
-	@FK(table=T.t_city.tablename__)
-	@Coldefine(comment="年龄",defaultValue="18")
+	@ColDefine(comment="年龄",defaultValue="18")
 	private Integer age;
 	
 	@Column(precision = 10,scale = 2)
-	@Coldefine(comment="价格",defaultValue="0.0")
+	@ColDefine(comment="价格",defaultValue="0.0")
 	private Double price;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
 	//@CreationTimestamp
 	//@UpdateTimestamp
-	@Coldefine(comment="创建时间")
+	@ColDefine(comment="创建时间")
 	private Date createDate;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(length=10)
-	@Coldefine(comment="创建时间",defaultValue="Man")
+	@ColDefine(comment="创建时间",defaultValue="Man")
 	private Sex sex;
 	
 	

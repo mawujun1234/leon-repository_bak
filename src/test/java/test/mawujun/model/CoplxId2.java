@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import com.mawujun.generator.code.Coldefine;
+import com.mawujun.generator.code.ColDefine;
 
 /**
 * @author mawujun 16064988
@@ -13,7 +13,7 @@ import com.mawujun.generator.code.Coldefine;
 public class CoplxId2 implements Serializable {
 	
 	private String id1;
-	@Coldefine(comment="id1注释0000")
+	@ColDefine(comment="id1注释0000")
 	private String id2;
 	
 	public String getId1() {

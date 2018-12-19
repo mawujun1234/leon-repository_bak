@@ -18,9 +18,8 @@
     create table t_coplxid1entity (
        id1 varchar(255) not null comment 'id1注释',
         id2 varchar(255) not null comment 'id2注释',
-        id_aaaaa varchar(255) not null comment 'id2注释',
         name varchar(255),
-        primary key (id1, id2, id_aaaaa)
+        primary key (id1, id2)
     ) engine=InnoDB;
 
     create table t_coplxid2entity (
