@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
-import com.mawujun.generator.code.ColDefine;
+import com.mawujun.generator.annotation.ColDefine;
 
 import lombok.Data;
 

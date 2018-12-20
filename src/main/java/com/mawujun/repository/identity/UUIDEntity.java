@@ -10,7 +10,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.mawujun.generator.code.ColDefine;
+import com.mawujun.generator.annotation.ColDefine;
 
 /**
  * 统一定义id的entity基类.是使用UUID作为生成策略

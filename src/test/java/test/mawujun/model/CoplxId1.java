@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import com.mawujun.generator.code.ColDefine;
+import com.mawujun.generator.annotation.ColDefine;
 
 /**
 * @author mawujun 16064988

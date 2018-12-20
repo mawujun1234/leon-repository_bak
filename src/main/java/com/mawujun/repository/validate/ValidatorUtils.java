@@ -11,7 +11,7 @@ import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import com.mawujun.utils.StringUtils;
+import com.mawujun.utils.string.StringUtils;
 
 public class ValidatorUtils {
 	 //private final Log logger = LogFactory.getLog(getClass());

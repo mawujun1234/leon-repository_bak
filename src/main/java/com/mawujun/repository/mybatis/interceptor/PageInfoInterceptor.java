@@ -24,7 +24,7 @@ import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.Dialect;
 import com.mawujun.repository.utils.PageInfo;
-import com.mawujun.utils.StringUtils;
+import com.mawujun.utils.string.StringUtils;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Intercepts(

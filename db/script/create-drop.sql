@@ -1,4 +1,8 @@
 
+    alter table t_city 
+       drop 
+       foreign key fk_z3zr4xwr;
+
     drop table if exists t_city;
 
     drop table if exists t_coplxid1entity;
@@ -28,3 +32,8 @@
         name varchar(255),
         primary key (id1, id2)
     ) engine=InnoDB;
+
+    alter table t_city 
+       add constraint fk_z3zr4xwr 
+       foreign key (name, sex) 
+       references t_coplxid1entity (id1, id2);
