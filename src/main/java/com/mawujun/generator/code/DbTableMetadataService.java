@@ -316,13 +316,7 @@ public class DbTableMetadataService {
                 	field.setIsId(true);
                 	
                 	tableInfo.addIdColumn(field.getColumn());
-                    if (dbQuery.isKeyIdentity(results)) {
-                    	field.setIdGenEnum(IDGenEnum.identity);
-                    	tableInfo.setIdGenEnum(IDGenEnum.identity);
-                    } else {
-                    	field.setIdGenEnum(IDGenEnum.none);
-                    	tableInfo.setIdGenEnum(IDGenEnum.none);
-                    }
+                    
                     ids.add(field);
                 } else {
                     field.setIsId(false);
@@ -334,11 +328,19 @@ public class DbTableMetadataService {
                     }
                 }
                 //如果大于1，就设置为复核主键
-                if(ids.size()>=1) {
+                if(ids.size()>1) {
                 	for(PropertyColumn id:ids) {
                 		id.setIsCompositeId(true);
                 	}
                 	tableInfo.setIsCompositeId(true);
+                } else {
+                	if (dbQuery.isKeyIdentity(results)) {
+                    	field.setIdGenEnum(IDGenEnum.identity);
+                    	tableInfo.setIdGenEnum(IDGenEnum.identity);
+                    } else {
+                    	field.setIdGenEnum(IDGenEnum.none);
+                    	tableInfo.setIdGenEnum(IDGenEnum.none);
+                    }
                 }
                 
                 
