@@ -2,13 +2,9 @@ package com.mawujun.repository.mybatis.dialect;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Clob;
 import java.sql.Date;
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +18,7 @@ import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.generator.db.DbColumn;
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
 import com.mawujun.repository.utils.PageInfo;
 import com.mawujun.utils.string.StringUtils;
@@ -137,44 +134,44 @@ public abstract class AbstractDialect implements Dialect {
 		// TODO Auto-generated constructor stub
 		//this.columtypes.put(Boolean.class.getName(), "bit"); sql server
 		//this.columtypes.put(Boolean.class.getName(), "boolean");
-		this.columtypes.put(Boolean.class.getName(), "tinyint");
-		this.columtypes.put(Boolean.class.getName()+"_yn", "char(1)");
-		this.columtypes.put(Boolean.class.getName()+"_tf", "char(1)");
-		
-		this.columtypes.put(Byte.class.getName(), "tinyint");
-		this.columtypes.put(Short.class.getName(), "smallint");
-		this.columtypes.put(Integer.class.getName(), "integer");
-		this.columtypes.put(Long.class.getName(), "bigint");
-		
-		this.columtypes.put(Float.class.getName(), "float");
-		this.columtypes.put(Double.class.getName(), "double");
-		this.columtypes.put(BigDecimal.class.getName(), "numeric");
-		this.columtypes.put(BigInteger.class.getName(), "numeric");
-		
-		//this.columtypes.put(7, "real");
-		this.columtypes.put(Date.class.getName(), "date");
-		this.columtypes.put(Date.class.getName()+"_time", "time");
-		this.columtypes.put(Date.class.getName()+"_timestamp", "time");
-		this.columtypes.put(java.sql.Date.class.getName(), "date");
-		this.columtypes.put(Time.class.getName(), "time");
-		this.columtypes.put(Timestamp.class.getName(), "timestamp");
-		this.columtypes.put(Calendar.class.getName(), "timestamp");
-		this.columtypes.put(Calendar.class.getName()+"_date", "date");
-		
-		//this.columtypes.put(-3, "bit varying($l)");
-		//this.columtypes.put(-4, "bit varying($l)");
-		
-		this.columtypes.put(Character.class.getName(), "char");
-		this.columtypes.put(String.class.getName(), "varchar");
-		this.columtypes.put(String.class.getName()+"_clob", "clob");
-		this.columtypes.put(Clob.class.getName(), "CLOB");
-		this.columtypes.put("Character[]", "CLOB");
-		this.columtypes.put("char[]", "CLOB");
-		
-		this.columtypes.put("Byte[]", "BLOB");
-		this.columtypes.put("byte[]", "BLOB");	
-		this.columtypes.put(Clob.class.getName(), "BLOB");
-		this.columtypes.put(Serializable.class.getName(), "BLOB");//个属性实现了java.io.Serializable同时也不是基本类型, 并且没有在该属性上使用@Lob注解
+//		this.columtypes.put(Boolean.class.getName(), "tinyint");
+//		this.columtypes.put(Boolean.class.getName()+"_yn", "char(1)");
+//		this.columtypes.put(Boolean.class.getName()+"_tf", "char(1)");
+//		
+//		this.columtypes.put(Byte.class.getName(), "tinyint");
+//		this.columtypes.put(Short.class.getName(), "smallint");
+//		this.columtypes.put(Integer.class.getName(), "integer");
+//		this.columtypes.put(Long.class.getName(), "bigint");
+//		
+//		this.columtypes.put(Float.class.getName(), "float");
+//		this.columtypes.put(Double.class.getName(), "double");
+//		this.columtypes.put(BigDecimal.class.getName(), "numeric");
+//		this.columtypes.put(BigInteger.class.getName(), "numeric");
+//		
+//		//this.columtypes.put(7, "real");
+//		this.columtypes.put(Date.class.getName(), "date");
+//		this.columtypes.put(Date.class.getName()+"_time", "time");
+//		this.columtypes.put(Date.class.getName()+"_timestamp", "time");
+//		this.columtypes.put(java.sql.Date.class.getName(), "date");
+//		this.columtypes.put(Time.class.getName(), "time");
+//		this.columtypes.put(Timestamp.class.getName(), "timestamp");
+//		this.columtypes.put(Calendar.class.getName(), "timestamp");
+//		this.columtypes.put(Calendar.class.getName()+"_date", "date");
+//		
+//		//this.columtypes.put(-3, "bit varying($l)");
+//		//this.columtypes.put(-4, "bit varying($l)");
+//		
+//		this.columtypes.put(Character.class.getName(), "char");
+//		this.columtypes.put(String.class.getName(), "varchar");
+//		this.columtypes.put(String.class.getName()+"_clob", "clob");
+//		this.columtypes.put(Clob.class.getName(), "CLOB");
+//		this.columtypes.put("Character[]", "CLOB");
+//		this.columtypes.put("char[]", "CLOB");
+//		
+//		this.columtypes.put("Byte[]", "BLOB");
+//		this.columtypes.put("byte[]", "BLOB");	
+//		this.columtypes.put(Clob.class.getName(), "BLOB");
+//		this.columtypes.put(Serializable.class.getName(), "BLOB");//个属性实现了java.io.Serializable同时也不是基本类型, 并且没有在该属性上使用@Lob注解
 		
 		
 //		this.columtypes.put(2004, "blob");
@@ -299,6 +296,8 @@ public abstract class AbstractDialect implements Dialect {
 
 	public abstract Object processPageParameter1(MappedStatement ms, Map<String, Object> paramMap, RowBounds rowBounds, BoundSql boundSql, CacheKey pageKey);
 
+
+	
 
 
 }

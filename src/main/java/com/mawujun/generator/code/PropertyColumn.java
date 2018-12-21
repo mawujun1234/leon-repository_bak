@@ -10,9 +10,9 @@ public class PropertyColumn {
 	private String comment;//注释
 	private String defaultValue;//默认值
 	
-	private int length=255;//列的长度
-	private int precision=0;
-	private int scale=0;
+	private Integer length=255;//列的长度
+	private Integer precision=null;
+	private Integer scale=null;
 	
 	private boolean unique=false;
 	private boolean nullable=true;
@@ -171,32 +171,32 @@ public class PropertyColumn {
 	}
 
 
-	public int getLength() {
+	public Integer getLength() {
 		return length;
 	}
 
 
-	public void setLength(int length) {
+	public void setLength(Integer length) {
 		this.length = length;
 	}
 
 
-	public int getPrecision() {
+	public Integer getPrecision() {
 		return precision;
 	}
 
 
-	public void setPrecision(int precision) {
+	public void setPrecision(Integer precision) {
 		this.precision = precision;
 	}
 
 
-	public int getScale() {
+	public Integer getScale() {
 		return scale;
 	}
 
 
-	public void setScale(int scale) {
+	public void setScale(Integer scale) {
 		this.scale = scale;
 	}
 

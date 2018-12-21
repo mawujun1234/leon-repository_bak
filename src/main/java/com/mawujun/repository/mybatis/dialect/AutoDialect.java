@@ -265,18 +265,12 @@ public class AutoDialect {
 			conn = dataSource.getConnection();
 			//String dialect_name=getDialect_name(conn);
 			DBAlias dbAlias=DialectUtils.getDialect_name(conn);
-			AbstractDialect dialect = (AbstractDialect) dbAlias.getDialectClass().newInstance();//initDialect(dialect_name, properties);
+			AbstractDialect dialect = dbAlias.getDialect();//(AbstractDialect) dbAlias.getDialectClass().newInstance();//initDialect(dialect_name, properties);
 			return dialect;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
     	return null;
     	
 //        //改为对dataSource做缓存
@@ -310,16 +304,8 @@ public class AutoDialect {
     	DBAlias dbAlias= DialectUtils.getDialect_name(conn);
     	
     	AbstractDialect dialect=null;
-		try {
-			dialect = (AbstractDialect) dbAlias.getDialectClass().newInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}//initDialect(dialectStr, properties);
-        
+		dialect =dbAlias.getDialect();;// (AbstractDialect) dbAlias.getDialectClass().newInstance();
+		
         return dialect;
     }
 

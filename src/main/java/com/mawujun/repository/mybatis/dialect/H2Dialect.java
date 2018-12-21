@@ -11,6 +11,7 @@ import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.generator.db.DbColumn;
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
 import com.mawujun.utils.DateUtils;
 
@@ -97,6 +98,12 @@ public class H2Dialect extends AbstractDialect {
 	@Override
 	public void addDateFormatStr(String java_pattern, String db_pattern) {
 		//不需要做任何事情，因为h2的日期格式化和java是一样的
+	}
+
+	@Override
+	public DbColumn columnTypeToProertyType(String columnType) {
+		// TODO Auto-generated method stub
+		return null;
 	}
     
 //    public boolean bindLimitParametersInReverseOrder() {

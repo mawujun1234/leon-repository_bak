@@ -41,6 +41,7 @@ public class GeneratorCodeService {
 	private static final Logger logger = LoggerFactory.getLogger(GeneratorCodeService.class);
 
 	private static JavaEntityMetadataService javaEntityMetaDataService = new JavaEntityMetadataService();
+	private static DbTableMetadataService dbTableMetadataService = new DbTableMetadataService();
 	private static Configuration cfg = null;
 	static List<FtlFileInfo> ftl_file_manes = new ArrayList<FtlFileInfo>();// ftl文件的名称
 
@@ -58,19 +59,67 @@ public class GeneratorCodeService {
 	private static String ftldir;// 再classpath路径下的ftl文件
 	private static String ftlpath;// ftldir去掉classpath等内容后的地址
 	private static String outputdir;// 输出的目录
-
-	/**
-	 * 记得在generator.properties中配置对应的参数:
-	 * code.ftldir,code.outputdir,code.basepackage
-	 */
-	public static void generator(Class... clazzs) {
+	
+	private static void initProperty() {
 		PropertiesUtils utils=PropertiesUtils.load("generator.properties");
 		ftldir = utils.getProperty("code.ftldir");
 		outputdir = utils.getProperty("code.outputdir");
 		basepackage = utils.getProperty("code.basepackage");
 		Assert.notNull(outputdir,"generator.properties中code.outputdir不能为null");
 		Assert.notNull(basepackage,"generator.properties中code.basepackage不能为null");
+		
+	}
 
+	/**
+	 * 通过表名来生成代码
+	 * @param tables
+	 */
+	public static void generator_(String... tables) {
+		initProperty();
+		generator(ftldir,outputdir,basepackage,tables);
+	}
+	
+	/**
+	 * 通过表名来生成代码
+	 * @param ftldir 可以设置为null
+	 * @param outputdir
+	 * @param basepackage
+	 * @param tablenames
+	 */
+	public static void generator(String ftldir,String outputdir,String basepackage,String... tablenames) {
+		Assert.notNull(outputdir,"outputdir不能为null");
+		Assert.notNull(basepackage,"basepackage不能为null");
+		
+		GeneratorCodeService.ftldir = ftldir;//utils.getProperty("code.ftldir");
+		GeneratorCodeService.outputdir = outputdir;//utils.getProperty("code.outputdir");
+		GeneratorCodeService.basepackage = basepackage;//utils.getProperty("code.basepackage");
+		
+		if(ftldir==null) {
+			GeneratorCodeService.ftldir="classpath*:/template/2.0";
+		}
+		try {
+			initConfiguration();
+			
+			FileUtils.createDir(outputdir);
+
+			List<EntityTable> root = dbTableMetadataService.getTablesInfo(tablenames);
+			for (EntityTable et : root) {
+				for (FtlFileInfo ftlFile : ftl_file_manes) {
+					generatorFile(et, ftlFile, outputdir);
+				}
+			}
+			// 打开文件夹
+			Runtime.getRuntime().exec("cmd.exe /c start " + outputdir);
+		} catch (Exception e) {
+			logger.error("生成代码失败!", e);
+		}
+	}
+	/**
+	 * 记得在generator.properties中配置对应的参数:
+	 * code.ftldir,code.outputdir,code.basepackage
+	 */
+	public static void generator(Class... clazzs) {
+		initProperty();
 		generator(ftldir,outputdir,basepackage,clazzs);
 		
 	}
@@ -103,7 +152,7 @@ public class GeneratorCodeService {
 				EntityTable root = javaEntityMetaDataService.initClassProperty(cls);
 
 				for (FtlFileInfo ftlFile : ftl_file_manes) {
-					generatorFile(cls, ftlFile, outputdir);
+					generatorFile(root, ftlFile, outputdir);
 				}
 			}
 			// 打开文件夹
@@ -235,81 +284,7 @@ public class GeneratorCodeService {
 
 	}
 
-//	/**
-//	 * 
-//	 * @param clazz 要
-//	 * @param ftl 模板文件在的地方
-//	 * @throws ClassNotFoundException 
-//	 * @throws TemplateException
-//	 * @throws IOException
-//	 */
-//	public  String generatorToString(String className,String ftl,Object extenConfig) throws ClassNotFoundException, TemplateException, IOException  {
-//		Class clazz=Class.forName(className);
-//		return generatorToString(clazz, ftl,extenConfig);
-//	}
-//	/**
-//	 * jsPackagel，默认是class的Leon.uncapitalize(simpleClassName)
-//	 * @author mawujun email:16064988@163.com qq:16064988
-//	 * @param clazz
-//	 * @param ftl
-//	 * @param 
-//	 * @return
-//	 * @throws TemplateException
-//	 * @throws IOException
-//	 */
-//	public  String generatorToString(Class clazz,String ftl,Object extenConfig) throws TemplateException, IOException {
-//		if(!StringUtils.hasLength(ftl)) {
-//			throw new NullArgumentException("模板文件名称不能为null");
-//		}
-//
-//		//String basePath=System.getProperty("user.dir")+"\\autoCoder\\templates\\";
-//		initConfiguration();
-//
-//		/* 在整个应用的生命周期中，这个工作你可以执行多次 */
-//		/* 获取或创建模板 */
-//		Template templete = cfg.getTemplate(ftl,"UTF-8");
-//		//templete.setEncoding("UTF-8");
-//		//templete.setOutputEncoding("UTF-8");
-//		/* 创建数据模型 */
-//		SubjectRoot root =javaEntityMetaDataService.prepareDate(clazz);
-//		if(extenConfig!=null){
-//			root.setExtenConfig(extenConfig);
-//		}
-//		
-//		
-//		
-//		/* 将模板和数据模型合并 */
-//		//Writer out = new OutputStreamWriter(System.out);
-//		Writer out = new StringWriter();
-//
-//		templete.process(root, out);
-//		out.flush();
-//		return out.toString();
-//	}
-//	private String getJsPackage(Class clazz){
-//		return "Leon."+StringUtils.uncapitalize(clazz.getSimpleName());
-//	}
 
-//	
-//	/**
-//	 * 
-//	 * @author mawujun 16064988@qq.com 
-//	 * @param className 领域类
-//	 * @param ftl 模板文件
-//	 * @param extenConfig 扩展的属性
-//	 * @param writer 要输出的对象，可以使控制面板，文件
-//	 * @throws ClassNotFoundException
-//	 * @throws TemplateException
-//	 * @throws IOException
-//	 */
-//	public  void generator(String className,String ftl,Writer writer) throws ClassNotFoundException, TemplateException, IOException  {
-//		Class clazz=Class.forName(className);
-//		generator(clazz,ftl, writer);
-//	}
-
-//	public  void generator(String className,String ftl,Map extenConfig,Writer writer) throws ClassNotFoundException, TemplateException, IOException  {
-//		
-//	}
 	/**
 	 * 根据字符串产生名称
 	 * 
@@ -320,10 +295,10 @@ public class GeneratorCodeService {
 	 * @throws TemplateException
 	 * @throws IOException
 	 */
-	private static String generatorFileName(Class clazz, String ftl)
+	private static String generatorFileName(EntityTable root, String ftl)
 			throws ClassNotFoundException, TemplateException, IOException {
 
-		EntityTable root = javaEntityMetaDataService.getClassProperty(clazz);
+		//EntityTable root = javaEntityMetaDataService.getClassProperty(clazz);
 		if (basepackage != null) {
 			root.setBasepackage(basepackage);
 		}
@@ -338,10 +313,7 @@ public class GeneratorCodeService {
 		fileName = fileName.substring(0, fileName.lastIndexOf('.'));
 		return fileName;
 	}
-//	public  String generatorFileName(String className,String ftl) throws ClassNotFoundException, TemplateException, IOException  {
-//		Class clazz=Class.forName(className);
-//		return generatorFileName(clazz,ftl);
-//	}
+
 
 	/**
 	 * 
@@ -359,17 +331,17 @@ public class GeneratorCodeService {
 	 * @throws SecurityException
 	 * @throws NoSuchMethodException
 	 */
-	public static void generatorFile(Class clazz, FtlFileInfo ftlfile, String dirPath)
+	public static void generatorFile(EntityTable root, FtlFileInfo ftlfile, String dirPath)
 			throws TemplateException, IOException, ClassNotFoundException, NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		initConfiguration();
 		/* 创建数据模型 */
-		EntityTable root = javaEntityMetaDataService.initClassProperty(clazz);
+		//EntityTable root = javaEntityMetaDataService.initClassProperty(clazz);
 //		if(this.getExtenConfig()!=null){
 //			root.setExtenConfig(this.getExtenConfig());
 //		}
 
-		String fileName = generatorFileName(clazz, ftlfile.getName());
+		String fileName = generatorFileName(root, ftlfile.getName());
 //		//按照模板的目录结构生成
 //		if(ftldir==null) {
 //			ftldir=PropertiesUtils.load("generator.properties").getProperty("ftldir");
@@ -411,7 +383,7 @@ public class GeneratorCodeService {
 			file.createNewFile();
 		}
 		FileWriter fileWriter = new FileWriter(filePath);
-		generator(clazz, ftlfile.getName(), fileWriter);
+		generator(root, ftlfile.getName(), fileWriter);
 	}
 
 	/**
@@ -421,7 +393,7 @@ public class GeneratorCodeService {
 	 * @throws TemplateException
 	 * @throws IOException
 	 */
-	private static void generator(Class clazz, String ftl, Writer writer) throws TemplateException, IOException {
+	private static void generator(EntityTable root, String ftl, Writer writer) throws TemplateException, IOException {
 		if (!StringUtils.hasLength(ftl)) {
 			throw new NullArgumentException("模板文件名称不能为null");
 		}
@@ -434,7 +406,7 @@ public class GeneratorCodeService {
 		// templete.setEncoding("UTF-8");
 		// templete.setOutputEncoding("UTF-8");
 		/* 创建数据模型 */
-		EntityTable root = javaEntityMetaDataService.getClassProperty(clazz);
+		//EntityTable root = javaEntityMetaDataService.getClassProperty(clazz);
 //		if(this.getExtenConfig()!=null){
 //			root.setExtenConfig(this.getExtenConfig());
 //		}

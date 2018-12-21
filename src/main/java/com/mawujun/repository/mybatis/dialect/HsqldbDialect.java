@@ -12,6 +12,7 @@ import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.generator.db.DbColumn;
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
 import com.mawujun.utils.DateUtils;
 
@@ -99,5 +100,11 @@ public class HsqldbDialect extends AbstractDialect{
 		//throw new RuntimeException("暂时不支持hsqldb");
 		// TODO Auto-generated method stub
 		date_pattern_map.put(java_pattern, db_pattern);
+	}
+
+	@Override
+	public DbColumn columnTypeToProertyType(String columnType) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

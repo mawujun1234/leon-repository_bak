@@ -40,6 +40,9 @@ public class JavaEntityMetadataService {
 	
 	//String id_name="id";//默认的id名称
 	
+	private String code_tablePrefix;
+	private String code_columnPrefix;
+	
 	private static Map<String,EntityTable> cache=new HashMap<String,EntityTable>();
 	
 	public JavaEntityMetadataService() {
@@ -51,6 +54,9 @@ public class JavaEntityMetadataService {
 				Class clazz=Class.forName(className);
 				nameStrategy=(NameStrategy) clazz.newInstance();
 			}
+			
+			code_tablePrefix=aa.getProperty("code.tablePrefix");
+			code_columnPrefix=aa.getProperty("code.columnPrefix");
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -102,7 +108,7 @@ public class JavaEntityMetadataService {
 				root.setEntityTableName(tableAnnotation.name());
 			} else {
 				//throw new RuntimeException("@Table注解的表名需要设置");
-				root.setEntityTableName(nameStrategy.classToTableName(clazz.getSimpleName()));
+				root.setEntityTableName(nameStrategy.classToTableName(clazz.getSimpleName(),code_tablePrefix));
 			}
 			
 		} else {
@@ -190,14 +196,14 @@ public class JavaEntityMetadataService {
 				if(StringUtils.hasText(column.name())) {
 					propertyColumn.setColumn(column.name());
 				} else {
-					propertyColumn.setColumn(nameStrategy.propertyToColumnName(propertyColumn.getProperty()));
+					propertyColumn.setColumn(nameStrategy.propertyToColumnName(propertyColumn.getProperty(),code_columnPrefix));
 				}
 				propertyColumn.setLength(column.length());
 				propertyColumn.setScale(column.scale());
 				propertyColumn.setPrecision(column.precision());
 				
 			} else {
-				propertyColumn.setColumn(nameStrategy.propertyToColumnName(propertyColumn.getProperty()));
+				propertyColumn.setColumn(nameStrategy.propertyToColumnName(propertyColumn.getProperty(),code_columnPrefix));
 			}
 			propertyColumn.setClazz(field.getType());
 			
@@ -213,7 +219,7 @@ public class JavaEntityMetadataService {
 				
 				for(int i=0;i<embeddedIdFields.length;i++) {
 					Field field_temp=embeddedIdFields[i];
-					idColumns[i]=nameStrategy.propertyToColumnName(field_temp.getName());
+					idColumns[i]=nameStrategy.propertyToColumnName(field_temp.getName(),code_columnPrefix);
 					idPropertys[i]=field_temp.getName();
 				}
 				

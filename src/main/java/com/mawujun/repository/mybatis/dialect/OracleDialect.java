@@ -8,6 +8,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.generator.db.DbColumn;
 import com.mawujun.utils.DateUtils;
 
 /**
@@ -78,6 +79,12 @@ public class OracleDialect extends AbstractDialect{
 	public void addDateFormatStr(String java_pattern, String db_pattern) {
 		// TODO Auto-generated method stub
 		date_pattern_map.put(java_pattern, db_pattern);
+	}
+
+	@Override
+	public DbColumn columnTypeToProertyType(String columnType) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

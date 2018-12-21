@@ -49,7 +49,45 @@ public enum DBAlias {
 	public Class<? extends IDbQuery> getDbQueryClass() {
 		return dbQueryClass;
 	}
+	
+	public IDbQuery getDbQuery() {
+		Class<? extends IDbQuery> dbQueryClass=this.getDbQueryClass();
+		if(dbQueryClass==null) {
+			throw new RuntimeException("当前数据库不支持反向生成代码");
+		}
+		IDbQuery dbQuery= null;
+		try {
+			dbQuery= dbQueryClass.newInstance();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(dbQuery==null) {
+			throw new RuntimeException("当前数据库不支持反向生成代码");
+		} 
+		return dbQuery;
+		
+	}
 
+	public AbstractDialect getDialect() {
+		Class<? extends Dialect> dbQueryClass=this.getDialectClass();
+
+		AbstractDialect dbQuery= null;
+		try {
+			dbQuery= (AbstractDialect) dbQueryClass.newInstance();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dbQuery;
+		
+	}
 
 
 	

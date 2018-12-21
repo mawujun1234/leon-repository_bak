@@ -5,6 +5,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.generator.db.DbColumn;
 import com.mawujun.repository.utils.PageInfo;
 
 /**
@@ -38,6 +39,9 @@ public interface Dialect {
     public Object processParameterObject(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql, CacheKey pageKey);
 
 	String getPageSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds, CacheKey pageKey);
+	
+	
+	public DbColumn columnTypeToProertyType(String columnType) ;
 	
 //    public boolean supportsLimit(){
 //    	return false;
