@@ -20,7 +20,9 @@ import ${basepackage}.repository.${entitySimpleClassName}Repository;
 
 @Service
 @Transactional(propagation=Propagation.REQUIRED)
+<#if uselombok==true>
 @Slf4j
+</#if>
 public class ${entitySimpleClassName}Service  extends BaseService<${entitySimpleClassName}Repository, ${entitySimpleClassName}> implements I${entitySimpleClassName}Service{
 
 

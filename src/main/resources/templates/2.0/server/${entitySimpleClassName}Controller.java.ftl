@@ -22,6 +22,9 @@ import ${basepackage}.service.${entitySimpleClassName}Service;
 </#if>
 <#include "/java_copyright.include"/>
 
+<#if uselombok==true>
+@Slf4j
+</#if>
 @Controller
 //@RequestMapping("/${simpleClassNameFirstLower}")
 public class ${entitySimpleClassName}Controller {

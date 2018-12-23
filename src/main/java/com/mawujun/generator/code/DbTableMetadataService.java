@@ -34,6 +34,7 @@ public class DbTableMetadataService {
 	private String db_username;
 	private String db_password;
 	private String db_schemaname;
+	private boolean db_uselombok;
 
 	//private String basepackage;
 
@@ -58,6 +59,7 @@ public class DbTableMetadataService {
 			db_username = aa.getProperty("db.username");
 			db_password = aa.getProperty("db.password");
 			db_schemaname = aa.getProperty("db.schemaname");
+			db_uselombok = aa.getBoolean("db.uselombok",true);
 			// code_basepackage=aa.getProperty("code.schemaname");
 
 			String db_tablePrefix = aa.getProperty("db.tablePrefix");
@@ -371,6 +373,19 @@ public class DbTableMetadataService {
 						field.setUnique(true);
 					}
 				}
+				
+
+				field.setProperty(processName(field.getColumn()));
+
+				AbstractDialect dialect = dbQuery.dbType().getDialect();
+				DbColumn dbColumn = dialect.columnTypeToProertyType(results.getString(dbQuery.fieldType()));
+				field.setColumnType(dbColumn.getColumnType());
+				field.setLength(dbColumn.getLength());
+				field.setPrecision(dbColumn.getPrecision());
+				field.setScale(dbColumn.getScale());
+				field.setClazz(dbColumn.getJavaType());
+				
+				
 				// 如果大于1，就设置为复核主键
 				if (ids.size() > 1) {
 					for (PropertyColumn id : ids) {
@@ -383,20 +398,15 @@ public class DbTableMetadataService {
 						field.setIdGenEnum(IDGenEnum.identity);
 						tableInfo.setIdGenEnum(IDGenEnum.identity);
 					} else {
-						field.setIdGenEnum(IDGenEnum.none);
-						tableInfo.setIdGenEnum(IDGenEnum.none);
+						if(field.getClazz().isAssignableFrom(String.class) && field.getLength()>=36) {
+							field.setIdGenEnum(IDGenEnum.uuid);
+							tableInfo.setIdGenEnum(IDGenEnum.uuid);
+						} else {
+							field.setIdGenEnum(IDGenEnum.none);
+							tableInfo.setIdGenEnum(IDGenEnum.none);
+						}
 					}
 				}
-
-				field.setProperty(processName(field.getColumn()));
-
-				AbstractDialect dialect = dbQuery.dbType().getDialect();
-				DbColumn dbColumn = dialect.columnTypeToProertyType(results.getString(dbQuery.fieldType()));
-				field.setColumnType(dbColumn.getColumnType());
-				field.setLength(dbColumn.getLength());
-				field.setPrecision(dbColumn.getPrecision());
-				field.setScale(dbColumn.getScale());
-				field.setClazz(dbColumn.getJavaType());
 				
 
 //                // 自定义字段查询

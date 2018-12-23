@@ -36,6 +36,8 @@ public class EntityTable {
 	private String[] idColumns;
 	private String[] idPropertys;
 	private String idSequenceName;//序列化的时候的名字,如oralce、DB、SAP DB、PostgerSQL、McKoi中的sequence。MySQL这种不支持sequence的数据库则不行（可以使用identity）。
+	
+	private boolean uselombok;
 
 	List<PropertyColumn> propertyColumns=new ArrayList<PropertyColumn>();
 	Map<String,PropertyColumn> propertyColumns_map=new HashMap<String,PropertyColumn>();
@@ -277,6 +279,12 @@ public class EntityTable {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+	public boolean isUselombok() {
+		return uselombok;
+	}
+	public void setUselombok(boolean uselombok) {
+		this.uselombok = uselombok;
 	}
 
 

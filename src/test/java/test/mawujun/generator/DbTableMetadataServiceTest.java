@@ -9,6 +9,9 @@ import com.mawujun.generator.code.EntityTable;
 import com.mawujun.generator.code.PropertyColumn;
 
 public class DbTableMetadataServiceTest {
+	//加载建表sql，
+	//再指定位置生成java代码
+	//测试各种功能，看看能不能完成测试
 	@Test
 	public void test() {
 		DbTableMetadataService service=new DbTableMetadataService();

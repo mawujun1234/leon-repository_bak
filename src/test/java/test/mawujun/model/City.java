@@ -72,6 +72,8 @@ public class City extends UUIDEntityValidate{
 	@Column(length=10)
 	@ColDefine(comment="性别",defaultValue="Man")
 	private Sex sex;
+
+
 	
 	
 }
