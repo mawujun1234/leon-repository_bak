@@ -167,7 +167,7 @@ public class MySqlDialect extends AbstractDialect {
         	dbColumn.setJavaType(BigDecimal.class);//使用java.sql.Date类型
         	int index=t.indexOf('(');
         	String[] aaa=t.substring(index+1,t.length()-1).split(",");
-        	dbColumn.setLength(Integer.parseInt(aaa[0]));
+        	dbColumn.setPrecision(Integer.parseInt(aaa[0]));
         	dbColumn.setScale(Integer.parseInt(aaa[1]));
             //return DbColumnType.BIG_DECIMAL;
         } else if (t.contains("clob")) {
@@ -191,7 +191,7 @@ public class MySqlDialect extends AbstractDialect {
         	int index=t.indexOf('(');
         	if(index!=-1) {
         		String[] aaa=t.substring(index+1,t.length()-1).split(",");
-            	dbColumn.setLength(Integer.parseInt(aaa[0]));
+            	dbColumn.setPrecision(Integer.parseInt(aaa[0]));
             	dbColumn.setScale(Integer.parseInt(aaa[1]));
         	}
         } else if (t.contains("double")) {
@@ -200,7 +200,7 @@ public class MySqlDialect extends AbstractDialect {
         	int index=t.indexOf('(');
         	if(index!=-1) {
         		String[] aaa=t.substring(index+1,t.length()-1).split(",");
-            	dbColumn.setLength(Integer.parseInt(aaa[0]));
+            	dbColumn.setPrecision(Integer.parseInt(aaa[0]));
             	dbColumn.setScale(Integer.parseInt(aaa[1]));
         	}
         } else if (t.contains("json") || t.contains("enum")) {

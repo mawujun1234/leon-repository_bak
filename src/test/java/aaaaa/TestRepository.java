@@ -5,14 +5,14 @@ import org.springframework.stereotype.Repository;
 import com.mawujun.repository.mybatis.IRepository;
 import org.apache.ibatis.annotations.Mapper;
 
-import test.mawujun.model.City;
+import com.mawujun.model.Test;
 /**
  * @author mawujun qq:16064988 e-mail:16064988@qq.com 
  * @version 1.0
  * @since 1.0
  */
 @Mapper
-public interface CityRepository extends IRepository<City>{
+public interface TestRepository extends IRepository<Test>{
 	/**
 	 * 这些注释掉的都是demo，可以拷贝出来用，并且如果不自定义方法，是不需要编写或拷贝xxxMapper.xml文件的。
 	 */

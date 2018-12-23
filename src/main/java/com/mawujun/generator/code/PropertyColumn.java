@@ -1,5 +1,12 @@
 package com.mawujun.generator.code;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.mawujun.utils.string.StringUtils;
+
 public class PropertyColumn {
 	private String column;//列名
 	private String columnType;//列的类型 如varcahr(20),主要用在逆向生成的时候
@@ -10,8 +17,8 @@ public class PropertyColumn {
 	private String comment;//注释
 	private String defaultValue;//默认值
 	
-	private Integer length=255;//列的长度
-	private Integer precision=null;
+	private Integer length=255;//列的长度,只有当类型为varchar等的时候才有用
+	private Integer precision=null;//当为数字的时候有用
 	private Integer scale=null;
 	
 	private boolean unique=false;
@@ -48,42 +55,54 @@ public class PropertyColumn {
 	
 	//List<PropertyColumn> propertyColumns=new ArrayList<PropertyColumn>();
 	
-//	//前段展示的时候的标签名字
-//	private String label;
-//	//展现方式，是下拉框，数字矿还是文本框
-//	private String showModel;
+	/**
+	 * 获取@Column注解需要的属性值
+	 * @return
+	 */
+	public String getColumnAnnotation() {
+		//List<Map<String,Object>> list=new ArrayList<Map<String,Object>>();
+		StringBuilder builder=new StringBuilder();
+		if(length!=null) {
+			builder.append(",length="+length);
+		}
+		if(precision!=null) {
+			builder.append(",precision="+precision);
+		}
+		if(scale!=null) {
+			builder.append(",scale="+scale);
+		}
+		if(unique==true) {
+			builder.append(",unique="+unique);
+		}
+		if(nullable=false) {
+			builder.append(",nullable="+nullable);
+		}
+		
+		//builder.insert(0, );
+		if(builder.length()>0) {
+			return "@Column("+builder.substring(1)+")";
+		} else {
+			return null;
+		}
+	}
 	
-//	private static Map<Class,String> jsJavaMapper=new HashMap<Class,String>();
-//	static {
-//		jsJavaMapper.put(String.class, "string");
-//		jsJavaMapper.put(Charset.class, "string");
-//		jsJavaMapper.put(char.class, "string");
-//		
-//		jsJavaMapper.put(boolean.class, "bool");
-//		jsJavaMapper.put(Boolean.class, "bool");
-//		
-//		jsJavaMapper.put(byte.class, "int");
-//		jsJavaMapper.put(Byte.class, "int");
-//		jsJavaMapper.put(short.class, "int");
-//		jsJavaMapper.put(Short.class, "int");
-//		jsJavaMapper.put(int.class, "int");
-//		jsJavaMapper.put(Integer.class, "int");
-//		jsJavaMapper.put(long.class, "int");
-//		jsJavaMapper.put(Long.class, "int");
-//		jsJavaMapper.put(BigInteger.class, "int");
-//		
-//		jsJavaMapper.put(float.class, "float");
-//		jsJavaMapper.put(Float.class, "float");
-//		jsJavaMapper.put(double.class, "float");
-//		jsJavaMapper.put(Double.class, "float");
-//		jsJavaMapper.put(BigDecimal.class, "float");
-//		
-//		jsJavaMapper.put(java.util.Date.class, "date");
-//		jsJavaMapper.put(java.sql.Date.class, "date");
-//		//jsJavaMapper.put(, "");
-//		
-//		//jsJavaMapper.put(, "");
-//	}
+	public String getColDefine() {
+		StringBuilder builder=new StringBuilder();
+		if(StringUtils.hasText(comment)) {
+			builder.append(",comment=\""+comment+"\"");
+		}
+		if(StringUtils.hasText(label)) {
+			builder.append(",label=\""+label+"\"");
+		}
+		if(StringUtils.hasText(defaultValue)) {
+			builder.append(",defaultValue=\""+defaultValue+"\"");
+		}
+		if(builder.length()>0) {
+			return "@ColDefine("+builder.substring(1)+")";
+		} else {
+			return null;
+		}
+	}
 
 	public void setClazz(Class<?> clazz) {
 		this.clazz=clazz;
@@ -313,6 +332,14 @@ public class PropertyColumn {
 				+ ", insertable=" + insertable + ", updatable=" + updatable + ", isEnum=" + isEnum + ", basepackage="
 				+ basepackage + ", className=" + className + ", clazz=" + clazz + ", simpleClassName=" + simpleClassName
 				+ ", isId=" + isId + ", isCompositeId=" + isCompositeId + ", idGenEnum=" + idGenEnum + "]";
+	}
+
+	public void setId(boolean isId) {
+		this.isId = isId;
+	}
+
+	public void setCompositeId(boolean isCompositeId) {
+		this.isCompositeId = isCompositeId;
 	}
 
 

@@ -67,6 +67,7 @@ public class GeneratorCodeService {
 		basepackage = utils.getProperty("code.basepackage");
 		Assert.notNull(outputdir,"generator.properties中code.outputdir不能为null");
 		Assert.notNull(basepackage,"generator.properties中code.basepackage不能为null");
+		//dbTableMetadataService.setBasepackage(basepackage);
 		
 	}
 
@@ -104,7 +105,9 @@ public class GeneratorCodeService {
 
 			List<EntityTable> root = dbTableMetadataService.getTablesInfo(tablenames);
 			for (EntityTable et : root) {
+				dbTableMetadataService.convertTable2Class(basepackage,et);
 				for (FtlFileInfo ftlFile : ftl_file_manes) {
+					
 					generatorFile(et, ftlFile, outputdir);
 				}
 			}
@@ -152,6 +155,9 @@ public class GeneratorCodeService {
 				EntityTable root = javaEntityMetaDataService.initClassProperty(cls);
 
 				for (FtlFileInfo ftlFile : ftl_file_manes) {
+					if(ftlFile.getName().equalsIgnoreCase("${entitySimpleClassName}.java.ftl") || ftlFile.getName().equalsIgnoreCase("${entitySimpleClassName}Id.java.ftl")) {
+						continue;
+					}
 					generatorFile(root, ftlFile, outputdir);
 				}
 			}

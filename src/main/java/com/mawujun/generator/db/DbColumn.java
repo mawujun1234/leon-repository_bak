@@ -4,7 +4,7 @@ public class DbColumn {
 	private String columnType;
 	private Class javaType;
 	private Integer length=null;
-	//private int precision=0;
+	private Integer precision=null;
 	private Integer scale=null;
 	
 
@@ -32,6 +32,12 @@ public class DbColumn {
 	}
 	public void setColumnType(String columnType) {
 		this.columnType = columnType;
+	}
+	public Integer getPrecision() {
+		return precision;
+	}
+	public void setPrecision(Integer precision) {
+		this.precision = precision;
 	}
 
 

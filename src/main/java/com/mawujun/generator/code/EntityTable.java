@@ -42,13 +42,41 @@ public class EntityTable {
 	//List<PropertyColumn> baseTypePropertyColumns=new ArrayList<PropertyColumn>();
 	//存放需要产生查询条件的属性
 	List<PropertyColumn> queryProperties =new ArrayList<PropertyColumn>();
-	
+	/**
+	 * 会自动设置
+	 * entitySimpleClassName，entitySimpleClassNameUncap，entityClassName，entityPackage
+	 * 
+	 * @param entityClass
+	 */
 	public void setEntityClass(Class entityClass) {
 		this.entityClass = entityClass;
 		this.entitySimpleClassName = entityClass.getSimpleName();
 		this.entitySimpleClassNameUncap=StringUtils.uncapitalize(this.getEntitySimpleClassName());
 		this.entityClassName=entityClass.getName();
 		this.entityPackage=entityClass.getPackage().getName();
+		
+	}
+	/**
+	 * 把tablename转换成classname,如果是复合主键，再转换一下
+	 * @param entityClassName
+	 */
+	public void convertTableToClass(String basepackage,String entitySimpleClassNameUncap) {
+		this.basepackage=basepackage;
+		this.entitySimpleClassNameUncap=entitySimpleClassNameUncap;
+		this.alias=entitySimpleClassNameUncap;
+		this.entitySimpleClassName=StringUtils.capitalize(entitySimpleClassNameUncap);
+		this.entityPackage=basepackage+".model";
+		this.entityClassName=this.entityPackage+"."+entitySimpleClassName;
+		this.entityClass =null;//还没有生成，不能用
+		
+		//还需要生成复合主键
+		if(this.getIsCompositeId()) {
+			String idClassName=this.getEntityClassName()+"Id";
+			String idSimpleClassName=this.getEntitySimpleClassName()+"Id";
+			//Class idClass=;
+			this.idClassName=idClassName;
+			this.idSimpleClassName=idSimpleClassName;
+		}
 		
 	}
 	
@@ -250,6 +278,8 @@ public class EntityTable {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
+
+
 
 	
 

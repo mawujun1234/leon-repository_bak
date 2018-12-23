@@ -35,7 +35,7 @@ public class DbTableMetadataService {
 	private String db_password;
 	private String db_schemaname;
 
-	// private String code_basepackage;
+	//private String basepackage;
 
 	private String[] tablePrefix;// 前缀,原始数据是以逗号进行分隔,复核前缀的肯定加进去
 	private String[] columnPrefix;// 列的前缀，以逗号分隔
@@ -260,8 +260,6 @@ public class DbTableMetadataService {
 					tableInfo = new EntityTable();
 					tableInfo.setEntityTableName(tableName);
 					tableInfo.setComment(tableComment);
-					还没有转换
-					tableInfo.setEntityClass(entityClass);
 
 					tableList.add(tableInfo);
 				} else {
@@ -289,6 +287,9 @@ public class DbTableMetadataService {
 
 			for (EntityTable ti : tableList) {
 				this.assignTableFields(ti);
+
+				
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -307,6 +308,18 @@ public class DbTableMetadataService {
 		}
 
 		return tableList;
+	}
+	
+	public void convertTable2Class(String basepackage,EntityTable ti) {
+		String tablename = ti.getEntityTableName();
+		// 去掉前缀
+		for (String str : tablePrefix) {
+			if (tablename.toLowerCase().startsWith(str.toLowerCase())) {
+				ti.setBasepackage(basepackage);
+				ti.convertTableToClass(basepackage, tablename.substring(str.length()));
+				break;
+			}
+		}
 	}
 
 	/**
@@ -364,6 +377,7 @@ public class DbTableMetadataService {
 						id.setIsCompositeId(true);
 					}
 					tableInfo.setIsCompositeId(true);
+
 				} else {
 					if (dbQuery.isKeyIdentity(results)) {
 						field.setIdGenEnum(IDGenEnum.identity);
@@ -380,9 +394,10 @@ public class DbTableMetadataService {
 				DbColumn dbColumn = dialect.columnTypeToProertyType(results.getString(dbQuery.fieldType()));
 				field.setColumnType(dbColumn.getColumnType());
 				field.setLength(dbColumn.getLength());
-				field.setPrecision(dbColumn.getLength());
+				field.setPrecision(dbColumn.getPrecision());
+				field.setScale(dbColumn.getScale());
 				field.setClazz(dbColumn.getJavaType());
-				dbColumn.setScale(dbColumn.getScale());
+				
 
 //                // 自定义字段查询
 //                String[] fcs = dbQuery.fieldCustom();
