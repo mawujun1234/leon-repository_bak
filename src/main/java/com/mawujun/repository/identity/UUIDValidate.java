@@ -1,5 +1,7 @@
 package com.mawujun.repository.identity;
 
+import java.io.Serializable;
+
 import javax.persistence.MappedSuperclass;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -7,16 +9,20 @@ import javax.validation.ValidationException;
 import com.mawujun.repository.validate.ValidatorUtils;
 
 /**
- * 要对Entity类进行改造。因为Oracle一般使用SEQUCENCE作为主键生成策略，而且每种Entity类使用一个独立的Sequence。
- * 此时统一的IdEntity基类就不再合适了，最好把它变为一个Id接口，然后在每个Entity中定义id及其Sequence。
- * 注意这里有个性能优化的地方，Hibernate一次问Oracle要了20个id自己慢慢用。相应的，sequence创建时需要修改increment by=20
- * create sequence SEQ_USER start with 100 increment by 20;这是要在oracle中执行的
-
+ * 统一定义id的entity基类.是使用UUID作为生成策略
+ * 
+ * 基类统一定义id的属性名称、数据类型、列名映射及生成策略.
+ * 子类可重载getId()函数重定义id的列名映射和生成策略.
  * @author mawujun
  *
  */
 @MappedSuperclass
-public class OracleAutoIdValidate  extends SequenceAutoId  implements IdEntity<Long> {
+public abstract class UUIDValidate  extends UUID  implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1985201725486995395L;
 	/**
 	 * 会抛出ConstraintViolationException异常
 	 * @exception ConstraintViolationException
@@ -32,5 +38,6 @@ public class OracleAutoIdValidate  extends SequenceAutoId  implements IdEntity<L
 	public void validate(String... separator){	
 		ValidatorUtils.validateAndReturnMessage(this);
 	}
-
+	
+	
 }

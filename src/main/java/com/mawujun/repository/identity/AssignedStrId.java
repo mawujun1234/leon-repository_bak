@@ -10,7 +10,7 @@ import javax.persistence.MappedSuperclass;
  *
  */
 @MappedSuperclass
-public abstract class AssignedStrIdEntity implements IdEntity<String> {
+public abstract class AssignedStrId implements IdEntity<String> {
 	@Id
 	@Column(length=36)
 	private String id;

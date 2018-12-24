@@ -15,7 +15,7 @@ import javax.persistence.MappedSuperclass;
  */
 //JPA 基类的标识
 @MappedSuperclass
-public abstract class AutoIdEntity implements IdEntity<Long> {
+public abstract class IdentityId implements IdEntity<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,7 +46,7 @@ public abstract class AutoIdEntity implements IdEntity<Long> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		AutoIdEntity other = (AutoIdEntity) obj;
+		IdentityId other = (IdentityId) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

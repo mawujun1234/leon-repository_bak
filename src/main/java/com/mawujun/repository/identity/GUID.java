@@ -15,7 +15,7 @@ import org.hibernate.annotations.GenericGenerator;
  *
  */
 @MappedSuperclass
-public abstract class GUIDEntity implements Serializable{
+public abstract class GUID implements Serializable{
 	/**
 	 * 
 	 */
@@ -52,7 +52,7 @@ public abstract class GUIDEntity implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GUIDEntity other = (GUIDEntity) obj;
+		GUID other = (GUID) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.mawujun.generator.annotation.ColDefine;
 import com.mawujun.generator.annotation.FK;
 import com.mawujun.generator.annotation.TableDefine;
-import com.mawujun.repository.identity.UUIDEntityValidate;
+import com.mawujun.repository.identity.UUIDValidate;
 
 import lombok.Data;
 import test.mawujun.jpa.utils.T;
@@ -44,7 +44,7 @@ import test.mawujun.jpa.utils.T;
 @TableDefine(comment="表注释",fks= {@FK(columnNames= {T.t_city.name,T.t_city.sex},refEntity=CoplxId1Entity.class,refColumnNames= {T.t_coplxid1entity.id1,T.t_coplxid1entity.id2})})
 //@org.hibernate.annotations.Table(comment="表注释", appliesTo = "t_city") 
 @Data
-public class City extends UUIDEntityValidate{
+public class City extends UUIDValidate{
 	
 	/**
 	 * 

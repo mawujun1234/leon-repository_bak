@@ -35,15 +35,21 @@ import com.fasterxml.jackson.annotation.JsonFormat;
  */
 @Alias("city2")
 @Entity
-@Table
-public class City2{
+@Table(name="t_city2")
+public class City2 {//extends SnowFlakeId {
+//	@Id
+//	@GeneratedValue(generator = "system-uuid")
+//	@GenericGenerator(name = "system-uuid", strategy = "org.hibernate.id.UUIDGenerator")
+////	@GeneratedValue(generator = "uuid")
+////	@GenericGenerator(name = "uuid", strategy = "uuid")
+//	@Column(length=36)
+//	protected String id;
+	
 	@Id
-	//@GeneratedValue(generator = "system-uuid")
-	//@GenericGenerator(name = "system-uuid", strategy = "org.hibernate.id.UUIDGenerator")
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid")
-	@Column(length=36)
-	protected String id;
+	@GeneratedValue(generator = "snowflake")
+	@GenericGenerator(name = "snowflake", strategy = "com.mawujun.repository.identity.generator.SnowFlakeGenerator")
+	//@Column(length=36,updatable=false,unique=true)
+	protected Long id;
 	
 	/**
 	 * 
@@ -99,6 +105,18 @@ public class City2{
 	public void setSex(Sex sex) {
 		this.sex = sex;
 	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+//	public String getId() {
+//		return id;
+//	}
+//	public void setId(String id) {
+//		this.id = id;
+//	}
 
 }
 

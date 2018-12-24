@@ -9,20 +9,16 @@ import javax.validation.ValidationException;
 import com.mawujun.repository.validate.ValidatorUtils;
 
 /**
- * 统一定义id的entity基类.是使用UUID作为生成策略
- * 
- * 基类统一定义id的属性名称、数据类型、列名映射及生成策略.
- * 子类可重载getId()函数重定义id的列名映射和生成策略.
+ * guid 采用数据库底层的guid算法机制，对应MySQL的uuid()函数，SQL Server的newid()函数，ORCALE的rawtohex(sys_guid())函数等
  * @author mawujun
  *
  */
 @MappedSuperclass
-public abstract class UUIDEntityValidate  extends UUIDEntity  implements Serializable{
-
+public abstract class GUIDValidate extends GUID implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1985201725486995395L;
+	private static final long serialVersionUID = 79567480559673949L;
 	/**
 	 * 会抛出ConstraintViolationException异常
 	 * @exception ConstraintViolationException
@@ -38,6 +34,4 @@ public abstract class UUIDEntityValidate  extends UUIDEntity  implements Seriali
 	public void validate(String... separator){	
 		ValidatorUtils.validateAndReturnMessage(this);
 	}
-	
-	
 }

@@ -10,7 +10,7 @@ import javax.persistence.MappedSuperclass;
  *
  */
 @MappedSuperclass
-public abstract class AssignedLongIdEntity implements IdEntity<Long> {
+public abstract class AssignedLongId implements IdEntity<Long> {
 	@Id
 	private Long id;
 

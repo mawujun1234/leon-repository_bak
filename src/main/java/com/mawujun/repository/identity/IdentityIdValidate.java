@@ -1,24 +1,20 @@
 package com.mawujun.repository.identity;
 
-import java.io.Serializable;
-
 import javax.persistence.MappedSuperclass;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
 import com.mawujun.repository.validate.ValidatorUtils;
 
+
 /**
- * guid 采用数据库底层的guid算法机制，对应MySQL的uuid()函数，SQL Server的newid()函数，ORCALE的rawtohex(sys_guid())函数等
+ * 添加了验证的方法
  * @author mawujun
  *
+ * @param <ID> 这个参数是指定什么类型的id，是int还是long
  */
 @MappedSuperclass
-public abstract class GUIDValidateEntity extends GUIDEntity implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 79567480559673949L;
+public abstract class IdentityIdValidate extends IdentityId {
 	/**
 	 * 会抛出ConstraintViolationException异常
 	 * @exception ConstraintViolationException

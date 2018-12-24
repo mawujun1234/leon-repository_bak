@@ -21,7 +21,7 @@ import com.mawujun.generator.annotation.ColDefine;
  *
  */
 @MappedSuperclass
-public abstract class UUIDEntity  implements IdEntity<String>,Serializable{
+public abstract class UUID  implements IdEntity<String>,Serializable{
 
 	/**
 	 * 
@@ -62,7 +62,7 @@ public abstract class UUIDEntity  implements IdEntity<String>,Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UUIDEntity other = (UUIDEntity) obj;
+		UUID other = (UUID) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

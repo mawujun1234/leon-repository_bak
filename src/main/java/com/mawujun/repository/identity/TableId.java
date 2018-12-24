@@ -21,7 +21,7 @@ l         allocationSize表示每次主键值增加的大小，例如设置成1�
  */
 //JPA 基类的标识
 @MappedSuperclass
-public abstract class TableIdEntity implements IdEntity<Long> {
+public abstract class TableId implements IdEntity<Long> {
 
 	/**
 	 * 系统中有个表叫"XT_XH"，它有两个列TYPE(主键)和XH(值)。每生成一个Student记录,这个Student的id就从XT_XH表中取。取TYPE=stu的XH（好多表的id主键都是放在这个表，以type来区分，当然要额可以一个表建立一个id生成器表）。取过之后，这个XH会加1，等着下次来取。
@@ -56,7 +56,7 @@ public abstract class TableIdEntity implements IdEntity<Long> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TableIdEntity other = (TableIdEntity) obj;
+		TableId other = (TableId) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
