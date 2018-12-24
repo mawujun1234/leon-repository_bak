@@ -12,6 +12,10 @@ public class SnowFlakeId  implements IdEntity<Long>,Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -5731890808057268584L;
+	
+	/**
+	 * 只能用单机，如果是双机集群的话，就得修改，得配置SnowFlakeGenerator中的workerId 
+	 */
 	@Id
 	@GeneratedValue(generator = "snowflake")
 	@GenericGenerator(name = "snowflake", strategy = "com.mawujun.repository.identity.generator.SnowFlakeGenerator")
