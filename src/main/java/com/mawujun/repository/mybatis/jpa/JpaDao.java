@@ -1,4 +1,4 @@
-package com.mawujun.repository.mybatis.extend;
+package com.mawujun.repository.mybatis.jpa;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -46,7 +45,7 @@ import com.mawujun.repository.mybatis.dialect.DBAlias;
 import com.mawujun.repository.mybatis.expression.VarcharLiteralExpression;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.OpEnum;
-import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Page;
 import com.mawujun.repository.utils.Params;
 import com.mawujun.utils.CollectionUtils;
 import com.mawujun.utils.ConvertUtils;
@@ -632,13 +631,13 @@ public class JpaDao {
 
 
 	
-	public PageInfo listPageByExample(Class entityClass,Object params, int pageIndex,int limit) {
+	public Page listPageByExample(Class entityClass,Object params, int pageIndex,int limit) {
 		ExampleMatcher matcher = ExampleMatcher.matching();
 		Example example = Example.of(params, matcher); 	
 		Pageable pageable=PageRequest.of(pageIndex, limit);
-		Page page=getSimpleJpaRepository(entityClass).findAll(example, pageable);
+		org.springframework.data.domain.Page page=getSimpleJpaRepository(entityClass).findAll(example, pageable);
 		
-		PageInfo pageinfo=new PageInfo();
+		Page pageinfo=new Page();
 		pageinfo.setPage(pageIndex);
 		pageinfo.setLimit(limit);
 		pageinfo.setTotal((int)page.getTotalElements());
@@ -677,13 +676,13 @@ public class JpaDao {
 		}
 	}
 	
-	public PageInfo listPageByMap(Class entityClass,Map<String,Object> params, int pageIndex,int limit) {
+	public Page listPageByMap(Class entityClass,Map<String,Object> params, int pageIndex,int limit) {
 		Pageable pageable = PageRequest.of(pageIndex, limit);
    
 		PageSpecification spec=new PageSpecification(params);
-		Page page=getSimpleJpaRepository(entityClass).findAll(spec, pageable);
+		org.springframework.data.domain.Page page=getSimpleJpaRepository(entityClass).findAll(spec, pageable);
 
-		PageInfo pageinfo=new PageInfo();
+		Page pageinfo=new Page();
 		pageinfo.setPage(pageIndex);
 		pageinfo.setLimit(limit);
 		pageinfo.setTotal((int)page.getTotalElements());
@@ -693,18 +692,18 @@ public class JpaDao {
 		return pageinfo;
 	}
 	
-	public PageInfo listPageByPageInfo(Class entityClass,PageInfo pageinfo) {
+	public Page listPageByPageInfo(Class entityClass,Page pageinfo) {
 		Object params=pageinfo.getParams();
 		Pageable pageable = PageRequest.of(pageinfo.getPage(), pageinfo.getLimit());
 		if(params instanceof Map) {
 			PageSpecification spec=new PageSpecification((Map)params);
-			Page page=getSimpleJpaRepository(entityClass).findAll(spec, pageable);
+			org.springframework.data.domain.Page page=getSimpleJpaRepository(entityClass).findAll(spec, pageable);
 			pageinfo.setTotal((int)page.getTotalElements());
 			pageinfo.setRoot(page.getContent());
 		} else {
 			ExampleMatcher matcher = ExampleMatcher.matching();
 			Example example = Example.of(params, matcher); 	
-			Page page=getSimpleJpaRepository(entityClass).findAll(example, pageable);
+			org.springframework.data.domain.Page page=getSimpleJpaRepository(entityClass).findAll(example, pageable);
 			pageinfo.setTotal((int)page.getTotalElements());
 			pageinfo.setRoot(page.getContent());
 		}

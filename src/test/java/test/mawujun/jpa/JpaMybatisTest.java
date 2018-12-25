@@ -23,7 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Page;
 import com.mawujun.repository.utils.Params;
 import com.mawujun.utils.DateUtils;
 
@@ -190,7 +190,7 @@ public class JpaMybatisTest {
 //		PageInfo<City> pagerequest=new PageInfo<City>();
 //		pagerequest.setPage(0);
 //		pagerequest.setLimit(1);
-		PageInfo<City> pageinfo=jpaMybatisMapper.listPageByExample(params, 0,1);
+		Page<City> pageinfo=jpaMybatisMapper.listPageByExample(params, 0,1);
 		Assert.assertEquals(1, pageinfo.getTotal());
 		Assert.assertEquals(1, pageinfo.getTotalPages());
 		Assert.assertEquals(0, pageinfo.getPage());
@@ -256,7 +256,7 @@ public class JpaMybatisTest {
 		
 		
 		paramsUtils = Params.of().add("age", 50);
-		PageInfo<City> oage=jpaMybatisMapper.listPageByMap(paramsUtils, 0, 1);
+		Page<City> oage=jpaMybatisMapper.listPageByMap(paramsUtils, 0, 1);
 		Assert.assertEquals(2, oage.getTotal());
 		Assert.assertEquals(2, oage.getTotalPages());
 		Assert.assertEquals(0, oage.getPage());
@@ -294,7 +294,7 @@ public class JpaMybatisTest {
 		//params.setId(id);
 		//params.setName("宁波");
 		city_params.setAge(50);
-		PageInfo<City> pageinfo=jpaMybatisMapper.listPageByExample(city_params, 0,1);
+		Page<City> pageinfo=jpaMybatisMapper.listPageByExample(city_params, 0,1);
 		Assert.assertEquals(2, pageinfo.getTotal());
 		Assert.assertEquals(2, pageinfo.getTotalPages());
 		Assert.assertEquals(0, pageinfo.getPage());
@@ -339,8 +339,8 @@ public class JpaMybatisTest {
 		Assert.assertEquals(0, pageinfo.getRootSize());
 		Assert.assertEquals(1, pageinfo.getPage());
 		
-		PageInfo<City> pageInfo=PageInfo.of_1(0, 10).eq("name", "宁波");
-		PageInfo<City> pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
+		Page<City> pageInfo=Page.of_1(0, 10).eq("name", "宁波");
+		Page<City> pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
 		Assert.assertEquals(pageInfo, pageinfo_result);
 		Assert.assertEquals(1, pageinfo_result.getTotal());
 		Assert.assertEquals(1, pageinfo_result.getRootSize());
@@ -354,7 +354,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(1, pageinfo_result.getPage());
 		
 		city_params.setAge(50);
-		pageInfo=PageInfo.of_1(0, 1).setParams(city_params);
+		pageInfo=Page.of_1(0, 1).setParams(city_params);
 		pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
 		Assert.assertEquals(2, pageinfo_result.getTotal());
 		Assert.assertEquals(2, pageinfo_result.getTotalPages());
@@ -362,7 +362,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(1, pageinfo_result.getLimit());
 		Assert.assertEquals(1, pageinfo_result.getRootSize());
 		city_params.setAge(11);
-		pageInfo=PageInfo.of_1(0, 1).setParams(city_params);
+		pageInfo=Page.of_1(0, 1).setParams(city_params);
 		pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
 		Assert.assertEquals(0, pageinfo_result.getTotal());
 		Assert.assertEquals(0, pageinfo_result.getTotalPages());
@@ -371,7 +371,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(0, pageinfo_result.getRootSize());
 		
 		//mybatis中的分页测试
-		pageInfo=PageInfo.of_1(0, 10).eq("name", "宁波").eq("age", 50);
+		pageInfo=Page.of_1(0, 10).eq("name", "宁波").eq("age", 50);
 		pageinfo_result=jpaMybatisMapper.listPageByMybatis(pageInfo);
 		Assert.assertEquals(pageInfo, pageinfo_result);
 		Assert.assertEquals(1, pageinfo_result.getTotal());
@@ -386,7 +386,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(1, pageinfo_result.getPage());
 		
 		city_params.setAge(50);
-		pageInfo=PageInfo.of_1(0, 1).setParams(city_params);
+		pageInfo=Page.of_1(0, 1).setParams(city_params);
 		pageinfo_result=jpaMybatisMapper.listPageByMybatis(pageInfo);
 		Assert.assertEquals(2, pageinfo_result.getTotal());
 		Assert.assertEquals(2, pageinfo_result.getTotalPages());
@@ -394,7 +394,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(1, pageinfo_result.getLimit());
 		Assert.assertEquals(1, pageinfo_result.getRootSize());
 		city_params.setAge(11);
-		pageInfo=PageInfo.of_1(0, 1).setParams(city_params);
+		pageInfo=Page.of_1(0, 1).setParams(city_params);
 		pageinfo_result=jpaMybatisMapper.listPageByMybatis(pageInfo);
 		Assert.assertEquals(0, pageinfo_result.getTotal());
 		Assert.assertEquals(0, pageinfo_result.getTotalPages());
@@ -407,15 +407,15 @@ public class JpaMybatisTest {
 	 */
 	@Test
 	public void test3listPageByMap1() {
-		PageInfo<City> pageInfo=PageInfo.of_1(0, 1);
-		PageInfo<City> pageinfo_result=jpaMybatisMapper.listPageByMybatis1(pageInfo);
+		Page<City> pageInfo=Page.of_1(0, 1);
+		Page<City> pageinfo_result=jpaMybatisMapper.listPageByMybatis1(pageInfo);
 		Assert.assertEquals(pageInfo, pageinfo_result);
 		Assert.assertEquals(2, pageinfo_result.getTotal());
 		Assert.assertEquals(2, pageinfo_result.getTotalPages());
 		Assert.assertEquals(1, pageinfo_result.getRootSize());
 		Assert.assertEquals(0, pageinfo_result.getPage());
 		
-		pageInfo=PageInfo.of_1(1, 1);
+		pageInfo=Page.of_1(1, 1);
 		pageinfo_result=jpaMybatisMapper.listPageByMybatis1(pageInfo);
 		Assert.assertEquals(pageInfo, pageinfo_result);
 		Assert.assertEquals(2, pageinfo_result.getTotal());
@@ -780,7 +780,7 @@ public class JpaMybatisTest {
 		
 		//其他方法也向这边靠拢
 		params = Params.of().ge("age", 49);
-		PageInfo<City> pageinfo_result=jpaMybatisMapper.listPageByMap(params, 0, 1);
+		Page<City> pageinfo_result=jpaMybatisMapper.listPageByMap(params, 0, 1);
 		Assert.assertEquals(2, pageinfo_result.getTotal());
 		Assert.assertEquals(2, pageinfo_result.getTotalPages());
 		Assert.assertEquals(0, pageinfo_result.getPage());
@@ -827,7 +827,7 @@ public class JpaMybatisTest {
 		
 		//其他方法也向这边靠拢
 		params = Params.of().le("age", 50);
-		PageInfo<City> pageinfo_result=jpaMybatisMapper.listPageByMap(params, 0, 1);
+		Page<City> pageinfo_result=jpaMybatisMapper.listPageByMap(params, 0, 1);
 		Assert.assertEquals(2, pageinfo_result.getTotal());
 		Assert.assertEquals(2, pageinfo_result.getTotalPages());
 		Assert.assertEquals(0, pageinfo_result.getPage());

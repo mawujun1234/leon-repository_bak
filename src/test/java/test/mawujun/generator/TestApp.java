@@ -1,28 +1,30 @@
-package test.mawujun.jpa;
+package test.mawujun.generator;
 
 
 import java.sql.SQLException;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@EntityScan("test.mawujun.model")
-@ComponentScan(basePackages= {"com.mawujun","test.mawujun.jpa"})
-//@MapperScan("test.mawujun.jpa")
-public class JpaMybatisApp  implements CommandLineRunner {
+@EntityScan("aaaaa")
+@ComponentScan(basePackages= {"aaaaa","com.mawujun"})
+@MapperScan(basePackages= {"aaaaa"})
+public class TestApp  implements CommandLineRunner {
 //	@Autowired
 //	private CityMapper cityMapper;
 
 
 	public static void main(String[] args) throws SQLException {
 		//ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
-		ConfigurableApplicationContext context = new SpringApplicationBuilder(JpaMybatisApp.class)
+		ConfigurableApplicationContext context = new SpringApplicationBuilder(TestApp.class)
 	    .web(WebApplicationType.NONE)
 	    .run(args);
 //		//JdbcTemplate jdbctemplate=context.getBean(JdbcTemplate.class;)

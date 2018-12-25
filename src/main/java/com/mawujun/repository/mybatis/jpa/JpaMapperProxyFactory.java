@@ -1,4 +1,4 @@
-package com.mawujun.repository.mybatis.extend;
+package com.mawujun.repository.mybatis.jpa;
 
 import java.lang.reflect.Proxy;
 

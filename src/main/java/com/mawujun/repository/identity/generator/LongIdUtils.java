@@ -1,12 +1,13 @@
 package com.mawujun.repository.identity.generator;
 
 import java.util.Calendar;
+
 /**
- * 主要用于多数据中心的，id生成器，时间回拨还未处理
+ * 单机，取消数据中心，只有普通应用或集群的时候用的
  * @author admin
  *
  */
-public class SnowFlakeUtils {
+public class LongIdUtils {
 	 /**
      * 雪花算法解析 结构 snowflake的结构如下(每部分用-分开):
      * 0 - 0000000000 0000000000 0000000000 0000000000 0 - 00000 - 00000 - 000000000000
@@ -19,13 +20,13 @@ public class SnowFlakeUtils {
  
     // ==============================Fields===========================================
     /** 开始时间截 (2018-01-01) */
-    private final long twepoch=1541001600000L;
+	 private final long twepoch=1541001600000L;
  
     /** 机器id所占的位数 */
-    private final long workerIdBits = 5L;
+    private final long workerIdBits = 2L;
  
     /** 数据标识id所占的位数 */
-    private final long dataCenterIdBits = 5L;
+    private final long dataCenterIdBits = 8L;
  
     /** 支持的最大机器id，结果是31 (这个移位算法可以很快的计算出几位二进制数所能表示的最大十进制数) */
     private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
@@ -48,10 +49,10 @@ public class SnowFlakeUtils {
     /** 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095) */
     private final long sequenceMask = -1L ^ (-1L << sequenceBits);
  
-    /** 工作机器ID(0~31) */
-    private long workerId;
+    /** 工作机器ID(0~3) */
+    private long workerId;//backwords
  
-    /** 数据中心ID(0~31) */
+    /** 数据中心ID(0~255) */
     private long dataCenterId;
  
     /** 毫秒内序列(0~4095) */
@@ -62,33 +63,32 @@ public class SnowFlakeUtils {
     /**
      * 当出现时间回拨的时候，允许等待的最大长度,单位毫秒
      */
-    private long maxsleeptime=5;
+    private long maxsleeptime=300;
  
     // ==============================Constructors=====================================
-    /**
-     * 构造函数
-     * @param workerId 工作ID (0~31)
-     * @param dataCenterId 数据中心ID (0~31)
-     */
-    public SnowFlakeUtils(long workerId, long dataCenterId) {
-        if (workerId > maxWorkerId || workerId < 0) {
-            throw new IllegalArgumentException(String.format("workerId can't be greater than %d or less than 0", maxWorkerId));
-        }
-        if (dataCenterId > maxDataCenterId || dataCenterId < 0) {
-            throw new IllegalArgumentException(String.format("dataCenterId can't be greater than %d or less than 0", maxDataCenterId));
-        }
-        this.workerId = workerId;
-        this.dataCenterId = dataCenterId;
-
-    }
+//    /**
+//     * 构造函数
+//     * @param workerId 工作ID (0~31)
+//     * @param dataCenterId 数据中心ID (0~31)
+//     */
+//    public SnowFlakeUtils(long workerId, long dataCenterId) {
+//        if (workerId > maxWorkerId || workerId < 0) {
+//            throw new IllegalArgumentException(String.format("workerId can't be greater than %d or less than 0", maxWorkerId));
+//        }
+//        if (dataCenterId > maxDataCenterId || dataCenterId < 0) {
+//            throw new IllegalArgumentException(String.format("dataCenterId can't be greater than %d or less than 0", maxDataCenterId));
+//        }
+//        this.workerId = workerId;
+//        this.dataCenterId = dataCenterId;
+//        
+//    }
 
     /**
      * 只适用于本机的时候，如果使用集群的时候，不能用这个
      */
-    public SnowFlakeUtils() {
-    	this.workerId = 1;
-        this.dataCenterId = 1;
-
+    public LongIdUtils() {
+    	this.workerId = 0;
+        this.dataCenterId = 0;
     }
  
     // ==============================Methods==========================================
@@ -100,25 +100,32 @@ public class SnowFlakeUtils {
         long timestamp = timeGen();
  
         // 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
-        if (timestamp < lastTimestamp) {
-            throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
-        }
 //        if (timestamp < lastTimestamp) {
-//	        if (timestamp - lastTimestamp<=maxsleeptime) {
-//	        	try {
-//					Thread.sleep(maxsleeptime);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//	        	timestamp = timeGen();
-//	        	if (timestamp < lastTimestamp) {
-//	        		d
-//	        	}
-//	        } else {
-//	        	
-//	        }
+//            throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
 //        }
+        if (timestamp < lastTimestamp) {
+	        if (timestamp - lastTimestamp<=maxsleeptime) {
+	        	try {
+					Thread.sleep(maxsleeptime);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        	timestamp = timeGen();
+	        	if (timestamp < lastTimestamp) {
+	        		workerId+=1;
+	        		if (workerId > maxWorkerId || workerId < 0) {
+	                    throw new RuntimeException(String.format("workerId can't be greater than %d or less than 0", maxWorkerId));
+	                }	        		    		
+	        	}
+	        } else {
+	        	workerId+=1;
+	        	if (workerId > maxWorkerId || workerId < 0) {
+                    throw new RuntimeException(String.format("workerId can't be greater than %d or less than 0", maxWorkerId));
+                }
+        		
+	        }
+        }
  
         // 如果是同一时间生成的，则进行毫秒内序列
         // sequenceMask 为啥是4095  2^12 = 4096
@@ -142,10 +149,10 @@ public class SnowFlakeUtils {
         // 为啥时间戳减法向左移动22 位 因为  5位datacenterid 
         // 为啥 datCenterID向左移动17位 因为 前面有5位workid  还有12位序列号 就是17位
         //为啥 workerId向左移动12位 因为 前面有12位序列号 就是12位 
-        System.out.println(((timestamp - twepoch) << timestampLeftShift) //
-                | (dataCenterId << dataCenterIdShift) //
-                | (workerId << workerIdShift) //
-                | sequence);
+//        System.out.println(((timestamp - twepoch) << timestampLeftShift) //
+//                | (dataCenterId << dataCenterIdShift) //
+//                | (workerId << workerIdShift) //
+//                | sequence);
         return ((timestamp - twepoch) << timestampLeftShift) //
                 | (dataCenterId << dataCenterIdShift) //
                 | (workerId << workerIdShift) //
@@ -177,7 +184,7 @@ public class SnowFlakeUtils {
     /** 测试 */
     public static void main(String[] args) {
         System.out.println(System.currentTimeMillis());
-        SnowFlakeUtils idWorker = new SnowFlakeUtils(1, 1);
+        LongIdUtils idWorker = new LongIdUtils();
         long startTime = System.nanoTime();
         for (long i = 0; i < 50000; i++) {
             long id = idWorker.nextId();

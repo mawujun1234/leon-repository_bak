@@ -1,11 +1,8 @@
 package aaaaa;
 
-import org.springframework.stereotype.Repository;
-
-import com.mawujun.repository.mybatis.IRepository;
 import org.apache.ibatis.annotations.Mapper;
 
-import com.mawujun.model.Test;
+import com.mawujun.repository.mybatis.IRepository;
 /**
  * @author mawujun qq:16064988 e-mail:16064988@qq.com 
  * @version 1.0

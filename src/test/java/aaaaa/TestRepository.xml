@@ -4,7 +4,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 
 <!-- mawujun qq:16064988 e-mail:16064988@qq.com-->
-<mapper namespace="com.mawujun.TestRepository">
+<mapper namespace="aaaaa.TestRepository">
 
     <sql id="BaseColumns">
 		id1 as id1,id2 as id2,name as name,age as age,price as price,test as test,timee as timee
@@ -34,41 +34,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			</if>
 		</where>
 	</sql>
-	<!-- 查询语句，会自动分页-->
-	<select id="listPageByMybatis" resultType="test" >
-        select <include refid = "BaseColumns" /> from test_test
-        <include refid="WhereColumns" />
-		order by id1 ,id2 
-    </select>
-    <!-- 名称模式为：****_count,也可以不写，但如果查询叫复杂的话，自己写有助于控制查询性能-->
-    <select id="listPageByMybatis1" resultType="test" >
-    	select <include refid = "BaseColumns" /> from test_test order by id1 ,id2 
-    </select>
-    <select id="listPageByMybatis1_count" resultType="long" >
-    	select count(id1,id2) from test_test
-    </select>
-    
 	
-    <select id="getById__" resultType="test" >
-        select
-		<include refid = "BaseColumns" />
-		from test_test where 
-		id1 = #{id1}and
-		id2 = #{id2}
-    </select>
-    <select id="getMapById__" resultType="beanmap">
-       select
-		<include refid = "BaseColumns" />
-		from test_test where 
-		id1 = #{id1}and
-		id2 = #{id2}
-    </select>
-    
-    <select id="listByParams__" resultType="test" >
-        select
-		<include refid="BaseColumns" />
-		from test_test
-		<include refid="WhereColumns" />
-    </select>
 </mapper>
 

@@ -20,7 +20,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.generator.db.DbColumn;
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
-import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Page;
 import com.mawujun.utils.string.StringUtils;
 
 public abstract class AbstractDialect implements Dialect {
@@ -212,7 +212,7 @@ public abstract class AbstractDialect implements Dialect {
 
 
 	@Override
-	public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, PageInfo pageInfo, CacheKey pageKey) {
+	public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, Page pageInfo, CacheKey pageKey) {
 	        String countColumn = pageInfo.getCountColumn();
 	        if (StringUtils.hasText(countColumn)) {
 	            return getSimpleCountSql(boundSql.getSql(), countColumn);

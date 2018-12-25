@@ -6,16 +6,16 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.mawujun.repository.mybatis.IRepository;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Page;
 
 import test.mawujun.model.City;
 
 @Mapper
 public interface JpaMybatisMapper extends IRepository<City>{
 
-	public PageInfo<City> listPageByMybatis(PageInfo<City> params);
+	public Page<City> listPageByMybatis(Page<City> params);
 	
-	public PageInfo<City> listPageByMybatis1(PageInfo<City> params);
+	public Page<City> listPageByMybatis1(Page<City> params);
 	
 	public City getById__(String id);
 	/**

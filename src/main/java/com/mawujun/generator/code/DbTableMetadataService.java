@@ -390,6 +390,7 @@ public class DbTableMetadataService {
 				if (ids.size() > 1) {
 					for (PropertyColumn id : ids) {
 						id.setIsCompositeId(true);
+						id.setIdGenEnum(IDGenEnum.none);
 					}
 					tableInfo.setIsCompositeId(true);
 
@@ -398,6 +399,7 @@ public class DbTableMetadataService {
 						field.setIdGenEnum(IDGenEnum.identity);
 						tableInfo.setIdGenEnum(IDGenEnum.identity);
 					} else {
+						//如果是string类型，并且长度大于36就设置为uuid
 						if(field.getClazz().isAssignableFrom(String.class) && field.getLength()>=36) {
 							field.setIdGenEnum(IDGenEnum.uuid);
 							tableInfo.setIdGenEnum(IDGenEnum.uuid);

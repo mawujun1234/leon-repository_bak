@@ -1,4 +1,4 @@
-package com.mawujun.repository.mybatis.extend;
+package com.mawujun.repository.mybatis.jpa;
 
 import java.util.Map;
 import java.util.Map.Entry;

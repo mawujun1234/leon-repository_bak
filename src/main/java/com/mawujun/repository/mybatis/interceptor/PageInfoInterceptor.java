@@ -23,7 +23,8 @@ import org.apache.ibatis.session.RowBounds;
 import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.Dialect;
-import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Page;
+import com.mawujun.repository.utils.Page;
 import com.mawujun.utils.string.StringUtils;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -67,15 +68,15 @@ public class PageInfoInterceptor implements Interceptor {
             
             //判断是否分页
             boolean isPageInfo=false;
-            PageInfo pageinfo=null;
+            Page pageinfo=null;
             if(parameter instanceof Map) {
             	Collection collections=((Map)parameter).values();
             	Iterator iterator=collections.iterator();
             	while(iterator.hasNext()) {
             		Object o=iterator.next();
-            		if(o instanceof PageInfo) {
+            		if(o instanceof Page) {
             			isPageInfo=true;
-            			pageinfo=(PageInfo)o;
+            			pageinfo=(Page)o;
             			args[1]=pageinfo.getParams();
             			parameter=args[1];
             			break;
@@ -125,7 +126,7 @@ public class PageInfoInterceptor implements Interceptor {
 
     private Long count(Executor executor, MappedStatement ms, Object parameter,
             RowBounds rowBounds, ResultHandler resultHandler,
-            BoundSql boundSql,PageInfo pageinfo) throws SQLException {
+            BoundSql boundSql,Page pageinfo) throws SQLException {
 		String countMsId = ms.getId() + MSUtils.countSuffix;
 		Long count;
 		// 先判断是否存在手写的 count 查询

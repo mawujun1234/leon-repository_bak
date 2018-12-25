@@ -47,8 +47,8 @@ public class City2 {//extends SnowFlakeId {
 	
 	@Id
 	@GeneratedValue(generator = "snowflake")
-	@GenericGenerator(name = "snowflake", strategy = "com.mawujun.repository.identity.generator.SnowFlakeGenerator")
-	//@Column(length=36,updatable=false,unique=true)
+	@GenericGenerator(name = "snowflake", strategy = "com.mawujun.repository.identity.generator.LongIdGenerator")
+	@Column(length=36,updatable=false,unique=true)
 	protected Long id;
 	
 	/**

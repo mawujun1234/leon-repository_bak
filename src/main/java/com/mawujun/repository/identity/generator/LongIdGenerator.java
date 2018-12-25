@@ -11,15 +11,21 @@ import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 
-public class SnowFlakeGenerator implements IdentifierGenerator,Configurable{
+/**
+ * 长整形的id生成器
+ * https://blog.csdn.net/u014042146/article/details/52595624 生成的时候，还可以传递参数
+ * @author admin
+ *
+ */
+public class LongIdGenerator implements IdentifierGenerator,Configurable{
    
     
 
-    public static SnowFlakeUtils idWorker;
+    public static LongIdUtils idWorker;
 	@Override
 	public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
 		if(idWorker==null) {
-    		idWorker = new SnowFlakeUtils(1, 1);
+    		idWorker = new LongIdUtils();
     	}
     	  
     	 return  idWorker.nextId();

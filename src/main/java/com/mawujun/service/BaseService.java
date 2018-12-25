@@ -9,7 +9,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import com.mawujun.repository.mybatis.IRepository;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Page;
 
 public class BaseService<M extends IRepository<T>, T> implements IBaseService<T> {
 
@@ -101,7 +101,7 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 	}
 
 	@Override
-	public PageInfo<T> listPageByExample(T params, int page, int limit) {
+	public Page<T> listPageByExample(T params, int page, int limit) {
 		// TODO Auto-generated method stub
 		return repository.listPageByExample(params, page, limit);
 	}
@@ -119,13 +119,13 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 	}
 
 	@Override
-	public PageInfo<T> listPageByPageInfo(PageInfo<T> pageinfo) {
+	public Page<T> listPageByPageInfo(Page<T> pageinfo) {
 		// TODO Auto-generated method stub
 		return repository.listPageByPageInfo(pageinfo);
 	}
 
 	@Override
-	public PageInfo<T> listPageByMap(Map<String, Object> params, int page, int limit) {
+	public Page<T> listPageByMap(Map<String, Object> params, int page, int limit) {
 		// TODO Auto-generated method stub
 		return repository.listPageByMap(params, page, limit);
 	}

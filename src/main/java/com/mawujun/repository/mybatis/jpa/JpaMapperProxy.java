@@ -1,4 +1,4 @@
-package com.mawujun.repository.mybatis.extend;
+package com.mawujun.repository.mybatis.jpa;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.session.SqlSession;
 
 import com.mawujun.mvc.SpringContextUtils;
-import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Page;
 import com.mawujun.utils.ReflectUtils;
 
 /**
@@ -102,7 +102,7 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		} else if(method.getName().equals("listPageByMap"))  {
 			return newdao.listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);
 		} else if(method.getName().equals("listPageByPageInfo"))  {
-			return newdao.listPageByPageInfo(entityClass, (PageInfo)args[0]);
+			return newdao.listPageByPageInfo(entityClass, (Page)args[0]);
 		} 
 		
 		else if(method.getName().equals("update"))  {

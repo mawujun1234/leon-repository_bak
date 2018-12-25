@@ -3,13 +3,8 @@ package com.mawujun.repository.mybatis;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Page;
 
 /**
  * 如果要使用mybatis进行分页查询，那必须参数是PageInfo<T>,返回值也是PageInfo<T>(返回值其实不是pageinfo也可以)，因为参数时引用传递。
@@ -63,7 +58,7 @@ public interface IRepository2<T,ID> {
 	 * @param limit 一页放几行
 	 * @return
 	 */
-	public PageInfo<T> listPageByExample(T params, int page,int limit);
+	public Page<T> listPageByExample(T params, int page,int limit);
 	
 	
 	public List<T> listAll();
@@ -82,7 +77,7 @@ public interface IRepository2<T,ID> {
 //	 * @return
 //	 */
 //	public PageInfo<T> listPageByMap(PageInfo<T> pageinfo);
-	public PageInfo<T> listPageByMap(Map<String,Object> params,int page,int limit);
+	public Page<T> listPageByMap(Map<String,Object> params,int page,int limit);
 
 
 	/**
@@ -129,7 +124,7 @@ public interface IRepository2<T,ID> {
 //	public int getCountsByEntity(T t);
 	
 	
-	public PageInfo<T> getPagerByMap(PageInfo pagerInfo);
+	public Page<T> getPagerByMap(Page pagerInfo);
 	
 	
 	

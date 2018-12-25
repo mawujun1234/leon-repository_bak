@@ -1,5 +1,22 @@
 package ${basepackage}.model;
 
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
+import org.apache.ibatis.type.Alias;
+import org.hibernate.annotations.GenericGenerator;
+
+import com.mawujun.generator.annotation.ColDefine;
+import com.mawujun.generator.annotation.TableDefine;
+<#if uselombok==true>
+import lombok.Data;
+</#if>
 <#include "/java_copyright.include"/>
 
 @Alias("${alias}")

@@ -9,7 +9,7 @@ import javax.persistence.NonUniqueResultException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.PageInfo;
+import com.mawujun.repository.utils.Page;
 
 public interface IBaseService<T> {
 	/**
@@ -95,7 +95,7 @@ public interface IBaseService<T> {
 	 * @param limit 一页放几行
 	 * @return
 	 */
-	public PageInfo<T> listPageByExample(T params, int page,int limit);
+	public Page<T> listPageByExample(T params, int page,int limit);
 	
 	
 	public List<T> listAll();
@@ -113,7 +113,7 @@ public interface IBaseService<T> {
 	 * @param params
 	 * @return
 	 */
-	public PageInfo<T> listPageByPageInfo(PageInfo<T> pageinfo);
+	public Page<T> listPageByPageInfo(Page<T> pageinfo);
 	
 	/**
 	 * 取分页数据，满足不了时，请参考listPageByPageInfo
@@ -122,7 +122,7 @@ public interface IBaseService<T> {
 	 * @param limit 每页的页数
 	 * @return
 	 */
-	public PageInfo<T> listPageByMap(Map<String,Object> params,int page,int limit);
+	public Page<T> listPageByMap(Map<String,Object> params,int page,int limit);
 
 
 	/**
