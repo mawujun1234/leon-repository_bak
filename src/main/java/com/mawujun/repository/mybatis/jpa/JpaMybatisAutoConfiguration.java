@@ -10,10 +10,11 @@ import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.context.annotation.Bean;
 
+import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.utils.ReflectUtils;
 
 @org.springframework.context.annotation.Configuration
@@ -68,6 +69,15 @@ public class JpaMybatisAutoConfiguration {
 	}
 
 
+	 @Bean
+	 public JpaDao jpaDao() {
+		 return new JpaDao();
+	 }
+	 
+	 @Bean
+	 public SpringContextUtils springContextUtils() {
+		 return new SpringContextUtils();
+	 }
 	
 
 }

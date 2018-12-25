@@ -52,7 +52,7 @@ import com.mawujun.utils.ConvertUtils;
 import com.mawujun.utils.ReflectUtils;
 import com.mawujun.utils.string.StringUtils;
 
-@Repository
+//@Repository
 public class JpaDao {
 	private static final Logger logger=LoggerFactory.getLogger(JpaDao.class);
 	@PersistenceContext
