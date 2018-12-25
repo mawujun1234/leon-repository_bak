@@ -12,6 +12,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
 import com.mawujun.mvc.SpringContextUtils;
@@ -69,11 +70,13 @@ public class JpaMybatisAutoConfiguration {
 	}
 
 
+	 @ConditionalOnMissingBean(JpaDao.class)
 	 @Bean
 	 public JpaDao jpaDao() {
 		 return new JpaDao();
 	 }
 	 
+	 @ConditionalOnMissingBean(SpringContextUtils.class)
 	 @Bean
 	 public SpringContextUtils springContextUtils() {
 		 return new SpringContextUtils();
