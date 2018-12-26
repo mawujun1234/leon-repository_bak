@@ -132,6 +132,10 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 			return newdao.removeForce(entityClass, args[0]);
 		}  else if(method.getName().equals("removeForceById"))  {
 			return newdao.removeForceById(entityClass, (Serializable)args[0]);
+		} else if(method.getName().equals("removeForceAll"))  {
+			return newdao.removeForceAll(entityClass);
+		}  else if(method.getName().equals("removeForceByMap"))  {
+			return newdao.removeForceByMap(entityClass, (Map<String,Object>)args[0]);
 		} 
 		
 		

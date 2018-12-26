@@ -29,7 +29,6 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -968,7 +967,7 @@ public class JpaDao {
 		} else {
 			//使用hql进行删除
 			Object id=em.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);
-			
+			//防止爆，对象不存在的异常
 			return removeForceById(entityClass,(Serializable)id);
 			
 		}
@@ -988,6 +987,20 @@ public class JpaDao {
 	
 	public int removeForceById(Class entityClass, Serializable id) {
 		int result=0;
+//		Object entity=getById(entityClass,id);
+//		if(entity!=null) {
+//			em.remove(entity);
+//			return 1;
+//		}
+		SimpleJpaRepository repository = getSimpleJpaRepository(entityClass);
+
+		Optional optional = repository.findById(id);
+		if (optional.isPresent()) {
+			//return optional.get();
+			em.remove(optional.get());
+			return 1;
+		} 
+
 		JpaEntityInformation entityInformation = getEntityInformation(entityClass);
 		if(hasCompositeId(entityClass)) {
 			List<String> ides=this.getIdAttributeNames(entityClass);
@@ -1014,6 +1027,7 @@ public class JpaDao {
 			query.setParameter(0, id);
 			result= query.executeUpdate();
 		}
+		
 		return result;
 	}
 	public int removeById(Class entityClass, Serializable id) {
@@ -1027,31 +1041,23 @@ public class JpaDao {
 			//Object id=em.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);
 			query.setParameter(1, id);
 			result= query.executeUpdate();
-//			Object entity=em.getReference(entityClass, id);
-//			if(Persistence.getPersistenceUtil().isLoaded(entity)) {
-//				em.refresh(entity);
-//			}
-//			return result;
+
 		} else {
 			result=removeForceById(entityClass,id);
 		}
-		Object entity=em.getReference(entityClass, id);
-		if ( !(entity instanceof HibernateProxy) ) {
-			if(Persistence.getPersistenceUtil().isLoaded(entity)) {
-				em.refresh(entity);
-			}
+		SimpleJpaRepository repository = getSimpleJpaRepository(entityClass);
+		Optional optional = repository.findById(id);
+		if (optional.isPresent()) {
+			em.refresh(optional.get());
 		} 
+//		Object entity=em.getReference(entityClass, id);
+//		if ( !(entity instanceof HibernateProxy) ) {
+//			if(Persistence.getPersistenceUtil().isLoaded(entity)) {
+//				em.refresh(entity);
+//			}
+//		} 
 		return result;
-		
-//		SimpleJpaRepository repository = getSimpleJpaRepository(entityClass);
-//		try {
-//			repository.deleteById(id);
-//			repository.flush();
-//		} catch (Exception e) {
-//			logger.error("removeById失败,id=" + id, e);
-//			return 0;
-//		}
-//		return 1;
+
 
 	}
 
@@ -1064,11 +1070,17 @@ public class JpaDao {
 			em.clear();
 			return result;
 		} else {
-			return em.createQuery( String.format(QueryUtils.DELETE_ALL_QUERY_STRING, entityClass.getName())).executeUpdate();
-			
+			return removeForceAll(entityClass);
 		}
 		//getSimpleJpaRepository(entityClass).deleteAllInBatch();// .deleteAll();
 		//return true;
+	}
+	
+	public int removeForceAll(Class entityClass) {
+		int result= em.createQuery( String.format(QueryUtils.DELETE_ALL_QUERY_STRING, entityClass.getName())).executeUpdate();
+		em.clear();
+		return result;
+
 	}
 
 	public int removeByMap(Class entityClass, Map<String, Object> params) {
@@ -1078,19 +1090,23 @@ public class JpaDao {
 			sets.put(loginc.getName(), loginc.getDeleteValue());
 			return this.updateByMap(entityClass, sets, params);
 		} else {
-			CriteriaBuilder cb = em.getCriteriaBuilder();
-			CriteriaDelete update = cb.createCriteriaDelete(entityClass);
-			Root root = update.from(entityClass);
-
-			Predicate[] predicatesList = genPredicates(cb, root, params);
-			update.where(predicatesList);
-
-			Query query = em.createQuery(update);
-			int rowCount = query.executeUpdate();
-			em.clear();
-			return rowCount;
+			return removeForceByMap(entityClass,params);
 		}
 
+	}
+	
+	public int removeForceByMap(Class entityClass, Map<String, Object> params) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaDelete update = cb.createCriteriaDelete(entityClass);
+		Root root = update.from(entityClass);
+
+		Predicate[] predicatesList = genPredicates(cb, root, params);
+		update.where(predicatesList);
+
+		Query query = em.createQuery(update);
+		int rowCount = query.executeUpdate();
+		em.clear();
+		return rowCount;
 	}
 
 

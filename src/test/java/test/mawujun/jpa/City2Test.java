@@ -106,16 +106,42 @@ public class City2Test {
 		Assert.assertEquals(new Integer(1), city22.getDeleted());
 
 
+		
+
+	}
+	
+	@Test
+	public void test2_forceDelete() {
+		//测试删除detacted的对象，会不会爆出异常，原生的话是会爆出异常的额
 		City2 deleteForce = new City2();
 		deleteForce.setId(1111L);
-		result=city2Mapper.removeForce(deleteForce);
+		int result=city2Mapper.removeForce(deleteForce);
 		Assert.assertEquals(0, result);
+		Assert.assertNull(city2Mapper.getById(1111L));
 		
-		result=city2Mapper.removeForce(city22);
+		result=city2Mapper.removeForce(city2Mapper.getById(id));
 		Assert.assertEquals(1, result);
+		Assert.assertNull(city2Mapper.getById(id));
 		
-		按id强制删除，入股id存在，如果id不存在
-
+		//按id强制删除，入股id存在，如果id不存在
+		result=city2Mapper.removeForceById(id);
+		Assert.assertEquals(0, result);
+		Assert.assertNull(city2Mapper.getById(id));
+		
+		test();
+		result=city2Mapper.removeForceById(id);
+		Assert.assertEquals(1, result);
+		Assert.assertNull(city2Mapper.getById(id));
+		
+		test();
+		result=city2Mapper.removeForceAll();
+		Assert.assertEquals(1, result);
+		Assert.assertNull(city2Mapper.getById(id));
+		
+		test();
+		result=city2Mapper.removeForceByMap(Params.of("name", "测试"));
+		Assert.assertEquals(1, result);
+		Assert.assertNull(city2Mapper.getById(id));
 	}
 
 }

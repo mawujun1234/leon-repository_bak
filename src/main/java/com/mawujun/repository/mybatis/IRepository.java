@@ -189,11 +189,23 @@ public interface IRepository<T> {
 	 */
 	public int removeAll();
 	/**
+	 * 强制删除所有，即使设置了逻辑删除，也会被强制删除
+	 * @param t
+	 * @return
+	 */
+	public int removeForceAll();
+	/**
 	 * 根据指定的条件删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param params
 	 * @return
 	 */
 	public int removeByMap(Map<String,Object> params);
+	/**
+	 * 根据指定的条件强制删除对象
+	 * @param params
+	 * @return
+	 */
+	public int removeForceByMap(Map<String,Object> params);
 	/**
 	 * 根据id删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param id

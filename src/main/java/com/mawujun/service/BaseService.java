@@ -178,7 +178,21 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 	}
 
 	@Override
+	public int removeForceAll() {
+		// TODO Auto-generated method stub
+		return repository.removeForceAll();
+	}
+
+	
+	@Override
 	public int removeByMap(Map<String, Object> params) {
+		// TODO Auto-generated method stub
+		return repository.removeByMap(params);
+	}
+	
+
+	@Override
+	public int removeForceByMap(Map<String, Object> params) {
 		// TODO Auto-generated method stub
 		return repository.removeByMap(params);
 	}
@@ -255,9 +269,5 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 		// TODO Auto-generated method stub
 		return repository.listMapByMap(params, fields);
 	}
-
-
-
-
-	 
+ 
 }
