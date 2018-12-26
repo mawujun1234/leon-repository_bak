@@ -40,6 +40,9 @@ public class PropertyColumn {
 	private boolean isCompositeId=false;
 	private IDGenEnum idGenEnum=IDGenEnum.none;
 	
+	private boolean isVersion=false;
+	private boolean isLogicDelete=false;
+	
 	
 	//private Boolean isIdProperty=false;//是不是属于id的列
 	//private Boolean isComponentType=false;
@@ -337,8 +340,23 @@ public class PropertyColumn {
 		this.isCompositeId = isCompositeId;
 	}
 
+	public boolean getIsVersion() {
+		return isVersion;
+	}
 
-	
+	public void setIsVersion(boolean isVersion) {
+		this.isVersion = isVersion;
+	}
+
+	public boolean getIsLogicDelete() {
+		return isLogicDelete;
+	}
+
+	public void setIsLogicDelete(boolean isLogicDelect) {
+		this.isLogicDelete = isLogicDelect;
+	}
+
+
 
 
 	

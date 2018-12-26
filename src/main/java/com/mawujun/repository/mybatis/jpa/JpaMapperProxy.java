@@ -1,5 +1,6 @@
 package com.mawujun.repository.mybatis.jpa;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.utils.Page;
-import com.mawujun.utils.ReflectUtils;
+import com.mawujun.utils.ReflectionUtils;
 
 /**
  * z这个类也可以自己扩展，例如要把某些逻辑写在持久层里的时候，可以为某些类专门指定使用哪个Proxy
@@ -43,7 +44,7 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		
 		//this.newdao=JpaMapperListener.context.getBean(JpaDao.class);
 		this.newdao=SpringContextUtils.getBean(JpaDao.class);
-		this.entityClass = ReflectUtils.getGenericInterfaces(mapperInterface,0);
+		this.entityClass = ReflectionUtils.getGenericInterfaces(mapperInterface,0);
 		//System.out.println(entityManager);
 
 //		//mapperInterface.getGenericSuperclass();
@@ -124,10 +125,16 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		} else if(method.getName().equals("removeByMap"))  {
 			return newdao.removeByMap(entityClass, (Map<String,Object>)args[0]);
 		} else if(method.getName().equals("removeById"))  {
-			return newdao.removeById(entityClass, args[0]);
+			return newdao.removeById(entityClass, (Serializable)args[0]);
 		} else if(method.getName().equals("removeByIds"))  {
-			return newdao.removeByIds(entityClass, (Object[])args[0]);
+			return newdao.removeByIds(entityClass, (Serializable[])args[0]);
+		} else if(method.getName().equals("removeForce"))  {
+			return newdao.removeForce(entityClass, args[0]);
+		}  else if(method.getName().equals("removeForceById"))  {
+			return newdao.removeForceById(entityClass, (Serializable)args[0]);
 		} 
+		
+		
 		else if(method.getName().equals("count"))  {
 			return newdao.count(entityClass);
 		} else if(method.getName().equals("countByExample"))  {

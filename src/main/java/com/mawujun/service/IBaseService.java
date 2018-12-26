@@ -169,11 +169,17 @@ public interface IBaseService<T> {
 	 */
 	public int remove(T t);
 	/**
+	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
+	 * @param t
+	 * @return
+	 */
+	public int removeForce(T t);
+	/**
 	 * 全部删除
 	 * @param t
 	 * @return
 	 */
-	public boolean removeAll();
+	public int removeAll();
 	/**
 	 * 根据指定的条件删除对象
 	 * @param params
@@ -186,6 +192,12 @@ public interface IBaseService<T> {
 	 * @return
 	 */
 	public int removeById(Serializable id);
+	/**
+	 * 根据id强制删除
+	 * @param id
+	 * @return
+	 */
+	public int removeForceById(Serializable id);
 	/**
 	 * 根据id数组删除对象
 	 * @param ids

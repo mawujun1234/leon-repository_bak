@@ -16,6 +16,7 @@ import org.apache.ibatis.type.Alias;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.mawujun.generator.annotation.LogicDelete;
 
 /**
  * 1：时间映射,@Temporal注解
@@ -55,7 +56,7 @@ public class City2 {//extends SnowFlakeId {
 	 * 
 	 */
 	private static final long serialVersionUID = 3172844311839975513L;
-	@Column
+	@Column(nullable=false)
 	private String name;
 	
 	private Integer age;
@@ -73,6 +74,8 @@ public class City2 {//extends SnowFlakeId {
 	@Column(length=10)
 	private Sex sex;
 	
+	@LogicDelete
+	private Integer deleted;
 	
 	
 	public String getName() {
@@ -117,6 +120,12 @@ public class City2 {//extends SnowFlakeId {
 //	public void setId(String id) {
 //		this.id = id;
 //	}
+	public Integer getDeleted() {
+		return deleted;
+	}
+	public void setDeleted(Integer deleted) {
+		this.deleted = deleted;
+	}
 
 }
 

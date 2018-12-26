@@ -43,7 +43,7 @@ import com.mawujun.generator.annotation.FK;
 import com.mawujun.generator.annotation.TableDefine;
 import com.mawujun.utils.Assert;
 import com.mawujun.utils.PropertiesUtils;
-import com.mawujun.utils.ReflectUtils;
+import com.mawujun.utils.ReflectionUtils;
 import com.mawujun.utils.file.FileUtils;
 import com.mawujun.utils.string.StringUtils;
 
@@ -303,7 +303,7 @@ public class GenerateDDLService {
 	}
 
 	private static void assignColCommentAndDefaultvalue(Class clazz, String property, Column col) {
-		Field field = ReflectUtils.getField(clazz, property);
+		Field field = ReflectionUtils.getField(clazz, property);
 		System.out.println(property + "......");
 		if (field == null) {
 			return;

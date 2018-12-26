@@ -137,7 +137,7 @@ public interface IRepository<T> {
 	 * 更新id为t.id的对象，所有属性都会更新，如果其他值没有设置，将会被更新为null
 	 * 不是动态更新
 	 * @param t
-	 * @return
+	 * @return 返回来的对象和参数对象，可能会不是同个对象
 	 */
 	public T update(T t);
 	/**
@@ -170,32 +170,44 @@ public interface IRepository<T> {
 	
 
 	/**
-	 * 和T一样的属性值的对象都会被删除
-	 * 不要传入一个没有任何值的实体对象，这样会清空整个表的数据
+	 * 如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
+	 * 
 	 * @param t
 	 * @return
 	 */
 	public int remove(T t);
 	/**
-	 * 全部删除
+	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
 	 * @param t
 	 * @return
 	 */
-	public boolean removeAll();
+	public int removeForce(T t);
 	/**
-	 * 根据指定的条件删除对象
+	 * 全部删除，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
+	 * @param t
+	 * @return
+	 */
+	public int removeAll();
+	/**
+	 * 根据指定的条件删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param params
 	 * @return
 	 */
 	public int removeByMap(Map<String,Object> params);
 	/**
-	 * 根据id删除对象
+	 * 根据id删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param id
 	 * @return
 	 */
 	public int removeById(Serializable id);
 	/**
-	 * 根据id数组删除对象
+	 * 根据id强制删除
+	 * @param id
+	 * @return
+	 */
+	public int removeForceById(Serializable id);
+	/**
+	 * 根据id数组删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param ids
 	 * @return
 	 */

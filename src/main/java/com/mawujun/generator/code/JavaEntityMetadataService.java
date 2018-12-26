@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -22,11 +23,12 @@ import javax.validation.constraints.Size;
 import org.apache.ibatis.type.Alias;
 
 import com.mawujun.generator.annotation.ColDefine;
+import com.mawujun.generator.annotation.LogicDelete;
 import com.mawujun.generator.annotation.TableDefine;
 import com.mawujun.generator.other.DefaultNameStrategy;
 import com.mawujun.generator.other.NameStrategy;
 import com.mawujun.utils.PropertiesUtils;
-import com.mawujun.utils.ReflectUtils;
+import com.mawujun.utils.ReflectionUtils;
 import com.mawujun.utils.string.StringUtils;
 
 /**
@@ -147,7 +149,7 @@ public class JavaEntityMetadataService {
 
 		
 		
-		Field[] fields=ReflectUtils.getAllDeclaredFields(clazz);
+		Field[] fields=ReflectionUtils.getAllDeclaredFields(clazz);
 		//List<PropertyColumn> propertyColumns =new ArrayList<PropertyColumn>();
 		//存放需要产生查询条件的属性
 		//List<PropertyColumn> queryProperties =new ArrayList<PropertyColumn>();
@@ -213,7 +215,7 @@ public class JavaEntityMetadataService {
 			//表示可嵌入类的组合主键
 			EmbeddedId embeddedId=field.getAnnotation(EmbeddedId.class);
 			if(embeddedId!=null) {
-				Field[] embeddedIdFields=ReflectUtils.getAllDeclaredFields(field.getType());
+				Field[] embeddedIdFields=ReflectionUtils.getAllDeclaredFields(field.getType());
 				String[] idColumns=new String[embeddedIdFields.length];
 				String[] idPropertys=new String[embeddedIdFields.length];
 				
@@ -254,7 +256,7 @@ public class JavaEntityMetadataService {
 					root.setIdGenEnum(IDGenEnum.none);
 					root.setIdSequenceName(null);
 					
-					Field[] idClass_fields=ReflectUtils.getAllDeclaredFields(idClass.value());
+					Field[] idClass_fields=ReflectionUtils.getAllDeclaredFields(idClass.value());
 					for(Field idField:idClass_fields) {
 						assignComment(idField,propertyColumn);
 					}
@@ -326,6 +328,14 @@ public class JavaEntityMetadataService {
 					propertyColumn.setLength(size.max());
 				}
 				
+			}
+			Version version=field.getAnnotation(Version.class);
+			if(version!=null){
+				propertyColumn.setIsVersion(true);
+			}
+			LogicDelete logicDelete=field.getAnnotation(LogicDelete.class);
+			if(logicDelete!=null){
+				propertyColumn.setIsLogicDelete(true);
 			}
 			
 			//

@@ -42,6 +42,9 @@ public class DbTableMetadataService {
 	private String[] columnPrefix;// 列的前缀，以逗号分隔
 	private String[] include;// 包括的表，不复核前缀，但是在include中的也加进去
 	private String[] exclude;// 排除的表,优先级比include和tablePrefix高，肯定会被排除
+	
+	private String[] version;
+	private String[] logicdelete;
 
 	IDbQuery dbQuery;
 
@@ -86,6 +89,22 @@ public class DbTableMetadataService {
 				exclude = db_exclude.split(",");
 			} else {
 				exclude = new String[0];
+			}
+			
+			
+			
+			String db_version = aa.getProperty("db.version.column");
+			if (StringUtils.hasText(db_version)) {
+				version = db_version.split(",");
+			} else {
+				version = new String[]{"version"};
+			}
+			
+			String db_logicdelete = aa.getProperty("db.logicdelete.column");
+			if (StringUtils.hasText(db_logicdelete)) {
+				logicdelete = db_logicdelete.split(",");
+			} else {
+				logicdelete = new String[]{"deleted"};
 			}
 
 		} catch (ClassNotFoundException e) {
@@ -406,6 +425,23 @@ public class DbTableMetadataService {
 						} else {
 							field.setIdGenEnum(IDGenEnum.none);
 							tableInfo.setIdGenEnum(IDGenEnum.none);
+						}
+					}
+				}
+				
+				if(logicdelete!=null) {
+					for(String ld:logicdelete) {
+						if(ld.equalsIgnoreCase(field.getColumn())) {
+							field.setIsLogicDelete(true);
+							break;
+						}
+					}
+				}
+				if(version!=null) {
+					for(String ld:version) {
+						if(ld.equalsIgnoreCase(field.getColumn())) {
+							field.setIsVersion(true);
+							break;
 						}
 					}
 				}

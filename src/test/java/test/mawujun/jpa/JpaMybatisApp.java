@@ -3,6 +3,7 @@ package test.mawujun.jpa;
 
 import java.sql.SQLException;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EntityScan("test.mawujun.model")
-@ComponentScan(basePackages= {"com.mawujun","test.mawujun.jpa"})
+@ComponentScan(basePackages= {"com.mawujun","test.mawujun.jpa"})//"com.mawujun",在测试时，这个不能去掉，不能加载自己的spring.factories
 //@MapperScan("test.mawujun.jpa")
 public class JpaMybatisApp  implements CommandLineRunner {
 //	@Autowired

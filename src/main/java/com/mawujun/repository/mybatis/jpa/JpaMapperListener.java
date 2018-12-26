@@ -12,7 +12,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import com.mawujun.utils.ReflectUtils;
+import com.mawujun.utils.ReflectionUtils;
 //@Component
 public class JpaMapperListener {//implements ApplicationListener<ContextRefreshedEvent> {
 

@@ -49,6 +49,12 @@ public class ${entitySimpleClassName} {
 	<#if pc.colDefine?? && pc.colDefine != "">
 	${pc.colDefine}
 	</#if>
+	<#if pc.isVersion==true>
+	@Version
+	</#if>
+	<#if pc.isLogicDelete==true>
+	@LogicDelete
+	</#if>
 	private ${pc.simpleClassName} ${pc.property};
 </#list>
 

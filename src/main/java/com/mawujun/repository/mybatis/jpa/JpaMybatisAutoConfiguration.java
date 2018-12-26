@@ -9,6 +9,7 @@ import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.hibernate.internal.SessionFactoryImpl;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -16,7 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 import com.mawujun.mvc.SpringContextUtils;
-import com.mawujun.utils.ReflectUtils;
+import com.mawujun.utils.ReflectionUtils;
 
 @org.springframework.context.annotation.Configuration
 //@ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class })
@@ -46,15 +47,15 @@ public class JpaMybatisAutoConfiguration {
 		Configuration conf=sqlSessionFactory.getConfiguration();
 		MapperRegistry mapperRegistry=conf.getMapperRegistry();
 		//Map<Class<?>, MapperProxyFactory<?>> knownMappers=(Map<Class<?>, MapperProxyFactory<?>>)ReflectUtils.getFieldValue(mapperRegistry, "knownMappers");
-		Map<Class<?>, MapperProxyFactory<?>> knownMappers_ =(Map<Class<?>, MapperProxyFactory<?>>)ReflectUtils.getFieldValue(mapperRegistry, "knownMappers");
+		Map<Class<?>, MapperProxyFactory<?>> knownMappers_ =(Map<Class<?>, MapperProxyFactory<?>>)ReflectionUtils.getFieldValue(mapperRegistry, "knownMappers");
 				
 		
 		JpaMapperRegistry jpaMapperRegistry=new JpaMapperRegistry(conf);
 		jpaMapperRegistry.setKnownMappers_(knownMappers_);
-		ReflectUtils.setFieldValue(jpaMapperRegistry, "knownMappers", knownMappers_);
+		ReflectionUtils.setFieldValue(jpaMapperRegistry, "knownMappers", knownMappers_);
 		//BeanUtils.copyProperties(mapperRegistry, jpaMapperRegistry);
 		
-		ReflectUtils.setFieldValue(conf, "mapperRegistry", jpaMapperRegistry);
+		ReflectionUtils.setFieldValue(conf, "mapperRegistry", jpaMapperRegistry);
 		//Collection<Class<?>> list=conf.getMapperRegistry().getMappers();
 		//System.out.println(list);
 		//MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory)
@@ -64,12 +65,8 @@ public class JpaMybatisAutoConfiguration {
 			knownMappers_.put(entry.getKey(), new JpaMapperProxyFactory(entry.getValue().getMapperInterface()));
 		}
 
-//	
-//		CityMapper cityMapper=context.getBean(CityMapper.class);
-//		System.out.println(cityMapper.getById("111"));
 	}
-
-
+	 
 	 @ConditionalOnMissingBean(JpaDao.class)
 	 @Bean
 	 public JpaDao jpaDao() {

@@ -195,7 +195,7 @@ public class JavaEntityMetaDataServiceTest {
 		
 		//测试属性，列名注解
 		List<PropertyColumn> lpc=root.getPropertyColumns();
-		Assert.assertEquals(6, lpc.size());
+		Assert.assertEquals(7, lpc.size());
 		PropertyColumn id=root.getPropertyColumn("id");
 		assertNotNull(id);
 		assertEquals("id", id.getProperty());

@@ -165,9 +165,14 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 		// TODO Auto-generated method stub
 		return repository.remove(t);
 	}
+	@Override
+	public int removeForce(T t) {
+		// TODO Auto-generated method stub
+		return repository.removeForce(t);
+	}
 
 	@Override
-	public boolean removeAll() {
+	public int removeAll() {
 		// TODO Auto-generated method stub
 		return repository.removeAll();
 	}
@@ -180,6 +185,12 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 
 	@Override
 	public int removeById(Serializable id) {
+		// TODO Auto-generated method stub
+		return repository.removeById(id);
+	}
+	
+	@Override
+	public int removeForceById(Serializable id) {
 		// TODO Auto-generated method stub
 		return repository.removeById(id);
 	}
@@ -244,5 +255,9 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 		// TODO Auto-generated method stub
 		return repository.listMapByMap(params, fields);
 	}
+
+
+
+
 	 
 }

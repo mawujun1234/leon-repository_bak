@@ -2,8 +2,6 @@ package test.mawujun.generator;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.junit.FixMethodOrder;
@@ -11,22 +9,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.Assert;
-
-import com.mawujun.generator.code.DbTableMetadataService;
-import com.mawujun.generator.code.EntityTable;
-import com.mawujun.generator.code.PropertyColumn;
 
 import aaaaa.TestId;
 import aaaaa.TestRepository;
-import test.mawujun.jpa.JpaMybatisApp;
 
 
 
