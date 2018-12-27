@@ -3,7 +3,6 @@ package com.mawujun.repository.mybatis.jpa;
 import javax.annotation.PostConstruct;
 
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
-import org.mybatis.spring.boot.autoconfigure.MybatisProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -15,13 +14,18 @@ import com.mawujun.mvc.SpringContextUtils;
 public class TypeAliasesAutoConfiguration {
 	@PostConstruct
 	public void onApplicationEvent() {
-		MybatisProperties tp=springContextUtils().getBean(MybatisProperties.class);
+		//MybatisProperties tp=springContextUtils().getBean(MybatisProperties.class);
 		String aaaa = springContextUtils().getEnvironment().getProperty("mybatis.type-aliases-package");
 		//System.out.println(aaaa);
 		// System.out.println();
-		System.setProperty("mybatis.type-aliases-package", aaaa + ";com.mawujun.repository.mybatis.typeAliases");
+		if(aaaa!=null && !"".equals(aaaa)) {
+			System.setProperty("mybatis.type-aliases-package", aaaa + ";com.mawujun.repository.mybatis.typeAliases");
+		} else {
+			System.setProperty("mybatis.type-aliases-package", "com.mawujun.repository.mybatis.typeAliases");
+		}
+		
 		//System.out.println(springContextUtils().getEnvironment().getProperty("mybatis.type-aliases-package"));
-		//System.out.println("===========================================================");
+		System.out.println("===========================================================");
 	}
 
 	@ConditionalOnMissingBean(JpaDao.class)

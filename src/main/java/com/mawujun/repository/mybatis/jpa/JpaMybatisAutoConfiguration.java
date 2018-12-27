@@ -67,22 +67,23 @@ public class JpaMybatisAutoConfiguration {
 		}
 
 //		conf.getTypeAliasRegistry().registerAlias("beanmap", BeanMap.class);
-//		System.out.println(conf.getTypeAliasRegistry().getTypeAliases());
+	System.out.println(conf.getTypeAliasRegistry().getTypeAliases().containsKey("beanmap"));
+	System.out.println("============================");
 //		
 //		SpringContextUtils.getEnvironment()
 	}
 	 
-//	 @ConditionalOnMissingBean(JpaDao.class)
-//	 @Bean
-//	 public JpaDao jpaDao() {
-//		 return new JpaDao();
-//	 }
-//	 
-//	 @ConditionalOnMissingBean(SpringContextUtils.class)
-//	 @Bean
-//	 public SpringContextUtils springContextUtils() {
-//		 return new SpringContextUtils();
-//	 }
+	 @ConditionalOnMissingBean(JpaDao.class)
+	 @Bean
+	 public JpaDao jpaDao() {
+		 return new JpaDao();
+	 }
+	 
+	 @ConditionalOnMissingBean(SpringContextUtils.class)
+	 @Bean
+	 public SpringContextUtils springContextUtils() {
+		 return new SpringContextUtils();
+	 }
 	
 
 }
