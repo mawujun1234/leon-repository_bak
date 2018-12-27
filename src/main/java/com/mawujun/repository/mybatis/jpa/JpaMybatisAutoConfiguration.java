@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 import com.mawujun.mvc.SpringContextUtils;
+import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.utils.ReflectionUtils;
 
 @org.springframework.context.annotation.Configuration
@@ -47,7 +48,7 @@ public class JpaMybatisAutoConfiguration {
 		Configuration conf=sqlSessionFactory.getConfiguration();
 		MapperRegistry mapperRegistry=conf.getMapperRegistry();
 		//Map<Class<?>, MapperProxyFactory<?>> knownMappers=(Map<Class<?>, MapperProxyFactory<?>>)ReflectUtils.getFieldValue(mapperRegistry, "knownMappers");
-		Map<Class<?>, MapperProxyFactory<?>> knownMappers_ =(Map<Class<?>, MapperProxyFactory<?>>)ReflectionUtils.getFieldValue(mapperRegistry, "knownMappers");
+		Map<Class<?>, MapperProxyFactory<?>> knownMappers_ =(Map<Class<?>, MapperProxyFactory<?>>)ReflectionUtils.getFieldValue (mapperRegistry, "knownMappers");
 				
 		
 		JpaMapperRegistry jpaMapperRegistry=new JpaMapperRegistry(conf);
@@ -65,19 +66,23 @@ public class JpaMybatisAutoConfiguration {
 			knownMappers_.put(entry.getKey(), new JpaMapperProxyFactory(entry.getValue().getMapperInterface()));
 		}
 
+//		conf.getTypeAliasRegistry().registerAlias("beanmap", BeanMap.class);
+//		System.out.println(conf.getTypeAliasRegistry().getTypeAliases());
+//		
+//		SpringContextUtils.getEnvironment()
 	}
 	 
-	 @ConditionalOnMissingBean(JpaDao.class)
-	 @Bean
-	 public JpaDao jpaDao() {
-		 return new JpaDao();
-	 }
-	 
-	 @ConditionalOnMissingBean(SpringContextUtils.class)
-	 @Bean
-	 public SpringContextUtils springContextUtils() {
-		 return new SpringContextUtils();
-	 }
+//	 @ConditionalOnMissingBean(JpaDao.class)
+//	 @Bean
+//	 public JpaDao jpaDao() {
+//		 return new JpaDao();
+//	 }
+//	 
+//	 @ConditionalOnMissingBean(SpringContextUtils.class)
+//	 @Bean
+//	 public SpringContextUtils springContextUtils() {
+//		 return new SpringContextUtils();
+//	 }
 	
 
 }
