@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.mawujun.repository.mybatis.jpa.JpaMybatisAutoConfiguration,com.mawujun.repository.mybatis.jpa.HibernateAutoConfiguration,com.mawujun.mvc.MvcAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.mawujun.repository.mybatis.jpa.JpaMybatisAutoConfiguration,com.mawujun.repository.mybatis.jpa.HibernateAutoConfiguration,com.mawujun.repository.mybatis.jpa.TypeAliasesAutoConfiguration,com.mawujun.mvc.MvcAutoConfiguration
+
