@@ -25,7 +25,7 @@ public class TypeAliasesAutoConfiguration {
 		}
 		
 		//System.out.println(springContextUtils().getEnvironment().getProperty("mybatis.type-aliases-package"));
-		System.out.println("===========================================================");
+		//System.out.println("===========================================================");
 	}
 
 	@ConditionalOnMissingBean(JpaDao.class)
