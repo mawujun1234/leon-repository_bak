@@ -214,6 +214,11 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 		// TODO Auto-generated method stub
 		return repository.removeByIds(ids);
 	}
+	@Override
+	public int removeByIds(List<Serializable> ids) {
+		// TODO Auto-generated method stub
+		return repository.removeByIds(ids);
+	}
 
 	@Override
 	public long count() {
@@ -269,5 +274,7 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 		// TODO Auto-generated method stub
 		return repository.listMapByMap(params, fields);
 	}
+
+
  
 }

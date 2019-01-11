@@ -1125,6 +1125,20 @@ public class JpaDao {
 //		}
 //		return result;
 	}
+	public int removeByIds(Class entityClass, List<Serializable> ids) {
+		int result = 0;
+		for (Serializable id : ids) {
+			result += removeById(entityClass, id);
+		}
+		return result;
+		
+//		int result = 0;
+//		SimpleJpaRepository repository = getSimpleJpaRepository(entityClass);
+//		for (Serializable id : ids) {
+//			result += removeById(entityClass, id);
+//		}
+//		return result;
+	}
 
 	public long count(Class entityClass) {
 		return getSimpleJpaRepository(entityClass).count();

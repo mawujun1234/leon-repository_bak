@@ -44,6 +44,10 @@ public class MvcControllerTest {
 		url = String.format("http://localhost:%d/", port);
 	}
 	
+	@Test
+	public void testException()  {
+		System.out.println(1111);
+	}
 
 
 //	@Test

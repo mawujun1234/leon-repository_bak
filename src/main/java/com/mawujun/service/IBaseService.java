@@ -216,6 +216,12 @@ public interface IBaseService<T> {
 	 * @return
 	 */
 	public int removeByIds(Serializable... ids);
+	/**
+	 * 根据id数组删除对象
+	 * @param ids
+	 * @return
+	 */
+	public int removeByIds(List<Serializable> ids);
 	
 	/**
 	 * 统计所有

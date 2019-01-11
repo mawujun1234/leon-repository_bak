@@ -11,12 +11,12 @@ public class JpaMapperProxyFactory<T> extends MapperProxyFactory<T> {
 		super((Class<T>)type);
 		// TODO Auto-generated constructor stub
 	}
-
+	@SuppressWarnings("unchecked")
 	protected T newInstance(MapperProxy<T> mapperProxy) {
 		return (T) Proxy.newProxyInstance(this.getMapperInterface().getClassLoader(), new Class[]{this.getMapperInterface()},
 				mapperProxy);
 	}
-
+	@SuppressWarnings("unchecked")
 	public T newInstance(SqlSession sqlSession) {
 		JpaMapperProxy<T> mapperProxy = new JpaMapperProxy(sqlSession, this.getMapperInterface(), this.getMethodCache());
 		return this.newInstance(mapperProxy);

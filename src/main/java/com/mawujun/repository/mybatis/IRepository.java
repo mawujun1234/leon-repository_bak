@@ -224,6 +224,12 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	public int removeByIds(Serializable... ids);
+	/**
+	 * 根据id数组删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
+	 * @param ids
+	 * @return
+	 */
+	public int removeByIds(List<Serializable> ids);
 	
 	/**
 	 * 统计所有

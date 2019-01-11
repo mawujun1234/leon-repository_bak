@@ -127,7 +127,12 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		} else if(method.getName().equals("removeById"))  {
 			return newdao.removeById(entityClass, (Serializable)args[0]);
 		} else if(method.getName().equals("removeByIds"))  {
-			return newdao.removeByIds(entityClass, (Serializable[])args[0]);
+			if(args[0] instanceof List) {
+				return newdao.removeByIds(entityClass, (List<Serializable>)args[0]);
+			} else {
+				return newdao.removeByIds(entityClass, (Serializable[])args[0]);
+			}
+			
 		} else if(method.getName().equals("removeForce"))  {
 			return newdao.removeForce(entityClass, args[0]);
 		}  else if(method.getName().equals("removeForceById"))  {

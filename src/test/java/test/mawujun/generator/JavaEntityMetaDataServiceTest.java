@@ -234,7 +234,7 @@ public class JavaEntityMetaDataServiceTest {
 		assertEquals(new Integer(0), name.getPrecision());
 		assertEquals(new Integer(0), name.getScale());
 		assertEquals(false, name.isUnique());
-		assertEquals(true, name.isNullable());
+		assertEquals(false, name.isNullable());
 		assertEquals(true, name.isInsertable());
 		assertEquals(true, name.isUpdatable());
 		assertEquals(false, name.getIsEnum());
