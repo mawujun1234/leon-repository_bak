@@ -99,7 +99,7 @@ public interface IRepository<T> {
 	/**
 	 * 满足不了时，请参考listPageByPageInfo
 	 * @param params
-	 * @param page 第几页，第一页是0；
+	 * @param page 第几页，第一页是1；
 	 * @param limit 一页放几行
 	 * @return
 	 */
@@ -121,12 +121,12 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
-	public Page<T> listPageByPageInfo(Page<T> pageinfo);
+	public Page<T> listPageByPage(Page<T> page);
 	
 	/**
 	 * 取分页数据，满足不了时，请参考listPageByPageInfo
 	 * @param params 如果为null，按所有数据进行分页
-	 * @param page 第几页  从0 开始
+	 * @param page 第几页  从1 开始
 	 * @param limit 每页的页数
 	 * @return
 	 */

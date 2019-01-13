@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Bean;
 
 import com.mawujun.mvc.SpringContextUtils;
 
-@org.springframework.context.annotation.Configuration
-@AutoConfigureBefore(MybatisAutoConfiguration.class)
+//@org.springframework.context.annotation.Configuration
+//@AutoConfigureBefore(MybatisAutoConfiguration.class)
 public class TypeAliasesAutoConfiguration {
 	@PostConstruct
 	public void onApplicationEvent() {

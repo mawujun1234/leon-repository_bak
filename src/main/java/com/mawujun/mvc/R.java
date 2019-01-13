@@ -3,6 +3,8 @@ package com.mawujun.mvc;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mawujun.repository.utils.Page;
+
 /**
  * spring mvc 的返回数据格式
  * 使用方法:R.ok().putData(result);
@@ -60,10 +62,27 @@ public class R extends HashMap<String, Object> {
 		return r;
 	}
 
-	@Override
 	public R put(String key, Object value) {
-		super.put(key, value);
+		
+		if(value instanceof Page) {
+			putPage(key,(Page)value);
+		} else {
+			super.put(key, value);
+		}
 		return this;
+	}
+	private void putPage(String key, Page page) {
+		Map<String,Object> result=new HashMap<String,Object>();
+		result.put("page", page.getPage());
+		result.put("limit", page.getLimit());
+		result.put("total", page.getTotal());
+		result.put("start", page.getStart());
+		result.put("totalPages", page.getTotalPages());
+		result.put("root", page.getRoot());
+		result.put("rootSize", page.getRootSize());
+		
+		super.put(key, result);
+		
 	}
 	
 	public R data(Object value) {
@@ -92,4 +111,6 @@ public class R extends HashMap<String, Object> {
 	public R setMsg(Object value) {
 		return this.putMsg(value);
 	}
+	
+	
 }

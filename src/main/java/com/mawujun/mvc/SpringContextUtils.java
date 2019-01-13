@@ -21,35 +21,42 @@ public class SpringContextUtils implements ApplicationContextAware {
 		SpringContextUtils.applicationContext = applicationContext;
 	}
 
+	public static ApplicationContext getApplicationContext() {
+		if(applicationContext==null) {
+			throw new NullPointerException("applicationContext还未初始化");
+		}
+		return applicationContext;
+	}
+	
 	public static Object getBean(String name) {
-		return applicationContext.getBean(name);
+		return getApplicationContext().getBean(name);
 	}
 	public static <T> T getBean( Class<T> requiredType) {
-		return applicationContext.getBean(requiredType);
+		return getApplicationContext().getBean(requiredType);
 	}
 
 	public static <T> T getBean(String name, Class<T> requiredType) {
-		return applicationContext.getBean(name, requiredType);
+		return getApplicationContext().getBean(name, requiredType);
 	}
 
 	public static boolean containsBean(String name) {
-		return applicationContext.containsBean(name);
+		return getApplicationContext().containsBean(name);
 	}
 
 	public static boolean isSingleton(String name) {
-		return applicationContext.isSingleton(name);
+		return getApplicationContext().isSingleton(name);
 	}
 
 	public static Class<? extends Object> getType(String name) {
-		return applicationContext.getType(name);
+		return getApplicationContext().getType(name);
 	}
 	
 	public static Environment getEnvironment() {
-		return applicationContext.getEnvironment();
+		return getApplicationContext().getEnvironment();
 	}
 	
 	public static String getActiveProfile() {
-		return applicationContext.getEnvironment().getActiveProfiles()[0];
+		return getApplicationContext().getEnvironment().getActiveProfiles()[0];
 	}
 
 }

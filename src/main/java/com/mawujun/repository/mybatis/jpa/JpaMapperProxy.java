@@ -41,27 +41,14 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		super(sqlSession, mapperInterface, methodCache);
 		sqlSession_=sqlSession;
 		
-		
-		//this.newdao=JpaMapperListener.context.getBean(JpaDao.class);
-		this.newdao=SpringContextUtils.getBean(JpaDao.class);
+		//this.newdao=SpringContextUtils.getBean(JpaDao.class);
 		this.entityClass = ReflectionUtils.getGenericInterfaces(mapperInterface,0);
-		//System.out.println(entityManager);
-
-//		//mapperInterface.getGenericSuperclass();
-//		
-//		//这个判断是当，Repository没有继承IRepository的时候
-//		if(mapperInterface.getGenericInterfaces().length!=0){
-//			Type[] types=((ParameterizedType)mapperInterface.getGenericInterfaces()[0]).getActualTypeArguments();
-//
-//			hibernateDao=new HibernateDao<Object,Serializable>((Class)types[0]);
-//		}
-//		
-//		
-//		
-//		mybatisRepository=new MybatisRepository();
-//		mybatisRepository.setSqlSession(sqlSession);
-//		namespace=mapperInterface.getName();
-
+	}
+	public JpaDao getJpaDao() {
+		if(this.newdao==null) {
+			this.newdao=SpringContextUtils.getBean(JpaDao.class);
+		}
+		return this.newdao;
 	}
 
 	/**
@@ -72,118 +59,118 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if(method.getName().equals("getById")) {
 			sqlSession_.clearCache();
-			return newdao.getById(entityClass, args[0]);
+			return getJpaDao().getById(entityClass, args[0]);
 		} else if(method.getName().equals("create")) {
-			 return newdao.create(entityClass,args[0]);
+			 return getJpaDao().create(entityClass,args[0]);
 		} else if(method.getName().equals("createBatch")) {
-			 return newdao.createBatch(entityClass,(List)args[0]);
+			 return getJpaDao().createBatch(entityClass,(List)args[0]);
 		} else if(method.getName().equals("createBatchByArray")) {
-			 return newdao.createBatchByArray(entityClass,(Object[])args[0]);
+			 return getJpaDao().createBatchByArray(entityClass,(Object[])args[0]);
 		}
 		else if(method.getName().equals("save")) {
-			 return newdao.save(entityClass,args[0]);
+			 return getJpaDao().save(entityClass,args[0]);
 		} else if(method.getName().equals("saveBatch")) {
-			 return newdao.saveBatch(entityClass,(List)args[0]);
+			 return getJpaDao().saveBatch(entityClass,(List)args[0]);
 		} else if(method.getName().equals("saveBatchByArray")) {
-			 return newdao.saveBatchByArray(entityClass,(Object[])args[0]);
+			 return getJpaDao().saveBatchByArray(entityClass,(Object[])args[0]);
 		}
 		
 		else if(method.getName().equals("getByMap"))  {
-			return newdao.getByMap(entityClass, (Map<String,Object>)args[0]);
+			return getJpaDao().getByMap(entityClass, (Map<String,Object>)args[0]);
 		} else if(method.getName().equals("getByExample"))  {
-			return newdao.getByExample(entityClass, args[0]);
+			return getJpaDao().getByExample(entityClass, args[0]);
 		} else if(method.getName().equals("listByExample"))  {
-			return newdao.listByExample(entityClass, args[0]);
+			return getJpaDao().listByExample(entityClass, args[0]);
 		} else if(method.getName().equals("listPageByExample"))  {
-			return newdao.listPageByExample(entityClass, args[0],(int)args[1],(int)args[2]);
+			return getJpaDao().listPageByExample(entityClass, args[0],(int)args[1],(int)args[2]);
 		} else if(method.getName().equals("listByMap"))  {
-			return newdao.listByMap(entityClass, (Map<String,Object>)args[0]);
+			return getJpaDao().listByMap(entityClass, (Map<String,Object>)args[0]);
 		} else if(method.getName().equals("listAll"))  {
-			return newdao.listAll(entityClass);
+			return getJpaDao().listAll(entityClass);
 		} else if(method.getName().equals("listPageByMap"))  {
-			return newdao.listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);
-		} else if(method.getName().equals("listPageByPageInfo"))  {
-			return newdao.listPageByPageInfo(entityClass, (Page)args[0]);
+			return getJpaDao().listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);
+		} else if(method.getName().equals("listPageByPage"))  {
+			return getJpaDao().listPageByPage(entityClass, (Page)args[0]);
 		} 
 		
 		else if(method.getName().equals("update"))  {
-			return newdao.update(entityClass, args[0]);
+			return getJpaDao().update(entityClass, args[0]);
 		} else if(method.getName().equals("updateBatch"))  {
-			return newdao.updateBatch(entityClass, (List)args[0]);
+			return getJpaDao().updateBatch(entityClass, (List)args[0]);
 		}  else if(method.getName().equals("updateBatchByArray"))  {//数组
-			return newdao.updateBatchByArray(entityClass, (Object[])args[0]);
+			return getJpaDao().updateBatchByArray(entityClass, (Object[])args[0]);
 		}  else if(method.getName().equals("updateByMap"))  {
-			return newdao.updateByMap(entityClass,(Map<String,Object>)args[0],(Map<String,Object>)args[1]);
+			return getJpaDao().updateByMap(entityClass,(Map<String,Object>)args[0],(Map<String,Object>)args[1]);
 		} else if(method.getName().equals("updateById"))  {
-			return newdao.updateById(entityClass,(Map<String,Object>)args[0],args[1]);
+			return getJpaDao().updateById(entityClass,(Map<String,Object>)args[0],args[1]);
 		}  
 		
 		else if(method.getName().equals("remove"))  {
-			 return newdao.remove(entityClass, args[0]);
+			 return getJpaDao().remove(entityClass, args[0]);
 		}if(method.getName().equals("removeAll"))  {
-			 return newdao.removeAll(entityClass);
+			 return getJpaDao().removeAll(entityClass);
 		} else if(method.getName().equals("removeByMap"))  {
-			return newdao.removeByMap(entityClass, (Map<String,Object>)args[0]);
+			return getJpaDao().removeByMap(entityClass, (Map<String,Object>)args[0]);
 		} else if(method.getName().equals("removeById"))  {
-			return newdao.removeById(entityClass, (Serializable)args[0]);
+			return getJpaDao().removeById(entityClass, (Serializable)args[0]);
 		} else if(method.getName().equals("removeByIds"))  {
 			if(args[0] instanceof List) {
-				return newdao.removeByIds(entityClass, (List<Serializable>)args[0]);
+				return getJpaDao().removeByIds(entityClass, (List<Serializable>)args[0]);
 			} else {
-				return newdao.removeByIds(entityClass, (Serializable[])args[0]);
+				return getJpaDao().removeByIds(entityClass, (Serializable[])args[0]);
 			}
 			
 		} else if(method.getName().equals("removeForce"))  {
-			return newdao.removeForce(entityClass, args[0]);
+			return getJpaDao().removeForce(entityClass, args[0]);
 		}  else if(method.getName().equals("removeForceById"))  {
-			return newdao.removeForceById(entityClass, (Serializable)args[0]);
+			return getJpaDao().removeForceById(entityClass, (Serializable)args[0]);
 		} else if(method.getName().equals("removeForceAll"))  {
-			return newdao.removeForceAll(entityClass);
+			return getJpaDao().removeForceAll(entityClass);
 		}  else if(method.getName().equals("removeForceByMap"))  {
-			return newdao.removeForceByMap(entityClass, (Map<String,Object>)args[0]);
+			return getJpaDao().removeForceByMap(entityClass, (Map<String,Object>)args[0]);
 		} 
 		
 		
 		else if(method.getName().equals("count"))  {
-			return newdao.count(entityClass);
+			return getJpaDao().count(entityClass);
 		} else if(method.getName().equals("countByExample"))  {
-			return newdao.countByExample(entityClass, args[0]);
+			return getJpaDao().countByExample(entityClass, args[0]);
 		} else if(method.getName().equals("countByMap"))  {
-			return newdao.countByMap(entityClass, (Map<String,Object>)args[0]);
+			return getJpaDao().countByMap(entityClass, (Map<String,Object>)args[0]);
 		} 
 		
 		else if(method.getName().equals("existsById"))  {
-			return newdao.existsById(entityClass, args[0]);
+			return getJpaDao().existsById(entityClass, args[0]);
 		} else if(method.getName().equals("existsByExample"))  {
-			return newdao.existsByExample(entityClass, args[0]);
+			return getJpaDao().existsByExample(entityClass, args[0]);
 		} else if(method.getName().equals("existsByMap"))  {
-			return newdao.existsByMap(entityClass, (Map<String,Object>)args[0]);
+			return getJpaDao().existsByMap(entityClass, (Map<String,Object>)args[0]);
 		} 
 		
 		else if(method.getName().equals("getIdType"))  {
-			return newdao.getIdType(entityClass);
+			return getJpaDao().getIdType(entityClass);
 		} else if(method.getName().equals("getIdAttributeNames"))  {
-			return newdao.getIdAttributeNames(entityClass);
+			return getJpaDao().getIdAttributeNames(entityClass);
 		} else if(method.getName().equals("getIdAttributeNames2Str"))  {
-			return newdao.getIdAttributeNames2Str(entityClass);
+			return getJpaDao().getIdAttributeNames2Str(entityClass);
 		} 
 		
 		else if (method.getName().equals("getMapById")){
-			return newdao.getMapById(entityClass,args[0],(String[])args[1]);
+			return getJpaDao().getMapById(entityClass,args[0],(String[])args[1]);
 		} else if (method.getName().equals("getMapByMap")){
-			return newdao.getMapByMap(entityClass,(Map<String,Object>)args[0],(String[])args[1]);
+			return getJpaDao().getMapByMap(entityClass,(Map<String,Object>)args[0],(String[])args[1]);
 		}else if (method.getName().equals("listMapByMap")){
-			return newdao.listMapByMap(entityClass,(Map<String,Object>)args[0],(String[])args[1]);
+			return getJpaDao().listMapByMap(entityClass,(Map<String,Object>)args[0],(String[])args[1]);
 		}
 		
 //		else if (method.getName().equals("sumAsLong")){
-//			return newdao.sumAsLong(entityClass,(String)args[0],(Map<String,Object>)args[2]);
+//			return getJpaDao().sumAsLong(entityClass,(String)args[0],(Map<String,Object>)args[2]);
 //		} else if (method.getName().equals("sumAsDouble")){
-//			return newdao.sumAsDouble(entityClass,(String)args[0],(Map<String,Object>)args[2]);
+//			return getJpaDao().sumAsDouble(entityClass,(String)args[0],(Map<String,Object>)args[2]);
 //		}
 		
 		else if (method.getName().equals("clear")){
-			newdao.clear();
+			getJpaDao().clear();
 			return true;
 		}
 		

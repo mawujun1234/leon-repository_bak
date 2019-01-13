@@ -116,6 +116,12 @@ public class Params extends HashMap<String,Object>  implements IParams{
 		return utils;
 		
 	}
+	public static Params of(Map<String,Object> params) {
+		Params utils=new Params();
+		utils.putAll(params);
+		return utils;
+		
+	}
 	public static Params of(String key,Object value) {
 		Params utils=new Params();
 		utils.put(key, value);

@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import test.mawujun.jpa.JpaMybatisMapper;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { MvcApp.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -33,6 +35,7 @@ public class MvcControllerTest {
 	private WebApplicationContext wac;
 	// 实现了对http请求的模拟
 	private MockMvc mvc;
+
 
 	private String url;
 

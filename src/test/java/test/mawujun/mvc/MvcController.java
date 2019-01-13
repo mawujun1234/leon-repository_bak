@@ -3,14 +3,14 @@ package test.mawujun.mvc;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mawujun.exception.BusinessException;
+import com.mawujun.exception.BizException;
 
 @RestController
 public class MvcController {
 	@RequestMapping("/throwBusinessException")
 	public String test() {
 		if(true) {
-			throw new BusinessException("业务异常");
+			throw new BizException("业务异常");
 		}
 		return "hellow111123333333";
 	}

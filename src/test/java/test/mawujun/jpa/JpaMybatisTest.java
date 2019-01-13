@@ -13,14 +13,18 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.Page;
@@ -43,8 +47,9 @@ import test.mawujun.model.Sex;
  * @author admin
  *
  */
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes={JpaMybatisApp.class})
+//@ComponentScan(basePackages= {"com.mawujun","test.mawujun.jpa"},excludeFilters={@Filter(type=FilterType.ASSIGNABLE_TYPE,value=MybatisAutoConfiguration.class)})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Transactional
 @Rollback(false)
@@ -340,14 +345,14 @@ public class JpaMybatisTest {
 		Assert.assertEquals(1, pageinfo.getPage());
 		
 		Page<City> pageInfo=Page.of_1(0, 10).eq("name", "宁波");
-		Page<City> pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
+		Page<City> pageinfo_result=jpaMybatisMapper.listPageByPage(pageInfo);
 		Assert.assertEquals(pageInfo, pageinfo_result);
 		Assert.assertEquals(1, pageinfo_result.getTotal());
 		Assert.assertEquals(1, pageinfo_result.getRootSize());
 		Assert.assertEquals(0, pageinfo_result.getPage());
 		
 		pageInfo.setPage(1);
-		pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
+		pageinfo_result=jpaMybatisMapper.listPageByPage(pageInfo);
 		Assert.assertEquals(pageInfo, pageinfo_result);
 		Assert.assertEquals(1, pageinfo_result.getTotal());
 		Assert.assertEquals(0, pageinfo_result.getRootSize());
@@ -355,7 +360,7 @@ public class JpaMybatisTest {
 		
 		city_params.setAge(50);
 		pageInfo=Page.of_1(0, 1).setParams(city_params);
-		pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
+		pageinfo_result=jpaMybatisMapper.listPageByPage(pageInfo);
 		Assert.assertEquals(2, pageinfo_result.getTotal());
 		Assert.assertEquals(2, pageinfo_result.getTotalPages());
 		Assert.assertEquals(0, pageinfo_result.getPage());
@@ -363,7 +368,7 @@ public class JpaMybatisTest {
 		Assert.assertEquals(1, pageinfo_result.getRootSize());
 		city_params.setAge(11);
 		pageInfo=Page.of_1(0, 1).setParams(city_params);
-		pageinfo_result=jpaMybatisMapper.listPageByPageInfo(pageInfo);
+		pageinfo_result=jpaMybatisMapper.listPageByPage(pageInfo);
 		Assert.assertEquals(0, pageinfo_result.getTotal());
 		Assert.assertEquals(0, pageinfo_result.getTotalPages());
 		Assert.assertEquals(0, pageinfo_result.getPage());

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.mawujun.exception.BusinessException;
+import com.mawujun.exception.BizException;
 
 @ControllerAdvice
 //@RestControllerAdvice
@@ -32,9 +32,9 @@ public class GlobalExceptionHandler {
      * @param e
      * @return
      */
-    @ExceptionHandler(BusinessException.class)
+    @ExceptionHandler(BizException.class)
     @ResponseBody
-    R handleBusinessException(BusinessException e){
+    R handleBusinessException(BizException e){
     	logger.error(e.getMessage(), e);
     	if(e.getErrorCode()!=null){
             return R.error(e.getErrorCode().getNumber(),e.getMessage());

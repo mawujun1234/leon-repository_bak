@@ -10,6 +10,8 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.mawujun.exception.BizException;
+
 /**
  * 继承List的原因是mybatis的接口只能返回list，继承list就可以以Page的形式返回了
  * 在mybatis中分页拦截的时候，必须是要参数为PageInfo才行
@@ -74,6 +76,37 @@ public class Page<T> implements List<T>,IParams{
 		param.setLimit(limit);
 		return param;
 	}
+	/**
+	 * 使用这个方法，map里必须要有分页的参数，否则会爆出异常。
+	 * 分页的参数名称未page和limit，或start和limit
+	 * @param params
+	 * @return
+	 */
+	public static Page of(Map<String, Object> params){
+		if(!params.containsKey("limit") || params.get("limit")==null) {
+			throw new BizException("请put进分页参数limit");
+		}
+		int limit=Integer.parseInt(params.get("limit").toString());
+		if(params.containsKey("page")) {
+			int page=Integer.parseInt(params.get("page").toString());
+//			params.remove("page");
+//			params.remove("limit");
+//			params.remove("start");
+
+			return Page.of_1(page, limit).setParams(params);
+		} else	if(params.containsKey("start")) {
+//			params.remove("page");
+//			params.remove("limit");
+//			params.remove("start");
+			
+			int start=Integer.parseInt(params.get("start").toString());
+			return Page.of_1(start, limit).setParams(params);
+		} else {
+			throw new BizException("请put进分页参数start或page");
+		}
+		
+
+	}
 	
 	
 	/**
@@ -129,7 +162,14 @@ public class Page<T> implements List<T>,IParams{
 	 * @param params
 	 */
 	public Page<T> setParams(Object params) {
-		this.params = params;
+		if(params instanceof Params) {
+			this.params = params;
+		} else if(params instanceof Map) {
+			this.params = Params.of((Map)params);
+		} else {
+			this.params = params;
+		}
+		
 		return this;
 	}
 //	/**

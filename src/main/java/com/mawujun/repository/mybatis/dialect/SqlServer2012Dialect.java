@@ -8,7 +8,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
-import com.mawujun.exception.BusinessException;
+import com.mawujun.exception.BizException;
 import com.mawujun.generator.db.DbColumn;
 import com.mawujun.utils.DateUtils;
 

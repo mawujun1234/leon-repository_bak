@@ -1,15 +1,18 @@
 package com.mawujun.repository.mybatis.jpa;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -27,6 +30,9 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
@@ -42,6 +48,7 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.mawujun.generator.annotation.LogicDelete;
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
@@ -56,6 +63,7 @@ import com.mawujun.utils.ReflectionUtils;
 import com.mawujun.utils.string.StringUtils;
 
 @Repository
+//@Transactional(rollbackOn= {Exception.class})
 public class JpaDao {
 	private static final Logger logger = LoggerFactory.getLogger(JpaDao.class);
 	@PersistenceContext
@@ -91,9 +99,40 @@ public class JpaDao {
 		}
 		JpaEntityInformation entityInformation = (JpaEntityInformation) ReflectionUtils
 				.getFieldValue(getSimpleJpaRepository(entityClass), "entityInformation");
+		
 		entityInformationCache.put(entityClass, entityInformation);
+		
+		
 		return entityInformation;
 
+	}
+
+	private Map<Class, Set<String>> attributeNameCache = new HashMap<Class, Set<String>>();
+
+	public boolean hasAttribute(Class entityClass, String attr_name) {
+		Set<String> attres = attributeNameCache.get(entityClass);
+		if (attres == null) {
+			synchronized (attributeNameCache) {
+				if (attres == null) {
+					attres = new HashSet<String>();
+
+					Metamodel mm = em.getMetamodel();
+					EntityType et = mm.entity(entityClass);
+					// et.getAttribute(param.getKey());
+					Set attributes = et.getAttributes();
+					for (Object obj : attributes) {
+						Attribute attr = (Attribute) obj;
+						Field field = ReflectionUtils.getField(entityClass, attr.getName());
+						if (field == null) {
+							continue;
+						}
+						attres.add(attr.getName());
+					}
+				}
+			}
+
+		}
+		return attres.contains(attr_name);
 	}
 
 	public void clear() {
@@ -342,6 +381,10 @@ public class JpaDao {
 		List<Predicate> predicatesList = new ArrayList<Predicate>();
 		// int i=0;
 		for (Entry<String, Object> param : params.entrySet()) {
+			if(!hasAttribute(itemRoot.getJavaType(),param.getKey())) {
+				logger.info("属性{}不在{}类中!,不能作为条件",param.getKey(),itemRoot.getJavaType());
+				continue;
+			}
 			Path path = itemRoot.get(param.getKey());
 			Class javatype = path.getJavaType();
 			Object value = param.getValue();
@@ -664,7 +707,7 @@ public class JpaDao {
 //	public PageInfo listPageByMap(Class entityClass,Map<String,Object> params, PageInfo pageinfo) {
 //		ExampleMatcher matcher = ExampleMatcher.matching();
 //		Example example = Example.of(params, matcher); 	
-//		Pageable pageable=PageRequest.of(pageinfo.getPage(), pageinfo.getLimit());
+//		Pageable pageable=PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit());
 //		Page page=getSimpleJpaRepository(entityClass).findAll(example, pageable);
 //		pageinfo.setTotal((int)page.getTotalElements());
 //		pageinfo.setRoot(page.getContent());
@@ -674,7 +717,7 @@ public class JpaDao {
 	public Page listPageByExample(Class entityClass, Object params, int pageIndex, int limit) {
 		ExampleMatcher matcher = ExampleMatcher.matching();
 		Example example = Example.of(params, matcher);
-		Pageable pageable = PageRequest.of(pageIndex, limit);
+		Pageable pageable = PageRequest.of(pageIndex-1, limit);
 		org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(example, pageable);
 
 		Page pageinfo = new Page();
@@ -717,7 +760,7 @@ public class JpaDao {
 	}
 
 	public Page listPageByMap(Class entityClass, Map<String, Object> params, int pageIndex, int limit) {
-		Pageable pageable = PageRequest.of(pageIndex, limit);
+		Pageable pageable = PageRequest.of(pageIndex-1, limit);
 
 		PageSpecification spec = new PageSpecification(params);
 		org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(spec, pageable);
@@ -732,9 +775,9 @@ public class JpaDao {
 		return pageinfo;
 	}
 
-	public Page listPageByPageInfo(Class entityClass, Page pageinfo) {
+	public Page listPageByPage(Class entityClass, Page pageinfo) {
 		Object params = pageinfo.getParams();
-		Pageable pageable = PageRequest.of(pageinfo.getPage(), pageinfo.getLimit());
+		Pageable pageable = PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit());
 		if (params instanceof Map) {
 			PageSpecification spec = new PageSpecification((Map) params);
 			org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(spec, pageable);
