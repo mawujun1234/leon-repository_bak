@@ -5,44 +5,28 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.mybatis.spring.boot.autoconfigure.MybatisProperties;
 import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
-import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration.AutoConfiguredMapperScannerRegistrar;
-import org.mybatis.spring.mapper.ClassPathMapperScanner;
-import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -50,6 +34,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.mawujun.mvc.SpringContextUtils;
+import com.mawujun.repository.mybatis.interceptor.PageInfoInterceptor;
 import com.mawujun.utils.ReflectionUtils;
 
 @org.springframework.context.annotation.Configuration
@@ -116,7 +101,12 @@ public class JpaMybatisAutoConfiguration {
 	    springContextUtils();
 	    JpaMapperRegistry mapperRegistry=new JpaMapperRegistry(configuration);
 	    ReflectionUtils.setFieldValue(configuration, "mapperRegistry", mapperRegistry);
-	    properties.setTypeAliasesPackage("com.mawujun.repository.mybatis.typeAliases;"+properties.getTypeAliasesPackage());
+	    if(StringUtils.hasText(properties.getTypeAliasesPackage())) {
+	    	 properties.setTypeAliasesPackage("com.mawujun.repository.mybatis.typeAliases,"+properties.getTypeAliasesPackage());
+	    } else {
+	    	 properties.setTypeAliasesPackage("com.mawujun.repository.mybatis.typeAliases");
+	    }
+	   
 //	    Field field = configuration.getClass().getDeclaredField("mapperRegistry");
 //		field.setAccessible(true);
 //		field.set(configuration, mapperRegistry);
@@ -272,6 +262,7 @@ public class JpaMybatisAutoConfiguration {
 ////		SpringContextUtils.getEnvironment()
 //	}
 	 
+
 	 @ConditionalOnMissingBean(JpaDao.class)
 	 @Bean
 	 public JpaDao jpaDao() {

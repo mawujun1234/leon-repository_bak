@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Bean;
 
 import com.mawujun.mvc.SpringContextUtils;
 
-//@org.springframework.context.annotation.Configuration
-//@AutoConfigureBefore(MybatisAutoConfiguration.class)
+@org.springframework.context.annotation.Configuration
+@AutoConfigureBefore(JpaMybatisAutoConfiguration.class)
 public class TypeAliasesAutoConfiguration {
 	@PostConstruct
 	public void onApplicationEvent() {
@@ -19,7 +19,7 @@ public class TypeAliasesAutoConfiguration {
 		//System.out.println(aaaa);
 		// System.out.println();
 		if(aaaa!=null && !"".equals(aaaa)) {
-			System.setProperty("mybatis.type-aliases-package", aaaa + ";com.mawujun.repository.mybatis.typeAliases");
+			System.setProperty("mybatis.type-aliases-package", aaaa + ",com.mawujun.repository.mybatis.typeAliases");
 		} else {
 			System.setProperty("mybatis.type-aliases-package", "com.mawujun.repository.mybatis.typeAliases");
 		}
