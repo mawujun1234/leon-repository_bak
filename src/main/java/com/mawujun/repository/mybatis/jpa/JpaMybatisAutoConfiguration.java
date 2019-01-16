@@ -106,7 +106,13 @@ public class JpaMybatisAutoConfiguration {
 	    } else {
 	    	 properties.setTypeAliasesPackage("com.mawujun.repository.mybatis.typeAliases");
 	    }
-	   
+	    //isMapUnderscoreToCamelCase
+	    String u2cc=springContextUtils().getEnvironment().getProperty("mybatis.configuration.map-underscore-to-camel-case");
+	    if(u2cc==null || "".equals(u2cc)) {
+	    	configuration.setMapUnderscoreToCamelCase(true);
+	    }
+
+	    
 //	    Field field = configuration.getClass().getDeclaredField("mapperRegistry");
 //		field.setAccessible(true);
 //		field.set(configuration, mapperRegistry);
@@ -130,7 +136,7 @@ public class JpaMybatisAutoConfiguration {
 	    if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
 	      factory.setMapperLocations(this.properties.resolveMapperLocations());
 	    }
-
+	    
 	    return factory.getObject();
 	  }
 	  
