@@ -21,9 +21,9 @@ import com.mawujun.exception.BizException;
  */
 public class Page<T> implements List<T>,IParams{
 	
-	protected int page = -1;//当前第几页
+	protected int page = -1;//当前第几页，第一页默认是1
 	protected int limit = 50;// 默认是每页50条
-	protected int start = 0;
+	protected int start = 0;//第一行默认是0
 	protected int total = -1;//总共有几条记录
 	//private Boolean success=true;
 	//private String message;
@@ -54,14 +54,19 @@ public class Page<T> implements List<T>,IParams{
 //	}
 	/**
 	 * 
-	 * @param page 第几页
+	 * @param page 第几页,第一页是1
 	 * @param limit 每页多少
 	 * @return
 	 */
 	public static Page of_1(int page,int limit){
+		if(page<1) {
+			throw new IllegalArgumentException("分页的页码是从1开始");
+		}
 		Page param = new Page();
 		param.setPage(page);
 		param.setLimit(limit);
+		param.setStart((page-1)*limit);
+		
 		return param;
 	}
 	/**
@@ -74,6 +79,7 @@ public class Page<T> implements List<T>,IParams{
 		Page param = new Page();
 		param.setStart(start);
 		param.setLimit(limit);
+		param.setPage((start/limit)+1);
 		return param;
 	}
 	/**
@@ -100,7 +106,7 @@ public class Page<T> implements List<T>,IParams{
 //			params.remove("start");
 			
 			int start=Integer.parseInt(params.get("start").toString());
-			return Page.of_1(start, limit).setParams(params);
+			return Page.of(start, limit).setParams(params);
 		} else {
 			throw new BizException("请put进分页参数start或page");
 		}
@@ -119,39 +125,51 @@ public class Page<T> implements List<T>,IParams{
 		return this;
 	}
 	
-	/**
-	 * 获得当前页,如果参数没有传递过来获取 第几页的话，这里将会自动计算当前是第几页
-	 * @author mawujun qq:16064988 mawujun1234@163.com
-	 * @return
-	 */
-	public int getPage() {
-		if(this.page==-1){
-			return getPage_cmpt();
-		}
-		return page;
-	}
-	/**
-	 * 通过计算获得当前页
-	 * @author mawujun qq:16064988 mawujun1234@163.com
-	 * @return
-	 */
-	public int getPage_cmpt() {
-		//开始计算pageNo。看getFirst()
-		this.page=Double.valueOf(Math.ceil(new Double(start)/new Double(limit))).intValue()+1;
-		return page;
-	}
-
-
+//	/**
+//	 * 获得当前页,如果参数没有传递过来获取 第几页的话，这里将会自动计算当前是第几页
+//	 * @author mawujun qq:16064988 mawujun1234@163.com
+//	 * @return
+//	 */
+//	public int getPage() {
+//		if(this.page==-1){
+//			return getPage_cmpt();
+//		}
+//		return page;
+//	}
+//	/**
+//	 * 通过计算获得当前页
+//	 * @author mawujun qq:16064988 mawujun1234@163.com
+//	 * @return
+//	 */
+//	public int getPage_cmpt() {
+//		//开始计算pageNo。看getFirst()
+//		this.page=Double.valueOf(Math.ceil(new Double(start)/new Double(limit))).intValue()+1;
+//		return page;
+//	}
+//
+//
+//	public int getStart() {
+//		if(start==0 &&page>0) {
+//			return page*limit;
+//		}
+//		return start;
+//	}
+//	public Page<T> setStart(int start) {
+//		this.start = start;
+//		return this;
+//	}
+	
 	public int getStart() {
-		if(start==0 &&page>0) {
-			return page*limit;
-		}
 		return start;
 	}
-	public Page<T> setStart(int start) {
+	public void setStart(int start) {
 		this.start = start;
-		return this;
 	}
+	public int getPage() {
+		return page;
+	}
+
+	
 	public Object getParams() {
 		return params;
 	}

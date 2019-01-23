@@ -717,7 +717,7 @@ public class JpaDao {
 	public Page listPageByExample(Class entityClass, Object params, int pageIndex, int limit) {
 		ExampleMatcher matcher = ExampleMatcher.matching();
 		Example example = Example.of(params, matcher);
-		Pageable pageable = PageRequest.of(pageIndex, limit);
+		Pageable pageable = PageRequest.of(pageIndex-1, limit);
 		org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(example, pageable);
 
 		Page pageinfo = new Page();
@@ -760,7 +760,7 @@ public class JpaDao {
 	}
 
 	public Page listPageByMap(Class entityClass, Map<String, Object> params, int pageIndex, int limit) {
-		Pageable pageable = PageRequest.of(pageIndex, limit);
+		Pageable pageable = PageRequest.of(pageIndex-1, limit);
 
 		PageSpecification spec = new PageSpecification(params);
 		org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(spec, pageable);
@@ -777,7 +777,7 @@ public class JpaDao {
 
 	public Page listPageByPage(Class entityClass, Page pageinfo) {
 		Object params = pageinfo.getParams();
-		Pageable pageable = PageRequest.of(pageinfo.getPage(), pageinfo.getLimit());
+		Pageable pageable = PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit());
 		if (params instanceof Map) {
 			PageSpecification spec = new PageSpecification((Map) params);
 			org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(spec, pageable);
