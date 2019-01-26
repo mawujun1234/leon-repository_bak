@@ -115,7 +115,7 @@ public interface IBaseService<T> {
 	 * @param params 第一页是1，记录数是从0开始
 	 * @return
 	 */
-	public Page<T> listPageByPageInfo(Page<T> pageinfo);
+	public Page<T> listPageByPageInfo(Page<Object> pageinfo);
 	
 	/**
 	 * 取分页数据，满足不了时，请参考listPageByPageInfo

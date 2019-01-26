@@ -121,7 +121,7 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
-	public Page<T> listPageByPage(Page<T> page);
+	public Page<T> listPageByPage(Page<? extends Object> page);
 	
 	/**
 	 * 取分页数据，满足不了时，请参考listPageByPageInfo

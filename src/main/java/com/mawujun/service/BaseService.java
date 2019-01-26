@@ -122,7 +122,7 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 	}
 
 	@Override
-	public Page<T> listPageByPageInfo(Page<T> pageinfo) {
+	public Page<T> listPageByPageInfo(Page<Object> pageinfo) {
 		// TODO Auto-generated method stub
 		return repo.listPageByPage(pageinfo);
 	}
@@ -134,6 +134,9 @@ public class BaseService<M extends IRepository<T>, T> implements IBaseService<T>
 	}
 	@Override
 	public Page<T> listPageByMap(Map<String,Object> params){
+//		Page<T> page=new Page<T>();
+//		page.init(params);
+//		return page;
 		return repo.listPageByPage(Page.of(params));
 	}
 

@@ -2,13 +2,10 @@ package com.mawujun.repository.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-
-import org.apache.ibatis.annotations.Param;
 
 import com.mawujun.exception.BizException;
 
@@ -58,14 +55,14 @@ public class Page<T> implements List<T>,IParams{
 	 * @param limit 每页多少
 	 * @return
 	 */
-	public static Page of_1(int page,int limit){
+	public static Page<Object> of_1(int page,int limit){
 		if(page<1) {
 			throw new IllegalArgumentException("分页的页码是从1开始");
 		}
-		Page param = new Page();
+		Page<Object> param = new Page<Object>();
 		param.setPage(page);
 		param.setLimit(limit);
-		param.setStart((page-1)*limit);
+		//param.setStart((page-1)*limit);
 		
 		return param;
 	}
@@ -75,8 +72,8 @@ public class Page<T> implements List<T>,IParams{
 	 * @param limit 每页多少
 	 * @return
 	 */
-	public static Page of(int start,int limit){
-		Page param = new Page();
+	public static Page<Object> of(int start,int limit){
+		Page<Object> param = new Page<Object>();
 		param.setStart(start);
 		param.setLimit(limit);
 		param.setPage((start/limit)+1);
@@ -88,7 +85,7 @@ public class Page<T> implements List<T>,IParams{
 	 * @param params
 	 * @return
 	 */
-	public static Page of(Map<String, Object> params){
+	public static <T> Page<T> of(Map<String, Object> params){
 		if(!params.containsKey("limit") || params.get("limit")==null) {
 			throw new BizException("请put进分页参数limit");
 		}
@@ -99,20 +96,45 @@ public class Page<T> implements List<T>,IParams{
 //			params.remove("limit");
 //			params.remove("start");
 
-			return Page.of_1(page, limit).setParams(params);
+			return (Page<T>)Page.of_1(page, limit).setParams(params);
 		} else	if(params.containsKey("start")) {
 //			params.remove("page");
 //			params.remove("limit");
 //			params.remove("start");
 			
 			int start=Integer.parseInt(params.get("start").toString());
-			return Page.of(start, limit).setParams(params);
+			return (Page<T>)Page.of(start, limit).setParams(params);
 		} else {
 			throw new BizException("请put进分页参数start或page");
-		}
+		}	
 		
-
+//		Page<T> page=new Page<T>();
+//		page.init(params);
+//		return page;
 	}
+//	public Page<T> init(Map<String, Object> params){
+//		if(!params.containsKey("limit") || params.get("limit")==null) {
+//			throw new BizException("请put进分页参数limit");
+//		}
+//		int limit=Integer.parseInt(params.get("limit").toString());
+//		if(params.containsKey("page")) {
+//			int page=Integer.parseInt(params.get("page").toString());
+////			params.remove("page");
+////			params.remove("limit");
+////			params.remove("start");
+//
+//			return (Page<T>)Page.of_1(page, limit).setParams(params);
+//		} else	if(params.containsKey("start")) {
+////			params.remove("page");
+////			params.remove("limit");
+////			params.remove("start");
+//			
+//			int start=Integer.parseInt(params.get("start").toString());
+//			return (Page<T>)Page.of(start, limit).setParams(params);
+//		} else {
+//			throw new BizException("请put进分页参数start或page");
+//		}	
+//	}
 	
 	
 	/**
@@ -224,6 +246,7 @@ public class Page<T> implements List<T>,IParams{
 
 	public Page<T> setPage(int page) {
 		this.page = page;
+		this.setStart((page-1)*limit);
 		return this;
 	}
 	public int getLimit() {

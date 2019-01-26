@@ -9,7 +9,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 <#macro printDollar value>${r"${"}${value}}</#macro>
 <#macro namespace>${basepackage}</#macro>
 <!-- mawujun qq:16064988 e-mail:16064988@qq.com-->
-<mapper namespace="<@namespace/>.${entitySimpleClassName}Repository">
+<mapper namespace="<@namespace/>.repository.${entitySimpleClassName}Repository">
 
     <sql id="BaseColumns">
 		<#list propertyColumns as pc>${pc.column} as ${pc.property}<#if pc_has_next>,</#if></#list>
