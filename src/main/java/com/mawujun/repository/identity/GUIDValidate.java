@@ -6,7 +6,7 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
-import com.mawujun.repository.validate.ValidatorUtils;
+import com.mawujun.mvc.ValidatorUtils;
 
 /**
  * guid 采用数据库底层的guid算法机制，对应MySQL的uuid()函数，SQL Server的newid()函数，ORCALE的rawtohex(sys_guid())函数等

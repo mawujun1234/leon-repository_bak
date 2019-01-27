@@ -4,6 +4,8 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
+import com.mawujun.mvc.ValidatorUtils;
+
 @MappedSuperclass
 public class ValidateEntity {
 	/**

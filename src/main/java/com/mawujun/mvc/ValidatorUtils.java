@@ -1,4 +1,4 @@
-package com.mawujun.repository.validate;
+package com.mawujun.mvc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import com.mawujun.exception.BizException;
 import com.mawujun.utils.string.StringUtils;
 
 public class ValidatorUtils {
@@ -23,22 +24,26 @@ public class ValidatorUtils {
         validator = factory.getValidator();
 	}
 
-	/**
-	 * 会抛出ConstraintViolationException异常，它包含一个Set<ConstraintViolation<T>>的异常集合
-	 * @param t
-	 * @exception ConstraintViolationException
-	 */
-	public static <T> void validate(T t) { 
-		 Set<ConstraintViolation<T>> constraintViolations = validator.validate(t); 
-		 if(constraintViolations.size() > 0) { 
-			 throw new ConstraintViolationException(constraintViolations);
-//			 String validateError = ""; 
-//			 for(ConstraintViolation<T> constraintViolation: constraintViolations) { 
-//				 validateError += constraintViolation.getMessage() + ";"; 
-//			 }
-//			 throw new ValidateException(validateError); 
-		 }
-	}
+
+	
+    /**
+     * 校验对象
+     * @param object        待校验对象
+     * @param groups        待校验的组
+     * @throws BizException  校验不通过，则报BizException异常
+     */
+    public static void validate(Object object, Class<?>... groups)
+            throws BizException {
+        Set<ConstraintViolation<Object>> constraintViolations = validator.validate(object, groups);
+        if (!constraintViolations.isEmpty()) {
+            StringBuilder msg = new StringBuilder();
+            for(ConstraintViolation<Object> constraint:  constraintViolations){
+                msg.append(constraint.getMessage()).append("<br>");
+            }
+            throw new BizException(msg.toString());
+        }
+    }
+    
 	/**
 	 * 如果验证异常，将会派出ValidationException异常，异常信息以字符串的形式返回，分隔符默认是分号，也可以自己指定
 	 * @param separator

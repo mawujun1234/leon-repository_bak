@@ -365,8 +365,14 @@ public class GeneratorCodeService {
 //		String fileDir=dirPath+ftlfilepath;
 //		String filePath=dirPath+ftlfilepath+File.separatorChar+fileName;
 
+		String ftlfilepath=ftlfile.getParentpath();
+		if(ftlfilepath.indexOf(ftlpath.replace('/', '\\'))!=-1) {
+			//System.out.println(ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('/', '\\'))+ftlpath.length()+1));
+			ftlfilepath=ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('/', '\\')));
+		}
+		
 		// 生成文件的目录地址
-		String fileDir = dirPath + ftlpath;
+		String fileDir = dirPath + ftlfilepath;
 		String filePath = fileDir + File.separatorChar + fileName;
 
 		File dir = new File(fileDir);

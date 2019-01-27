@@ -4,7 +4,7 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 
-import com.mawujun.repository.validate.ValidatorUtils;
+import com.mawujun.mvc.ValidatorUtils;
 
 
 /**
