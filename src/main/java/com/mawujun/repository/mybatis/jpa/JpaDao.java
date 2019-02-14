@@ -778,7 +778,7 @@ public class JpaDao {
 	public Page listPageByPage(Class entityClass, Page pageinfo) {
 		Object params = pageinfo.getParams();
 		Pageable pageable = PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit());
-		if (params instanceof Map) {
+		if (params==null || params instanceof Map) {
 			PageSpecification spec = new PageSpecification((Map) params);
 			org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(spec, pageable);
 			pageinfo.setTotal((int) page.getTotalElements());

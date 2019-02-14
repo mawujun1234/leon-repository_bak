@@ -86,6 +86,11 @@ public class R extends HashMap<String, Object> {
 	}
 	
 	public R data(Object value) {
+		if(value instanceof Page) {
+			//这个是有限制的
+			putPage("page",(Page)value);
+			return this;
+		}
 		super.put("data", value);
 		return this;
 	}
