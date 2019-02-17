@@ -3,6 +3,8 @@ package com.mawujun.repository.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mawujun.utils.string.StringUtils;
+
 public class Params extends HashMap<String,Object>  implements IParams{
 	/**
 	 * 
@@ -139,11 +141,17 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params add(String key,Object value) {
+		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
+			return this;
+		}
 		this.put(key, value);
 		op.put(key, OpEnum.eq);
 		return this;
 	}
 	public Params add(String key,OpEnum opEnum,Object value) {
+		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
+			return this;
+		}
 		this.put(key, value);
 		op.put(key, opEnum);
 		return this;
@@ -230,11 +238,15 @@ public class Params extends HashMap<String,Object>  implements IParams{
 		return this;
 	}
 	public Params isnull(String key) {
-		this.add(key,OpEnum.isnull,null);
+		//this.add(key,OpEnum.isnull,null);
+		this.put(key, null);
+		op.put(key, OpEnum.isnull);
 		return this;
 	}
 	public Params isnotnull(String key) {
-		this.add(key,OpEnum.isnotnull,null);
+		//this.add(key,OpEnum.isnotnull,null);
+		this.put(key, null);
+		op.put(key, OpEnum.isnotnull);
 		return this;
 	}
 	/**
@@ -244,6 +256,9 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params like(String key,String value) {
+		if(!StringUtils.hasText(value)) {
+			return this;
+		}
 		this.add(key,OpEnum.like,"%"+value+"%");
 		return this;
 	}
@@ -254,6 +269,9 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params likeprefix(String key,String value) {
+		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+			return this;
+		}
 		this.add(key,OpEnum.likeprefix,"%"+value);
 		return this;
 	}
@@ -265,6 +283,9 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params likesuffix(String key,String value) {
+		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+			return this;
+		}
 		this.add(key,OpEnum.likesuffix,value+"%");
 		return this;
 	}
@@ -276,6 +297,9 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params like_i(String key,String value) {
+		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+			return this;
+		}
 		this.add(key,OpEnum.like_i,"%"+value+"%");
 		return this;
 	}
@@ -286,6 +310,9 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params likeprefix_i(String key,String value) {
+		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+			return this;
+		}
 		this.add(key,OpEnum.likeprefix_i,"%"+value);
 		return this;
 	}
@@ -297,6 +324,9 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params likesuffix_i(String key,String value) {
+		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+			return this;
+		}
 		this.add(key,OpEnum.likesuffix_i,value+"%");
 		return this;
 	}
@@ -307,6 +337,9 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params notlike(String key,String value) {
+		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+			return this;
+		}
 		this.add(key,OpEnum.notlike,"%"+value+"%");
 		return this;
 	}
@@ -317,6 +350,9 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params notlikeprefix(String key,String value) {
+		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+			return this;
+		}
 		this.add(key,OpEnum.notlikeprefix,"%"+value);
 		return this;
 	}
@@ -328,6 +364,9 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params notlikesuffix(String key,String value) {
+		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+			return this;
+		}
 		this.add(key,OpEnum.notlikesuffix,value+"%");
 		return this;
 	}

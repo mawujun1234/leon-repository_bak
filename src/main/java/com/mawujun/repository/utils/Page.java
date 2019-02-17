@@ -8,6 +8,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import com.mawujun.exception.BizException;
+import com.mawujun.utils.string.StringUtils;
 
 /**
  * 继承List的原因是mybatis的接口只能返回list，继承list就可以以Page的形式返回了
@@ -561,11 +562,15 @@ public class Page<T> implements List<T>,IParams{
 
 	@Override
 	public Page<T> put(String key, Object value) {
-		getParamsMap().put(key, value);
+		//getParamsMap().put(key, value);
+		add( key,  value);
 		return this;
 	}
 	@Override
 	public Page<T> add(String key, Object value) {
+		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
+			return this;
+		}
 		// TODO Auto-generated method stub
 		getParamsMap().add(key, value);
 		return this;
