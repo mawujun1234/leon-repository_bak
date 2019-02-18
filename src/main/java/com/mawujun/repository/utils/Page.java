@@ -61,8 +61,9 @@ public class Page<T> implements List<T>,IParams{
 			throw new IllegalArgumentException("分页的页码是从1开始");
 		}
 		Page<Object> param = new Page<Object>();
-		param.setPage(page);
+		
 		param.setLimit(limit);
+		param.setPage(page);
 		//param.setStart((page-1)*limit);
 		
 		return param;

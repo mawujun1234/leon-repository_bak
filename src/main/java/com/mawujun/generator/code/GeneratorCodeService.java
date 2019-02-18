@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,6 +136,7 @@ public class GeneratorCodeService {
 	 * @param clazzs
 	 */
 	public static void generator(String ftldir,String outputdir,String basepackage,Class... clazzs) {
+		System.out.println("生成路径是："+outputdir);
 		Assert.notNull(outputdir,"outputdir不能为null");
 		Assert.notNull(basepackage,"basepackage不能为null");
 		
@@ -161,8 +163,11 @@ public class GeneratorCodeService {
 					generatorFile(root, ftlFile, outputdir);
 				}
 			}
-			// 打开文件夹
-			Runtime.getRuntime().exec("cmd.exe /c start " + outputdir);
+			if(SystemUtils.IS_OS_WINDOWS) {
+				// 打开文件夹
+				Runtime.getRuntime().exec("cmd.exe /c start " + outputdir);
+			}
+			
 		} catch (Exception e) {
 			logger.error("生成代码失败!", e);
 		}
@@ -217,11 +222,11 @@ public class GeneratorCodeService {
 
 				URL url = FileUtils.getJarPath(GeneratorCodeService.class);
 				if ("file".equals(url.getProtocol()) && url.getFile().indexOf(".jar!") == -1) {
-					File classpath_file = new File(
-							url.getFile() + "/../../src/main/resources".replaceAll("\\\\/", File.separator) + ftlpath);
+					//File classpath_file = new File(url.getFile() + "/../../src/main/resources".replaceAll("\\\\/", File.separator) + ftlpath);
+					File classpath_file = new File(url.getFile().substring(0,url.getFile().length()-16)+File.separator+"src"+File.separator+"main"+File.separator+"resources" + ftlpath);
 					files = FileUtils.findFiles(classpath_file.getAbsolutePath(), "*.ftl");
 
-					System.out.println(classpath_file);
+					System.out.println("查找路径："+classpath_file);
 				} else {
 					String jarpath=FileUtils.getJarAbstractPath(GeneratorCodeService.class);
 					jarpath="E:\\workspace\\leon-generator\\target\\leon-generator.jar";
