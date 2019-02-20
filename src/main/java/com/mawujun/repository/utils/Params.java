@@ -120,7 +120,11 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	}
 	public static Params of(Map<String,Object> params) {
 		Params utils=new Params();
-		utils.putAll(params);
+		
+		for(Entry<String,Object> entry:params.entrySet()) {
+			utils.add(entry.getKey(), entry.getValue());
+		}
+
 		return utils;
 		
 	}
@@ -256,7 +260,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params like(String key,String value) {
-		if(!StringUtils.hasText(value)) {
+		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.like,"%"+value+"%");
@@ -269,7 +273,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params likeprefix(String key,String value) {
-		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.likeprefix,"%"+value);
@@ -283,7 +287,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params likesuffix(String key,String value) {
-		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.likesuffix,value+"%");
@@ -297,7 +301,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params like_i(String key,String value) {
-		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.like_i,"%"+value+"%");
@@ -310,7 +314,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params likeprefix_i(String key,String value) {
-		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.likeprefix_i,"%"+value);
@@ -324,7 +328,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params likesuffix_i(String key,String value) {
-		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.likesuffix_i,value+"%");
@@ -337,7 +341,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params notlike(String key,String value) {
-		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.notlike,"%"+value+"%");
@@ -350,7 +354,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params notlikeprefix(String key,String value) {
-		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.notlikeprefix,"%"+value);
@@ -364,7 +368,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @return
 	 */
 	public Params notlikesuffix(String key,String value) {
-		if(!StringUtils.hasText(value) || !StringUtils.hasText(value)) {
+		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.notlikesuffix,value+"%");

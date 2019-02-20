@@ -2,6 +2,7 @@ package com.mawujun.repository.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -204,10 +205,14 @@ public class Page<T> implements List<T>,IParams{
 	 * @param params
 	 */
 	public Page<T> setParams(Object params) {
+		if(params==null) {
+			return this;
+		}
 		if(params instanceof Params) {
 			this.params = params;
 		} else if(params instanceof Map) {
 			this.params = Params.of((Map)params);
+			
 		} else {
 			this.params = params;
 		}
