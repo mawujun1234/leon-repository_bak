@@ -10,7 +10,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 <#macro namespace>${basepackage}</#macro>
 <!-- mawujun qq:16064988 e-mail:16064988@qq.com-->
 <mapper namespace="<@namespace/>.repository.${entitySimpleClassName}Repository">
-
+	<!--
     <sql id="BaseColumns">
 		<#list propertyColumns as pc>${pc.column} as ${pc.property}<#if pc_has_next>,</#if></#list>
 	</sql>
@@ -23,21 +23,23 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			</#list>
 		</where>
 	</sql>
-	<!-- 查询语句，会自动分页-->
+	-->
+	<!-- 查询语句，会自动分页
 	<select id="listPageByMybatis" resultType="${alias}" >
         select <include refid = "BaseColumns" /> from ${entityTableName}
         <include refid="WhereColumns" />
 		order by <#list idColumns as id>${id} <#if id_has_next>,</#if></#list>
     </select>
-    <!-- 名称模式为：****_count,也可以不写，但如果查询叫复杂的话，自己写有助于控制查询性能-->
+    -->
+    <!-- 名称模式为：****_count,也可以不写，但如果查询叫复杂的话，自己写有助于控制查询性能
     <select id="listPageByMybatis1" resultType="${alias}" >
     	select <include refid = "BaseColumns" /> from ${entityTableName} order by <#list idColumns as id>${id} <#if id_has_next>,</#if></#list>
     </select>
     <select id="listPageByMybatis1_count" resultType="long" >
     	select count(<#list idColumns as id>${id}<#if id_has_next>,</#if></#list>) from ${entityTableName}
     </select>
-    
-	
+    -->
+	<!--
     <select id="getById__" resultType="${alias}" >
         select
 		<include refid = "BaseColumns" />
@@ -61,5 +63,6 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		from ${entityTableName}
 		<include refid="WhereColumns" />
     </select>
+    -->
 </mapper>
 
