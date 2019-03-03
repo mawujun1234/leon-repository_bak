@@ -166,6 +166,8 @@ public class GeneratorCodeService {
 			if(SystemUtils.IS_OS_WINDOWS) {
 				// 打开文件夹
 				Runtime.getRuntime().exec("cmd.exe /c start " + outputdir);
+			} else if(SystemUtils.IS_OS_MAC) {
+				Runtime.getRuntime().exec("open  " + outputdir);
 			}
 			
 		} catch (Exception e) {
@@ -229,7 +231,7 @@ public class GeneratorCodeService {
 					System.out.println("查找路径："+classpath_file);
 				} else {
 					String jarpath=FileUtils.getJarAbstractPath(GeneratorCodeService.class);
-					jarpath="E:\\workspace\\leon-generator\\target\\leon-generator.jar";
+					//jarpath="E:\\workspace\\leon-generator\\target\\leon-generator.jar";
 					//把文件内容写到临时目录中
 					files=JarFileSearch.unzipJarFile(jarpath, ftlpath, ".ftl");
 
@@ -371,10 +373,18 @@ public class GeneratorCodeService {
 //		String filePath=dirPath+ftlfilepath+File.separatorChar+fileName;
 
 		String ftlfilepath=ftlfile.getParentpath();
-		if(ftlfilepath.indexOf(ftlpath.replace('/', '\\'))!=-1) {
-			//System.out.println(ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('/', '\\'))+ftlpath.length()+1));
-			ftlfilepath=ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('/', '\\')));
+		if(com.mawujun.utils.SystemUtils.IS_OS_WINDOWS) {
+			if(ftlfilepath.indexOf(ftlpath.replace('/', '\\'))!=-1) {
+				//System.out.println(ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('/', '\\'))+ftlpath.length()+1));
+				ftlfilepath=ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('/', '\\')));
+			}
+		} else {
+			if(ftlfilepath.indexOf(ftlpath.replace('\\', '/'))!=-1) {
+				//System.out.println(ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('/', '\\'))+ftlpath.length()+1));
+				ftlfilepath=ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('\\', '/')));
+			}
 		}
+		
 		
 		// 生成文件的目录地址
 		String fileDir = dirPath + ftlfilepath;
