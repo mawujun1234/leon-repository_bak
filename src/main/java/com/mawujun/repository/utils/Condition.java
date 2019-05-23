@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.mawujun.utils.string.StringUtils;
 
-public class Params extends HashMap<String,Object>  implements IParams{
+public class Condition extends HashMap<String,Object>  implements ICondition{
 	/**
 	 * 
 	 */
@@ -96,7 +96,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * 默认的操作符是“=”
 	 */
 	@Override
-	public Params put(String key, Object value) {
+	public Condition put(String key, Object value) {
 		// TODO Auto-generated method stub
 		super.put(key, value);
 		op.put(key, OpEnum.eq);
@@ -113,13 +113,13 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * 创建一个新的Params对象
 	 * @return
 	 */
-	public static Params of() {
-		Params utils=new Params();
+	public static Condition of() {
+		Condition utils=new Condition();
 		return utils;
 		
 	}
-	public static Params of(Map<String,Object> params) {
-		Params utils=new Params();
+	public static Condition of(Map<String,Object> params) {
+		Condition utils=new Condition();
 		
 		for(Entry<String,Object> entry:params.entrySet()) {
 			utils.add(entry.getKey(), entry.getValue());
@@ -128,8 +128,8 @@ public class Params extends HashMap<String,Object>  implements IParams{
 		return utils;
 		
 	}
-	public static Params of(String key,Object value) {
-		Params utils=new Params();
+	public static Condition of(String key,Object value) {
+		Condition utils=new Condition();
 		utils.put(key, value);
 		return utils;
 		
@@ -144,7 +144,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params add(String key,Object value) {
+	public Condition add(String key,Object value) {
 		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
 			return this;
 		}
@@ -152,7 +152,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 		op.put(key, OpEnum.eq);
 		return this;
 	}
-	public Params add(String key,OpEnum opEnum,Object value) {
+	public Condition add(String key,OpEnum opEnum,Object value) {
 		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
 			return this;
 		}
@@ -161,7 +161,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 		return this;
 	}
 	
-	public Params eq(String key,Object value) {
+	public Condition eq(String key,Object value) {
 		this.add(key,OpEnum.eq,value);
 		return this;
 	}
@@ -171,11 +171,11 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params eq_i(String key,Object value) {
+	public Condition eq_i(String key,Object value) {
 		this.add(key,OpEnum.eq_i,value);
 		return this;
 	}
-	public Params noteq(String key,Object value) {
+	public Condition noteq(String key,Object value) {
 		this.add(key,OpEnum.noteq,value);
 		return this;
 	}
@@ -185,7 +185,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params noteq_i(String key,Object value) {
+	public Condition noteq_i(String key,Object value) {
 		this.add(key,OpEnum.noteq_i,value);
 		return this;
 	}
@@ -195,7 +195,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params gt(String key,Object value) {
+	public Condition gt(String key,Object value) {
 		this.add(key,OpEnum.gt,value);
 		return this;
 	}
@@ -205,7 +205,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params ge(String key,Object value) {
+	public Condition ge(String key,Object value) {
 		this.add(key,OpEnum.ge,value);
 		return this;
 	}
@@ -215,7 +215,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params lt(String key,Object value) {
+	public Condition lt(String key,Object value) {
 		this.add(key,OpEnum.lt,value);
 		return this;
 	}
@@ -225,29 +225,29 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params le(String key,Object value) {
+	public Condition le(String key,Object value) {
 		this.add(key,OpEnum.le,value);
 		return this;
 	}
-	public Params between(String key,Object value1,Object value2) {
+	public Condition between(String key,Object value1,Object value2) {
 		this.add(key,OpEnum.between,new Object[] {value1,value2});
 		return this;
 	}
-	public Params in(String key,Object... value) {
+	public Condition in(String key,Object... value) {
 		this.add(key,OpEnum.in,value);
 		return this;
 	}
-	public Params notin(String key,Object... value) {
+	public Condition notin(String key,Object... value) {
 		this.add(key,OpEnum.notin,value);
 		return this;
 	}
-	public Params isnull(String key) {
+	public Condition isnull(String key) {
 		//this.add(key,OpEnum.isnull,null);
 		this.put(key, null);
 		op.put(key, OpEnum.isnull);
 		return this;
 	}
-	public Params isnotnull(String key) {
+	public Condition isnotnull(String key) {
 		//this.add(key,OpEnum.isnotnull,null);
 		this.put(key, null);
 		op.put(key, OpEnum.isnotnull);
@@ -259,7 +259,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params like(String key,String value) {
+	public Condition like(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -272,7 +272,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params likeprefix(String key,String value) {
+	public Condition likeprefix(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -286,7 +286,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params likesuffix(String key,String value) {
+	public Condition likesuffix(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -300,7 +300,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params like_i(String key,String value) {
+	public Condition like_i(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -313,7 +313,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params likeprefix_i(String key,String value) {
+	public Condition likeprefix_i(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -327,7 +327,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params likesuffix_i(String key,String value) {
+	public Condition likesuffix_i(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -340,7 +340,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params notlike(String key,String value) {
+	public Condition notlike(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -353,7 +353,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params notlikeprefix(String key,String value) {
+	public Condition notlikeprefix(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -367,7 +367,7 @@ public class Params extends HashMap<String,Object>  implements IParams{
 	 * @param value
 	 * @return
 	 */
-	public Params notlikesuffix(String key,String value) {
+	public Condition notlikesuffix(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}

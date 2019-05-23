@@ -18,7 +18,7 @@ import com.mawujun.utils.string.StringUtils;
  *
  * @param <T>
  */
-public class Page<T> implements List<T>,IParams{
+public class Page<T> implements List<T>,ICondition{
 	
 	protected int page = -1;//当前第几页，第一页默认是1
 	protected int limit = 50;// 默认是每页50条
@@ -208,10 +208,10 @@ public class Page<T> implements List<T>,IParams{
 		if(params==null) {
 			return this;
 		}
-		if(params instanceof Params) {
+		if(params instanceof Condition) {
 			this.params = params;
 		} else if(params instanceof Map) {
-			this.params = Params.of((Map)params);
+			this.params = Condition.of((Map)params);
 			
 		} else {
 			this.params = params;
@@ -555,15 +555,15 @@ public class Page<T> implements List<T>,IParams{
 	
 	//=============================================================================================
 	//下面的都是参数相关的修改
-	private Params getParamsMap() {
+	private Condition getParamsMap() {
 		if(params==null) {
-			params=Params.of();
-			return (Params)params;
+			params=Condition.of();
+			return (Condition)params;
 		}
-		if(!(params instanceof Params)) {
+		if(!(params instanceof Condition)) {
 			throw new RuntimeException("当前分页的参数不是Params类型，不能调用该方法!");
 		} 
-		return (Params)params;
+		return (Condition)params;
 	}
 
 	@Override

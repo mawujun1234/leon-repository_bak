@@ -7,7 +7,7 @@ import java.util.Map;
  * @author admin
  *
  */
-public interface IParams {
+public interface ICondition {
 
 //	/**
 //	 * 如果不存在，默认是eq
@@ -20,7 +20,7 @@ public interface IParams {
 	/**
 	 * 默认的操作符是“=”
 	 */
-	IParams put(String key, Object value);
+	ICondition put(String key, Object value);
 	//	@Override
 	//	public void putAll(Map<? extends String, ? extends Object> m) {
 	//		// TODO Auto-generated method stub
@@ -35,11 +35,11 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams add(String key, Object value);
+	ICondition add(String key, Object value);
 
-	IParams add(String key, OpEnum opEnum, Object value);
+	ICondition add(String key, OpEnum opEnum, Object value);
 
-	IParams eq(String key, Object value);
+	ICondition eq(String key, Object value);
 
 	/**
 	 * 忽略大小写的比较
@@ -47,9 +47,9 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams eq_i(String key, Object value);
+	ICondition eq_i(String key, Object value);
 
-	IParams noteq(String key, Object value);
+	ICondition noteq(String key, Object value);
 
 	/**
 	 * 忽略大小写
@@ -57,7 +57,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams noteq_i(String key, Object value);
+	ICondition noteq_i(String key, Object value);
 
 	/**
 	 * 大于
@@ -65,7 +65,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams gt(String key, Object value);
+	ICondition gt(String key, Object value);
 
 	/**
 	 * 大于等于
@@ -73,7 +73,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams ge(String key, Object value);
+	ICondition ge(String key, Object value);
 
 	/**
 	 * 小于
@@ -81,7 +81,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams lt(String key, Object value);
+	ICondition lt(String key, Object value);
 
 	/**
 	 * 小于等于
@@ -89,17 +89,17 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams le(String key, Object value);
+	ICondition le(String key, Object value);
 
-	IParams between(String key, Object value1, Object value2);
+	ICondition between(String key, Object value1, Object value2);
 
-	IParams in(String key, Object... value);
+	ICondition in(String key, Object... value);
 
-	IParams notin(String key, Object... value);
+	ICondition notin(String key, Object... value);
 
-	IParams isnull(String key);
+	ICondition isnull(String key);
 
-	IParams isnotnull(String key);
+	ICondition isnotnull(String key);
 
 	/**
 	 * 两端like,"%"+value+"%"
@@ -107,7 +107,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams like(String key, String value);
+	ICondition like(String key, String value);
 
 	/**
 	 * 前端匹配，"%"+value
@@ -115,7 +115,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams likeprefix(String key, String value);
+	ICondition likeprefix(String key, String value);
 
 	/**
 	 * 后端匹配，value+"%"
@@ -123,7 +123,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams likesuffix(String key, String value);
+	ICondition likesuffix(String key, String value);
 
 	/**
 	 * 两端like,"%"+value+"%",或略大小写
@@ -131,7 +131,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams like_i(String key, String value);
+	ICondition like_i(String key, String value);
 
 	/**
 	 * 前端匹配，"%"+value,或略大小写
@@ -139,7 +139,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams likeprefix_i(String key, String value);
+	ICondition likeprefix_i(String key, String value);
 
 	/**
 	 * 后端匹配，value+"%",或略大小写
@@ -147,14 +147,14 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams likesuffix_i(String key, String value);
+	ICondition likesuffix_i(String key, String value);
 
 	/** 两端like,"%"+value+"%"
 	 * @param key
 	 * @param value
 	 * @return
 	 */
-	IParams notlike(String key, String value);
+	ICondition notlike(String key, String value);
 
 	/**
 	 * 前端匹配，"%"+value
@@ -162,7 +162,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams notlikeprefix(String key, String value);
+	ICondition notlikeprefix(String key, String value);
 
 	/**
 	 * 后端匹配，value+"%"
@@ -170,7 +170,7 @@ public interface IParams {
 	 * @param value
 	 * @return
 	 */
-	IParams notlikesuffix(String key, String value);
+	ICondition notlikesuffix(String key, String value);
 
 //	/**
 //		 * 会把key相同的值组装成sql中in的形式,'a','b','c'

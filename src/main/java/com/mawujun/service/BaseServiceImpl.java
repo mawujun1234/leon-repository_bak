@@ -14,7 +14,7 @@ import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.Page;
 
 @Transactional(rollbackOn= {Exception.class})
-public class BaseService<M extends IRepository<T>, T> implements IBaseService<T> {
+public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseService<T> {
 
 	 @Autowired
 	 protected M repo;

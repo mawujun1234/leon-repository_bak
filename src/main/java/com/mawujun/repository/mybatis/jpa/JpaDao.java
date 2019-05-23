@@ -56,7 +56,7 @@ import com.mawujun.repository.mybatis.expression.VarcharLiteralExpression;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.Page;
-import com.mawujun.repository.utils.Params;
+import com.mawujun.repository.utils.Condition;
 import com.mawujun.utils.CollectionUtils;
 import com.mawujun.utils.ConvertUtils;
 import com.mawujun.utils.ReflectionUtils;
@@ -381,7 +381,7 @@ public class JpaDao {
 			}
 		}
 
-		boolean isParams = (params instanceof Params);
+		boolean isParams = (params instanceof Condition);
 		// Predicate[] predicatesList=new Predicate[params.size()];
 		List<Predicate> predicatesList = new ArrayList<Predicate>();
 		// int i=0;
@@ -394,7 +394,7 @@ public class JpaDao {
 			Class javatype = path.getJavaType();
 			Object value = param.getValue();
 			if (isParams) {
-				OpEnum opEnum = ((Params) params).getOpEnum(param.getKey());
+				OpEnum opEnum = ((Condition) params).getOpEnum(param.getKey());
 				switch (opEnum) {
 				case eq:
 					if (Date.class.isAssignableFrom(javatype)) {
