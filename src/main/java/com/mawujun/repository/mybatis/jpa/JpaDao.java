@@ -252,14 +252,14 @@ public class JpaDao {
 		Predicate[] predicatesList = genPredicates(criteriaBuilder, itemRoot, params);
 		query.where(predicatesList);
 		TypedQuery typedQuery = em.createQuery(query);
-		// typedQuery.setFirstResult(startPosition)
-		// typedQuery.setMaxResults(maxResult)
-		try {
+//		// typedQuery.setFirstResult(startPosition)
+//		// typedQuery.setMaxResults(maxResult)
+//		try {
 			Object obj= typedQuery.getSingleResult();
 			return obj;
-		} catch(Exception e) {
-			return null;
-		}
+//		} catch(Exception e) {
+//			return null;
+//		}
 
 	}
 
@@ -730,7 +730,7 @@ public class JpaDao {
 		pageinfo.setLimit(limit);
 		pageinfo.setTotal((int) page.getTotalElements());
 		pageinfo.setRoot(page.getContent());
-		pageinfo.setParams(params);
+		//pageinfo.setParams(params);
 		return pageinfo;
 	}
 
@@ -775,29 +775,51 @@ public class JpaDao {
 		pageinfo.setLimit(limit);
 		pageinfo.setTotal((int) page.getTotalElements());
 		pageinfo.setRoot(page.getContent());
-		pageinfo.setParams(params);
+		//pageinfo.setParams(params);
 
 		return pageinfo;
 	}
 
-	public Page listPageByPage(Class entityClass, Page pageinfo) {
+	public <T> Page<T> listPage(Class<T> entityClass, Condition pageinfo) {
+		Page<T> result=new Page<T>();
+		result.setStart(pageinfo.getStart());
+		result.setPage(pageinfo.getPage());
+		result.setLimit(pageinfo.getLimit());
 		Object params = pageinfo.getParams();
 		Pageable pageable = PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit());
 		if (params==null || params instanceof Map) {
 			PageSpecification spec = new PageSpecification((Map) params);
 			org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(spec, pageable);
-			pageinfo.setTotal((int) page.getTotalElements());
-			pageinfo.setRoot(page.getContent());
+			result.setTotal((int) page.getTotalElements());
+			result.setRoot(page.getContent());
 		} else {
 			ExampleMatcher matcher = ExampleMatcher.matching();
 			Example example = Example.of(params, matcher);
 			org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(example, pageable);
-			pageinfo.setTotal((int) page.getTotalElements());
-			pageinfo.setRoot(page.getContent());
+			result.setTotal((int) page.getTotalElements());
+			result.setRoot(page.getContent());
 		}
 
-		return pageinfo;
+		return result;
 	}
+//	public Page listPageByPage(Class entityClass, Page pageinfo) {
+//		Object params = pageinfo.getParams();
+//		Pageable pageable = PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit());
+//		if (params==null || params instanceof Map) {
+//			PageSpecification spec = new PageSpecification((Map) params);
+//			org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(spec, pageable);
+//			pageinfo.setTotal((int) page.getTotalElements());
+//			pageinfo.setRoot(page.getContent());
+//		} else {
+//			ExampleMatcher matcher = ExampleMatcher.matching();
+//			Example example = Example.of(params, matcher);
+//			org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(example, pageable);
+//			pageinfo.setTotal((int) page.getTotalElements());
+//			pageinfo.setRoot(page.getContent());
+//		}
+//
+//		return pageinfo;
+//	}
 
 	public Object update(Class entityClass, Object entity) {
 		// SimpleJpaRepository repository=getSimpleJpaRepository(entityClass);
@@ -955,10 +977,11 @@ public class JpaDao {
 	
 	public int remove(Class entityClass, Object entity) {
 		try {
-			
 			Loginc loginc = LogicDeleteInterceptor.getLoginc(entityClass);
+			//逻辑删除
 			if(loginc!=null) {
 				JpaEntityInformation entityInformation = getEntityInformation(entityClass);
+				//复合主键删除
 				if(hasCompositeId(entityClass)) {
 					List<String> ides=this.getIdAttributeNames(entityClass);
 					StringBuilder hql=new StringBuilder(String.format("update %s set %s =?0 where ", entityClass.getName(),loginc.getName()));
@@ -985,6 +1008,7 @@ public class JpaDao {
 					return result;
 					
 				} else {
+					//单主键删除
 					Query query =em.createQuery(String.format(logicdelete_hql, entityClass.getName(),loginc.getName(),entityInformation.getIdAttribute().getName()));
 					query.setParameter(0, loginc.getDeleteValue());
 					
@@ -997,6 +1021,7 @@ public class JpaDao {
 					return result;
 				}
 			} else {
+				//非逻辑删除
 				SimpleJpaRepository repository = getSimpleJpaRepository(entityClass);
 				repository.delete(entity);
 				repository.flush();
@@ -1008,6 +1033,22 @@ public class JpaDao {
 		}
 		return 1;
 	}
+	public int removeBatch(Class entityClass, List list) {
+		int result=0;
+		for (int i = 0; i < list.size(); i++) {
+			result+=this.remove(entityClass,list.get(i));
+		}
+		return result;
+	}
+
+	public int removeBatchByArray(Class entityClass, Object... list) {
+		int result=0;
+		for (int i = 0; i < list.length; i++) {
+			result+=this.remove(entityClass,list[i]);
+		}
+		return result;
+	}
+
 	public int removeForce(Class entityClass, Object entity) {
 		if(em.contains(entity)) {
 			em.remove(entity);
@@ -1031,6 +1072,21 @@ public class JpaDao {
 //			return 0;
 //		}
 		
+	}
+	
+	public int removeForceBatchByArray(Class entityClass, Object... list) {
+		int result=0;
+		for (int i = 0; i < list.length; i++) {
+			result+=this.removeForce(entityClass,list[i]);
+		}
+		return result;
+	}
+	public int removeForceBatch(Class entityClass, List list) {
+		int result=0;
+		for (int i = 0; i < list.size(); i++) {
+			result+=this.removeForce(entityClass,list.get(i));
+		}
+		return result;
 	}
 	
 	public int removeForceById(Class entityClass, Serializable id) {
@@ -1133,6 +1189,7 @@ public class JpaDao {
 
 	public int removeByMap(Class entityClass, Map<String, Object> params) {
 		Loginc loginc = LogicDeleteInterceptor.getLoginc(entityClass);
+		//逻辑删除
 		if(loginc!=null) {
 			Map<String, Object> sets=new HashMap<String,Object>();
 			sets.put(loginc.getName(), loginc.getDeleteValue());

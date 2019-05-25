@@ -9,8 +9,9 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.session.SqlSession;
 
+import com.mawujun.exception.BizException;
 import com.mawujun.mvc.SpringContextUtils;
-import com.mawujun.repository.utils.Page;
+import com.mawujun.repository.utils.Condition;
 import com.mawujun.utils.ReflectionUtils;
 
 /**
@@ -60,57 +61,145 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		if(method.getName().equals("getById")) {
 			sqlSession_.clearCache();
 			return getJpaDao().getById(entityClass, args[0]);
-		} else if(method.getName().equals("create")) {
-			 return getJpaDao().create(entityClass,args[0]);
-		} else if(method.getName().equals("createBatch")) {
-			 return getJpaDao().createBatch(entityClass,(List)args[0]);
-		} else if(method.getName().equals("createBatchByArray")) {
-			 return getJpaDao().createBatchByArray(entityClass,(Object[])args[0]);
-		}
+		} 
+		else if(method.getName().equals("create")) {
+			if(args[0]==null) {
+				throw new BizException("create参数不能为null");
+			} if(entityClass.isInstance(args[0])) {
+				return getJpaDao().create(entityClass,args[0]);
+			} else if(args[0] instanceof List) {
+				return getJpaDao().createBatch(entityClass,(List)args[0]);
+			} else {
+				return getJpaDao().createBatchByArray(entityClass,(Object[])args[0]);
+			}
+			 
+		} 
 		else if(method.getName().equals("save")) {
-			 return getJpaDao().save(entityClass,args[0]);
-		} else if(method.getName().equals("saveBatch")) {
-			 return getJpaDao().saveBatch(entityClass,(List)args[0]);
-		} else if(method.getName().equals("saveBatchByArray")) {
-			 return getJpaDao().saveBatchByArray(entityClass,(Object[])args[0]);
-		}
+			if(args[0]==null) {
+				throw new BizException("create参数不能为null");
+			} if(entityClass.isInstance(args[0])) {
+				return getJpaDao().save(entityClass,args[0]);
+			} else if(args[0] instanceof List) {
+				return getJpaDao().saveBatch(entityClass,(List)args[0]);
+			} else {
+				return getJpaDao().saveBatchByArray(entityClass,(Object[])args[0]);
+			}	 
+		} 
+//		else if(method.getName().equals("create")) {
+//		 return getJpaDao().create(entityClass,args[0]);
+//	} 
+//		else if(method.getName().equals("createBatch")) {
+//			 return getJpaDao().createBatch(entityClass,(List)args[0]);
+//		} 
+//		else if(method.getName().equals("createBatchByArray")) {
+//			 return getJpaDao().createBatchByArray(entityClass,(Object[])args[0]);
+//		}
+//		else if(method.getName().equals("save")) {
+//			 return getJpaDao().save(entityClass,args[0]);
+//		} else if(method.getName().equals("saveBatch")) {
+//			 return getJpaDao().saveBatch(entityClass,(List)args[0]);
+//		} else if(method.getName().equals("saveBatchByArray")) {
+//			 return getJpaDao().saveBatchByArray(entityClass,(Object[])args[0]);
+//		}
 		
-		else if(method.getName().equals("getByMap"))  {
-			return getJpaDao().getByMap(entityClass, (Map<String,Object>)args[0]);
-		} else if(method.getName().equals("getByExample"))  {
-			return getJpaDao().getByExample(entityClass, args[0]);
-		} else if(method.getName().equals("listByExample"))  {
-			return getJpaDao().listByExample(entityClass, args[0]);
-		} else if(method.getName().equals("listPageByExample"))  {
-			return getJpaDao().listPageByExample(entityClass, args[0],(int)args[1],(int)args[2]);
-		} else if(method.getName().equals("listByMap"))  {
-			return getJpaDao().listByMap(entityClass, (Map<String,Object>)args[0]);
-		} else if(method.getName().equals("listAll"))  {
+//		else if(method.getName().equals("getByMap"))  {
+//			return getJpaDao().getByMap(entityClass, (Map<String,Object>)args[0]);
+//		} else if(method.getName().equals("getByExample"))  {
+//			return getJpaDao().getByExample(entityClass, args[0]);
+//		} 
+		else if(method.getName().equals("get"))  {
+			if(args[0]==null || args[0] instanceof Map) {
+				return getJpaDao().getByMap(entityClass, (Map<String,Object>)args[0]);
+			} else {
+				return getJpaDao().getByExample(entityClass, args[0]);
+			}
+			
+		} 
+//		else if(method.getName().equals("listByExample"))  {
+//			return getJpaDao().listByExample(entityClass, args[0]);
+//		}  else if(method.getName().equals("listByMap"))  {
+//			return getJpaDao().listByMap(entityClass, (Map<String,Object>)args[0]);
+//		} 
+		else if(method.getName().equals("list"))  {
+			if(args[0]==null || args[0] instanceof Map) {
+				return getJpaDao().listByMap(entityClass, (Map<String,Object>)args[0]);
+			} else {
+				return getJpaDao().listByExample(entityClass, args[0]);
+			}
+			
+		}  else if(method.getName().equals("listByMap"))  {
+			
+		} 
+		else if(method.getName().equals("listAll"))  {
 			return getJpaDao().listAll(entityClass);
-		} else if(method.getName().equals("listPageByMap"))  {
-			return getJpaDao().listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);
-		} else if(method.getName().equals("listPageByPage"))  {
-			return getJpaDao().listPageByPage(entityClass, (Page)args[0]);
+		} 
+//		else if(method.getName().equals("listPageByExample"))  {
+//			return getJpaDao().listPageByExample(entityClass, args[0],(int)args[1],(int)args[2]);
+//		}
+//		else if(method.getName().equals("listPageByMap"))  {
+//			return getJpaDao().listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);
+//		} 
+		else if(method.getName().equals("listPage"))  {
+			if(args.length==3) {
+				if(args[0]==null || args[0] instanceof Map) {
+					return getJpaDao().listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);
+				} else {
+					return getJpaDao().listPageByExample(entityClass, args[0],(int)args[1],(int)args[2]);
+				}
+				
+			}
+			if(args[0] instanceof Condition) {
+				return getJpaDao().listPage(entityClass, (Condition)args[0]);
+			}
+			
 		} 
 		
+//		else if(method.getName().equals("update"))  {
+//			return getJpaDao().update(entityClass, args[0]);
+//		} 
+//		else if(method.getName().equals("updateBatch"))  {
+//			return getJpaDao().updateBatch(entityClass, (List)args[0]);
+//		}  else if(method.getName().equals("updateBatchByArray"))  {//数组
+//			return getJpaDao().updateBatchByArray(entityClass, (Object[])args[0]);
+//		}  
 		else if(method.getName().equals("update"))  {
-			return getJpaDao().update(entityClass, args[0]);
-		} else if(method.getName().equals("updateBatch"))  {
-			return getJpaDao().updateBatch(entityClass, (List)args[0]);
-		}  else if(method.getName().equals("updateBatchByArray"))  {//数组
-			return getJpaDao().updateBatchByArray(entityClass, (Object[])args[0]);
-		}  else if(method.getName().equals("updateByMap"))  {
+			if(args[0]==null) {
+				throw new BizException(method.getName()+"参数不能为null");
+			} if(entityClass.isInstance(args[0])) {
+				return getJpaDao().update(entityClass, args[0]);
+			} else if(args[0] instanceof List) {
+				return getJpaDao().updateBatch(entityClass,(List)args[0]);
+			} else {
+				return getJpaDao().updateBatchByArray(entityClass,(Object[])args[0]);
+			}	 
+		}  
+		else if(method.getName().equals("updateByMap"))  {
 			return getJpaDao().updateByMap(entityClass,(Map<String,Object>)args[0],(Map<String,Object>)args[1]);
 		} else if(method.getName().equals("updateById"))  {
 			return getJpaDao().updateById(entityClass,(Map<String,Object>)args[0],args[1]);
 		}  
 		
+//		else if(method.getName().equals("remove"))  {
+//			 return getJpaDao().remove(entityClass, args[0]);
+//		} else if(method.getName().equals("removeByMap"))  {
+//			return getJpaDao().removeByMap(entityClass, (Map<String,Object>)args[0]);
+//		} 
 		else if(method.getName().equals("remove"))  {
-			 return getJpaDao().remove(entityClass, args[0]);
-		}if(method.getName().equals("removeAll"))  {
+			if(args[0]==null) {
+				throw new BizException("删除的时候参数不能为null!");
+			} else if(entityClass.isInstance(args[0])) {
+				return getJpaDao().remove(entityClass, args[0]);
+			} else if(args[0] instanceof List) {
+				return getJpaDao().removeBatch(entityClass,(List)args[0]);
+			} else if(args[0] instanceof Map) {
+				return getJpaDao().removeByMap(entityClass, (Map<String,Object>)args[0]);
+			} else {
+				return getJpaDao().removeBatchByArray(entityClass,(Object[])args[0]);
+			} 
+			 
+		} 
+		if(method.getName().equals("removeAll"))  {
 			 return getJpaDao().removeAll(entityClass);
-		} else if(method.getName().equals("removeByMap"))  {
-			return getJpaDao().removeByMap(entityClass, (Map<String,Object>)args[0]);
 		} else if(method.getName().equals("removeById"))  {
 			return getJpaDao().removeById(entityClass, (Serializable)args[0]);
 		} else if(method.getName().equals("removeByIds"))  {
@@ -120,32 +209,65 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 				return getJpaDao().removeByIds(entityClass, (Serializable[])args[0]);
 			}
 			
-		} else if(method.getName().equals("removeForce"))  {
-			return getJpaDao().removeForce(entityClass, args[0]);
-		}  else if(method.getName().equals("removeForceById"))  {
+		} 
+//		else if(method.getName().equals("removeForce"))  {
+//			return getJpaDao().removeForce(entityClass, args[0]);
+//		}  else if(method.getName().equals("removeForceByMap"))  {
+//			return getJpaDao().removeForceByMap(entityClass, (Map<String,Object>)args[0]);
+//		} 
+		else if(method.getName().equals("removeForce"))  {
+			if(args[0]==null) {
+				throw new BizException("removeForce删除的时候参数不能为null!");
+			}else if(args[0] instanceof Map) {
+				return getJpaDao().removeForceByMap(entityClass, (Map<String,Object>)args[0]);
+			} else if(entityClass.isInstance(args[0])) {
+				return getJpaDao().removeForce(entityClass, args[0]);
+			} else if(args[0] instanceof List) {
+				return getJpaDao().removeForceBatch(entityClass,(List)args[0]);
+			} else {
+				return getJpaDao().removeForceBatchByArray(entityClass,(Object[])args[0]);
+			}
+			
+		} 
+		else if(method.getName().equals("removeForceById"))  {
 			return getJpaDao().removeForceById(entityClass, (Serializable)args[0]);
 		} else if(method.getName().equals("removeForceAll"))  {
 			return getJpaDao().removeForceAll(entityClass);
-		}  else if(method.getName().equals("removeForceByMap"))  {
-			return getJpaDao().removeForceByMap(entityClass, (Map<String,Object>)args[0]);
-		} 
+		}  
 		
 		
 		else if(method.getName().equals("count"))  {
-			return getJpaDao().count(entityClass);
-		} else if(method.getName().equals("countByExample"))  {
-			return getJpaDao().countByExample(entityClass, args[0]);
-		} else if(method.getName().equals("countByMap"))  {
-			return getJpaDao().countByMap(entityClass, (Map<String,Object>)args[0]);
+			if(args==null) {
+				return getJpaDao().count(entityClass);
+			} else if(args[0]==null || args[0] instanceof Map) {
+				return getJpaDao().countByMap(entityClass, (Map<String,Object>)args[0]);
+			} else {
+				return getJpaDao().countByExample(entityClass, args[0]);
+			}
+			
 		} 
+//		 else if(method.getName().equals("count"))  {
+//				return getJpaDao().count(entityClass);
+//		}	else if(method.getName().equals("countByExample"))  {
+//			return getJpaDao().countByExample(entityClass, args[0]);
+//		} else if(method.getName().equals("countByMap"))  {
+//			return getJpaDao().countByMap(entityClass, (Map<String,Object>)args[0]);
+//		} 
 		
 		else if(method.getName().equals("existsById"))  {
 			return getJpaDao().existsById(entityClass, args[0]);
-		} else if(method.getName().equals("existsByExample"))  {
-			return getJpaDao().existsByExample(entityClass, args[0]);
-		} else if(method.getName().equals("existsByMap"))  {
-			return getJpaDao().existsByMap(entityClass, (Map<String,Object>)args[0]);
-		} 
+		} else if(method.getName().equals("exists"))  {
+			if(args[0]==null || args[0] instanceof Map) {
+				return getJpaDao().existsByMap(entityClass, (Map<String,Object>)args[0]);
+			} else {
+				return getJpaDao().existsByExample(entityClass, args[0]);
+			}		
+		}
+//		else if(method.getName().equals("existsByExample"))  {
+//			return getJpaDao().existsByExample(entityClass, args[0]);
+//		} else if(method.getName().equals("existsByMap"))  {
+//			return getJpaDao().existsByMap(entityClass, (Map<String,Object>)args[0]);
+//		} 
 		
 		else if(method.getName().equals("getIdType"))  {
 			return getJpaDao().getIdType(entityClass);
@@ -157,9 +279,9 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		
 		else if (method.getName().equals("getMapById")){
 			return getJpaDao().getMapById(entityClass,args[0],(String[])args[1]);
-		} else if (method.getName().equals("getMapByMap")){
+		} else if (method.getName().equals("getMap")){
 			return getJpaDao().getMapByMap(entityClass,(Map<String,Object>)args[0],(String[])args[1]);
-		}else if (method.getName().equals("listMapByMap")){
+		}else if (method.getName().equals("listMap")){
 			return getJpaDao().listMapByMap(entityClass,(Map<String,Object>)args[0],(String[])args[1]);
 		}
 		

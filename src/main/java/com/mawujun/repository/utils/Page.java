@@ -18,7 +18,7 @@ import com.mawujun.utils.string.StringUtils;
  *
  * @param <T>
  */
-public class Page<T> implements List<T>,ICondition{
+public class Page<T> implements List<T>{//,ICondition
 	
 	protected int page = -1;//当前第几页，第一页默认是1
 	protected int limit = 50;// 默认是每页50条
@@ -27,12 +27,12 @@ public class Page<T> implements List<T>,ICondition{
 	//private Boolean success=true;
 	//private String message;
 	
-	private String countColumn;
+	//private String countColumn;
 	protected List<T> root = null;
 
-	// 这个优先级较高，如果设置了这个值，传递到后台的话，就使用这个值作为参数
-	// mybatis时候用的较多
-	protected Object params;// 具体的参数形式，可能是Map也可能是Bean
+//	// 这个优先级较高，如果设置了这个值，传递到后台的话，就使用这个值作为参数
+//	// mybatis时候用的较多
+//	protected Object params;// 具体的参数形式，可能是Map也可能是Bean
 	
 	//protected List result = null;
 	//protected int total = -1;
@@ -82,39 +82,39 @@ public class Page<T> implements List<T>,ICondition{
 		param.setPage((start/limit)+1);
 		return param;
 	}
-	/**
-	 * 使用这个方法，map里必须要有分页的参数，否则会爆出异常。
-	 * 分页的参数名称未page和limit，或start和limit
-	 * @param params
-	 * @return
-	 */
-	public static <T> Page<T> of(Map<String, Object> params){
-		if(!params.containsKey("limit") || params.get("limit")==null) {
-			throw new BizException("请put进分页参数limit");
-		}
-		int limit=Integer.parseInt(params.get("limit").toString());
-		if(params.containsKey("page")) {
-			int page=Integer.parseInt(params.get("page").toString());
-//			params.remove("page");
-//			params.remove("limit");
-//			params.remove("start");
-
-			return (Page<T>)Page.of_1(page, limit).setParams(params);
-		} else	if(params.containsKey("start")) {
-//			params.remove("page");
-//			params.remove("limit");
-//			params.remove("start");
-			
-			int start=Integer.parseInt(params.get("start").toString());
-			return (Page<T>)Page.of(start, limit).setParams(params);
-		} else {
-			throw new BizException("请put进分页参数start或page");
-		}	
-		
-//		Page<T> page=new Page<T>();
-//		page.init(params);
-//		return page;
-	}
+//	/**
+//	 * 使用这个方法，map里必须要有分页的参数，否则会爆出异常。
+//	 * 分页的参数名称未page和limit，或start和limit
+//	 * @param params
+//	 * @return
+//	 */
+//	public static <T> Page<T> of(Map<String, Object> params){
+//		if(!params.containsKey("limit") || params.get("limit")==null) {
+//			throw new BizException("请put进分页参数limit");
+//		}
+//		int limit=Integer.parseInt(params.get("limit").toString());
+//		if(params.containsKey("page")) {
+//			int page=Integer.parseInt(params.get("page").toString());
+////			params.remove("page");
+////			params.remove("limit");
+////			params.remove("start");
+//
+//			return (Page<T>)Page.of_1(page, limit).setParams(params);
+//		} else	if(params.containsKey("start")) {
+////			params.remove("page");
+////			params.remove("limit");
+////			params.remove("start");
+//			
+//			int start=Integer.parseInt(params.get("start").toString());
+//			return (Page<T>)Page.of(start, limit).setParams(params);
+//		} else {
+//			throw new BizException("请put进分页参数start或page");
+//		}	
+//		
+////		Page<T> page=new Page<T>();
+////		page.init(params);
+////		return page;
+//	}
 //	public Page<T> init(Map<String, Object> params){
 //		if(!params.containsKey("limit") || params.get("limit")==null) {
 //			throw new BizException("请put进分页参数limit");
@@ -140,15 +140,15 @@ public class Page<T> implements List<T>,ICondition{
 //	}
 	
 	
-	/**
-	 * 使用哪一列进行统计总数，默认是null,一般可以设置为id
-	 * 只在mybatis中有效
-	 * @param countColumn
-	 */
-	public Page<T> setCountColumn(String countColumn) {
-		this.countColumn = countColumn;
-		return this;
-	}
+//	/**
+//	 * 使用哪一列进行统计总数，默认是null,一般可以设置为id
+//	 * 只在mybatis中有效
+//	 * @param countColumn
+//	 */
+//	public Page<T> setCountColumn(String countColumn) {
+//		this.countColumn = countColumn;
+//		return this;
+//	}
 	
 //	/**
 //	 * 获得当前页,如果参数没有传递过来获取 第几页的话，这里将会自动计算当前是第几页
@@ -195,30 +195,30 @@ public class Page<T> implements List<T>,ICondition{
 	}
 
 	
-	public Object getParams() {
-		return params;
-	}
-	/**
-	 * 设置参数，一般是作为where条件的，可以是map，bean等各种类型
-	 * 
-	 * @author mawujun email:160649888@163.com qq:16064988
-	 * @param params
-	 */
-	public Page<T> setParams(Object params) {
-		if(params==null) {
-			return this;
-		}
-		if(params instanceof Condition) {
-			this.params = params;
-		} else if(params instanceof Map) {
-			this.params = Condition.of((Map)params);
-			
-		} else {
-			this.params = params;
-		}
-		
-		return this;
-	}
+//	public Object getParams() {
+//		return params;
+//	}
+//	/**
+//	 * 设置参数，一般是作为where条件的，可以是map，bean等各种类型
+//	 * 
+//	 * @author mawujun email:160649888@163.com qq:16064988
+//	 * @param params
+//	 */
+//	public Page<T> setParams(Object params) {
+//		if(params==null) {
+//			return this;
+//		}
+//		if(params instanceof Condition) {
+//			this.params = params;
+//		} else if(params instanceof Map) {
+//			this.params = Condition.of((Map)params);
+//			
+//		} else {
+//			this.params = params;
+//		}
+//		
+//		return this;
+//	}
 //	/**
 //	 * 获取map类型的params，然后添加参数
 //	 * PageInfo.of(start,limit).ofParams().eq(key,value)
@@ -352,9 +352,7 @@ public class Page<T> implements List<T>,ICondition{
 			return getPage();
 		}
 	}
-	public String getCountColumn() {
-		return countColumn;
-	}
+
 
 	
 	
@@ -554,170 +552,170 @@ public class Page<T> implements List<T>,ICondition{
 	
 	
 	//=============================================================================================
-	//下面的都是参数相关的修改
-	private Condition getParamsMap() {
-		if(params==null) {
-			params=Condition.of();
-			return (Condition)params;
-		}
-		if(!(params instanceof Condition)) {
-			throw new RuntimeException("当前分页的参数不是Params类型，不能调用该方法!");
-		} 
-		return (Condition)params;
-	}
+//	//下面的都是参数相关的修改
+//	private Condition getParamsMap() {
+//		if(params==null) {
+//			params=Condition.of();
+//			return (Condition)params;
+//		}
+//		if(!(params instanceof Condition)) {
+//			throw new RuntimeException("当前分页的参数不是Params类型，不能调用该方法!");
+//		} 
+//		return (Condition)params;
+//	}
 
-	@Override
-	public Page<T> put(String key, Object value) {
-		//getParamsMap().put(key, value);
-		add( key,  value);
-		return this;
-	}
-	@Override
-	public Page<T> add(String key, Object value) {
-		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
-			return this;
-		}
-		// TODO Auto-generated method stub
-		getParamsMap().add(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> add(String key, OpEnum opEnum, Object value) {
-		// TODO Auto-generated method stub
-		getParamsMap().add(key, opEnum, value);
-		return this;
-	}
-	@Override
-	public Page<T> eq(String key, Object value) {
-		// TODO Auto-generated method stub
-		getParamsMap().eq(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> eq_i(String key, Object value) {
-		// TODO Auto-generated method stub
-		getParamsMap().eq_i(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> noteq(String key, Object value) {
-		// TODO Auto-generated method stub
-		getParamsMap().noteq(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> noteq_i(String key, Object value) {
-		// TODO Auto-generated method stub
-		getParamsMap().noteq_i(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> gt(String key, Object value) {
-		// TODO Auto-generated method stub
-		getParamsMap().gt(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> ge(String key, Object value) {
-		// TODO Auto-generated method stub
-		getParamsMap().ge(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> lt(String key, Object value) {
-		// TODO Auto-generated method stub
-		getParamsMap().lt(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> le(String key, Object value) {
-		// TODO Auto-generated method stub
-		getParamsMap().le(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> between(String key, Object value1, Object value2) {
-		// TODO Auto-generated method stub
-		getParamsMap().between(key, value1, value2);
-		return this;
-	}
-	@Override
-	public Page<T> in(String key, Object... value) {
-		// TODO Auto-generated method stub
-		getParamsMap().in(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> notin(String key, Object... value) {
-		// TODO Auto-generated method stub
-		getParamsMap().notin(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> isnull(String key) {
-		// TODO Auto-generated method stub
-		getParamsMap().isnull(key);
-		return this;
-	}
-	@Override
-	public Page<T> isnotnull(String key) {
-		// TODO Auto-generated method stub
-		getParamsMap().isnotnull(key);
-		return this;
-	}
-	@Override
-	public Page<T> like(String key, String value) {
-		// TODO Auto-generated method stub
-		getParamsMap().like(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> likeprefix(String key, String value) {
-		// TODO Auto-generated method stub
-		getParamsMap().likeprefix(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> likesuffix(String key, String value) {
-		// TODO Auto-generated method stub
-		return this;
-	}
-	@Override
-	public Page<T> like_i(String key, String value) {
-		// TODO Auto-generated method stub
-		getParamsMap().like_i(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> likeprefix_i(String key, String value) {
-		// TODO Auto-generated method stub
-		getParamsMap().likeprefix_i(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> likesuffix_i(String key, String value) {
-		// TODO Auto-generated method stub
-		getParamsMap().likesuffix_i(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> notlike(String key, String value) {
-		// TODO Auto-generated method stub
-		getParamsMap().notlike(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> notlikeprefix(String key, String value) {
-		// TODO Auto-generated method stub
-		getParamsMap().notlikeprefix(key, value);
-		return this;
-	}
-	@Override
-	public Page<T> notlikesuffix(String key, String value) {
-		// TODO Auto-generated method stub
-		getParamsMap().notlikesuffix(key, value);
-		return this;
-	}
-
-	
+//	@Override
+//	public Page<T> put(String key, Object value) {
+//		//getParamsMap().put(key, value);
+//		add( key,  value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> add(String key, Object value) {
+//		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
+//			return this;
+//		}
+//		// TODO Auto-generated method stub
+//		getParamsMap().add(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> add(String key, OpEnum opEnum, Object value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().add(key, opEnum, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> eq(String key, Object value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().eq(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> eq_i(String key, Object value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().eq_i(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> noteq(String key, Object value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().noteq(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> noteq_i(String key, Object value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().noteq_i(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> gt(String key, Object value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().gt(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> ge(String key, Object value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().ge(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> lt(String key, Object value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().lt(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> le(String key, Object value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().le(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> between(String key, Object value1, Object value2) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().between(key, value1, value2);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> in(String key, Object... value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().in(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> notin(String key, Object... value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().notin(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> isnull(String key) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().isnull(key);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> isnotnull(String key) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().isnotnull(key);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> like(String key, String value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().like(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> likeprefix(String key, String value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().likeprefix(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> likesuffix(String key, String value) {
+//		// TODO Auto-generated method stub
+//		return this;
+//	}
+//	@Override
+//	public Page<T> like_i(String key, String value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().like_i(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> likeprefix_i(String key, String value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().likeprefix_i(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> likesuffix_i(String key, String value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().likesuffix_i(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> notlike(String key, String value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().notlike(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> notlikeprefix(String key, String value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().notlikeprefix(key, value);
+//		return this;
+//	}
+//	@Override
+//	public Page<T> notlikesuffix(String key, String value) {
+//		// TODO Auto-generated method stub
+//		getParamsMap().notlikesuffix(key, value);
+//		return this;
+//	}
+//
+//	
 }

@@ -47,13 +47,13 @@ public interface IRepository<T> {
 	 * @param list
 	 * @return
 	 */
-	public List<T> createBatch(List<T> list);
+	public List<T> create(List<T> list);
 	/***
 	 * 批量插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
 	 */
-	public List<T> createBatchByArray(T... list);
+	public List<T> create(T... list);
 	
 	/**
 	 * 如果存在就更新，如果不存在就插入
@@ -66,13 +66,13 @@ public interface IRepository<T> {
 	 * @param list
 	 * @return
 	 */
-	public List<T> saveBatch(List<T> list);
+	public List<T> save(List<T> list);
 	/***
 	 * 如果存在就更新，如果不存在就插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
 	 */
-	public List<T> saveBatchByArray(T... list);
+	public List<T> save(T... list);
 	
 	
 	public T getById(Serializable id);
@@ -82,7 +82,7 @@ public interface IRepository<T> {
 	 * @return
 	 * @throws NonUniqueResultException
 	 */
-	public T getByMap(Map<String,Object> params)  throws IncorrectResultSizeDataAccessException;
+	public T get(Map<String,Object> params)  throws IncorrectResultSizeDataAccessException;
 	/**
 	 * 如果有多条记录就返回第一条,如果有多个，将爆出异常
 	 * Example还可以扩展，例如某个属性的名字不是=，而是使用like
@@ -90,13 +90,53 @@ public interface IRepository<T> {
 	 * @return
 	 * @throws IncorrectResultSizeDataAccessException
 	 */
-	public T getByExample(T params)  throws IncorrectResultSizeDataAccessException;
+	public T get(T params)  throws IncorrectResultSizeDataAccessException;
 	
 	
-	
-	public List<T> listByExample(T params);
+	/**
+	 * 根据某个实体对象来查询
+	 * @param params
+	 * @return
+	 */
+	public List<T> list(T params);
 	
 	//public PageInfo<T> listPageByExample(T params, PageInfo<T> pageinfo);
+
+	/**
+	 * 参数不能为null,如果为null，将会返回所有数据
+	 * @param params
+	 * @return
+	 */
+	public List<T> list(Map<String,Object> params);
+	/**
+	 * 列出所有数据
+	 * @return
+	 */
+	public List<T> listAll();
+//	/**
+//	 * 参数是PageInfo，封装了sql要用的参数和分页信息。
+//	 * PageInfo中的参数可以是Map也可以是T，但不能是其他类型，否则会报异常
+//	 * 还可以自定义复杂查询的分页，需要自己增加一个方法，参数是PageInfo<M> ，返回值也是PageInfo,并在Mapper.xml文件中，写对应的方法.泛型可以是T也可以是Map
+//	 * @param params
+//	 * @return
+//	 */
+//	public Page<T> listPageByPage(Page<? extends Object> page);
+	
+	/**
+	 * 通过查询条件进行数据的分页
+	 * @param page
+	 * @return
+	 */
+	public Page<T> listPage(Condition condition);
+	
+	/**
+	 * 取分页数据，满足不了时，map参数里面必须有参数start，page和limit。
+	 * @param params 如果为null，按所有数据进行分页
+	 * @param page 第几页  从1 开始
+	 * @param limit 每页的页数
+	 * @return
+	 */
+	public Page<T> listPage(Map<String,Object> params,int page,int limit);
 	/**
 	 * 满足不了时，请参考listPageByPageInfo
 	 * @param params
@@ -104,37 +144,7 @@ public interface IRepository<T> {
 	 * @param limit 一页放几行
 	 * @return
 	 */
-	public Page<T> listPageByExample(T params, int page,int limit);
-	
-	
-	public List<T> listAll();
-	
-	/**
-	 * 参数不能为null,如果为null，将会返回所有数据
-	 * @param params
-	 * @return
-	 */
-	public List<T> listByMap(Map<String,Object> params);
-	/**
-	 * 参数是PageInfo，封装了sql要用的参数和分页信息。
-	 * PageInfo中的参数可以是Map也可以是T，但不能是其他类型，否则会报异常
-	 * 还可以自定义复杂查询的分页，需要自己增加一个方法，参数是PageInfo<M> ，返回值也是PageInfo,并在Mapper.xml文件中，写对应的方法.泛型可以是T也可以是Map
-	 * @param params
-	 * @return
-	 */
-	public Page<T> listPageByPage(Page<? extends Object> page);
-	
-
-	
-	/**
-	 * 取分页数据，满足不了时，请参考listPageByPageInfo
-	 * @param params 如果为null，按所有数据进行分页
-	 * @param page 第几页  从1 开始
-	 * @param limit 每页的页数
-	 * @return
-	 */
-	public Page<T> listPageByMap(Map<String,Object> params,int page,int limit);
-
+	public Page<T> listPage(T params, int page,int limit);
 
 	/**
 	 * 更新id为t.id的对象，所有属性都会更新，如果其他值没有设置，将会被更新为null
@@ -148,13 +158,13 @@ public interface IRepository<T> {
 	 * @param t
 	 * @return
 	 */
-	public List<T> updateBatch(List<T> list);
+	public List<T> update(List<T> list);
 	/**
 	 * 更新id为array中的t.id的对象
 	 * @param t
 	 * @return
 	 */
-	public List<T> updateBatchByArray(T... list);
+	public List<T> update(T... list);
 	/**
 	 * sets就是要更新的值
 	 * params是条件
@@ -180,17 +190,48 @@ public interface IRepository<T> {
 	 */
 	public int remove(T t);
 	/**
-	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
+	 * 如果数据量很大，会有性能问题
 	 * @param t
 	 * @return
 	 */
-	public int removeForce(T t);
+	public int remove(T... list);
+	/**
+	 * 如果数据量很大，会有性能问题
+	 * @param list
+	 * @return
+	 */
+	public int remove(List<T> list);
 	/**
 	 * 全部删除，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param t
 	 * @return
 	 */
 	public int removeAll();
+	
+	/**
+	 * 根据指定的条件删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
+	 * @param params
+	 * @return
+	 */
+	public int remove(Map<String,Object> params);
+	/**
+	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
+	 * @param t
+	 * @return
+	 */
+	public int removeForce(T t);
+	/**
+	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
+	 * @param t
+	 * @return
+	 */
+	public int removeForce(T... t);
+	/**
+	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
+	 * @param t
+	 * @return
+	 */
+	public int removeForce(List<T> list);
 	/**
 	 * 强制删除所有，即使设置了逻辑删除，也会被强制删除
 	 * @param t
@@ -198,17 +239,11 @@ public interface IRepository<T> {
 	 */
 	public int removeForceAll();
 	/**
-	 * 根据指定的条件删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
-	 * @param params
-	 * @return
-	 */
-	public int removeByMap(Map<String,Object> params);
-	/**
 	 * 根据指定的条件强制删除对象
 	 * @param params
 	 * @return
 	 */
-	public int removeForceByMap(Map<String,Object> params);
+	public int removeForce(Map<String,Object> params);
 	/**
 	 * 根据id删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param id
@@ -245,13 +280,13 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
-	public long countByExample(T params);
+	public long count(T params);
 	/**
 	 * 参数为null，就统计所有的记录
 	 * @param params
 	 * @return
 	 */
-	public long countByMap(Map<String,Object> params);
+	public long count(Map<String,Object> params);
 
 	
 	/**
@@ -266,14 +301,14 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
-	public boolean existsByExample(T params);
+	public boolean exists(T params);
 	/**
 	 * 是否存在相同的对象
 	 * 
 	 * @param params
 	 * @return
 	 */
-	public boolean existsByMap(Map<String,Object> params);
+	public boolean exists(Map<String,Object> params);
 	
 	
 	
@@ -291,14 +326,14 @@ public interface IRepository<T> {
 	 * @return
 	 * @throws IncorrectResultSizeDataAccessException
 	 */
-	public BeanMap getMapByMap(Map<String,Object> params,String... fields) throws IncorrectResultSizeDataAccessException;
+	public BeanMap getMap(Map<String,Object> params,String... fields) throws IncorrectResultSizeDataAccessException;
 	/**
 	 * 
 	 * @param params
 	 * @param fields 要查询的属性名称
 	 * @return
 	 */
-	public List<BeanMap> listMapByMap(Map<String,Object> params,String... fields);
+	public List<BeanMap> listMap(Map<String,Object> params,String... fields);
 //	/**
 //	 * 
 //	 * @param field 统计某个属性

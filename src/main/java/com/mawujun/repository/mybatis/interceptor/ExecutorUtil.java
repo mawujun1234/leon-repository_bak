@@ -14,6 +14,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.repository.mybatis.dialect.Dialect;
+import com.mawujun.repository.utils.Condition;
 import com.mawujun.repository.utils.Page;
 
 public class ExecutorUtil {
@@ -95,12 +96,12 @@ public class ExecutorUtil {
      */
     public static Long executeAutoCount(Dialect dialect, Executor executor, MappedStatement countMs,
                                         Object parameter, BoundSql boundSql,
-                                        Page pageInfo,RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
+                                        Condition condition,RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
         Map<String, Object> additionalParameters = getAdditionalParameter(boundSql);
         //创建 count 查询的缓存 key
         CacheKey countKey = executor.createCacheKey(countMs, parameter, RowBounds.DEFAULT, boundSql);
         //调用方言获取 count sql
-        String countSql = dialect.getCountSql(countMs, boundSql, parameter, pageInfo, countKey);
+        String countSql = dialect.getCountSql(countMs, boundSql, parameter, condition, countKey);
         //countKey.update(countSql);
         BoundSql countBoundSql = new BoundSql(countMs.getConfiguration(), countSql, boundSql.getParameterMappings(), parameter);
         //当使用动态 SQL 时，可能会产生临时的参数，这些参数需要手动设置到新的 BoundSql 中

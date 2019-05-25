@@ -9,8 +9,10 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
+import com.mawujun.exception.BizException;
 import com.mawujun.repository.mybatis.IRepository;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
+import com.mawujun.repository.utils.Condition;
 import com.mawujun.repository.utils.Page;
 
 @Transactional(rollbackOn= {Exception.class})
@@ -50,15 +52,15 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public List<T> createBatch(List<T> list) {
+	public List<T> create(List<T> list) {
 		// TODO Auto-generated method stub
-		return repo.createBatch(list);
+		return repo.create(list);
 	}
 
 	@Override
-	public List<T> createBatchByArray(T... list) {
+	public List<T> create(T... list) {
 		// TODO Auto-generated method stub
-		return repo.createBatchByArray(list);
+		return repo.create(list);
 	}
 
 	@Override
@@ -68,15 +70,15 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public List<T> saveBatch(List<T> list) {
+	public List<T> save(List<T> list) {
 		// TODO Auto-generated method stub
-		return repo.saveBatch(list);
+		return repo.save(list);
 	}
 
 	@Override
-	public List<T> saveBatchByArray(T... list) {
+	public List<T> save(T... list) {
 		// TODO Auto-generated method stub
-		return repo.saveBatchByArray(list);
+		return repo.save(list);
 	}
 
 	@Override
@@ -86,28 +88,28 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public T getByMap(Map<String, Object> params) throws IncorrectResultSizeDataAccessException {
+	public T get(Map<String, Object> params) throws IncorrectResultSizeDataAccessException {
 		// TODO Auto-generated method stub
-		return repo.getByMap(params);
+		return repo.get(params);
 	}
 
 	@Override
-	public T getByExample(T params) throws IncorrectResultSizeDataAccessException {
+	public T get(T params) throws IncorrectResultSizeDataAccessException {
 		// TODO Auto-generated method stub
-		return repo.getByExample(params);
+		return repo.get(params);
 	}
 
 	@Override
-	public List<T> listByExample(T params) {
+	public List<T> list(T params) {
 		// TODO Auto-generated method stub
-		return repo.listByExample(params);
+		return repo.list(params);
 	}
 
-	@Override
-	public Page<T> listPageByExample(T params, int page, int limit) {
-		// TODO Auto-generated method stub
-		return repo.listPageByExample(params, page, limit);
-	}
+//	@Override
+//	public Page<T> listPageByExample(T params, int page, int limit) {
+//		// TODO Auto-generated method stub
+//		return repo.listPage(params, page, limit);
+//	}
 
 	@Override
 	public List<T> listAll() {
@@ -116,28 +118,40 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public List<T> listByMap(Map<String, Object> params) {
+	public List<T> list(Map<String, Object> params) {
 		// TODO Auto-generated method stub
-		return repo.listByMap(params);
+		return repo.list(params);
 	}
 
 	@Override
-	public Page<T> listPageByPageInfo(Page<Object> pageinfo) {
+	public Page<T> listPage(Condition pageinfo) {
+		if(!pageinfo.isPageCondition()) {
+			throw new BizException("必须添加分页参数：start或page，limit");
+		}
 		// TODO Auto-generated method stub
-		return repo.listPageByPage(pageinfo);
+		return repo.listPage(pageinfo);
 	}
 
 	@Override
-	public Page<T> listPageByMap(Map<String, Object> params, int page, int limit) {
+	public Page<T> listPage(Map<String, Object> params, int page, int limit) {
 		// TODO Auto-generated method stub
-		return repo.listPageByMap(params, page, limit);
+		return repo.listPage(params, page, limit);
 	}
 	@Override
-	public Page<T> listPageByMap(Map<String,Object> params){
+	public Page<T> listPage(T params, int page, int limit) {
+		return repo.listPage(params, page, limit);
+	}
+
+	@Override
+	public Page<T> listPage(Map<String,Object> params){
 //		Page<T> page=new Page<T>();
 //		page.init(params);
 //		return page;
-		return repo.listPageByPage(Page.of(params));
+		Condition cnd=Condition.of(params);
+		if(!cnd.isPageCondition()) {
+			throw new BizException("必须添加分页参数：start或page，limit");
+		}
+		return repo.listPage(cnd);
 	}
 
 	@Override
@@ -147,15 +161,15 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public List<T> updateBatch(List<T> list) {
+	public List<T> update(List<T> list) {
 		// TODO Auto-generated method stub
-		return repo.updateBatch(list);
+		return repo.update(list);
 	}
 
 	@Override
-	public List<T> updateBatchByArray(T... list) {
+	public List<T> update(T... list) {
 		// TODO Auto-generated method stub
-		return repo.updateBatchByArray(list);
+		return repo.update(list);
 	}
 
 	@Override
@@ -176,9 +190,36 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 		return repo.remove(t);
 	}
 	@Override
+	public int remove(T... list) {
+		// TODO Auto-generated method stub
+		return repo.remove(list);
+	}
+
+	@Override
+	public int remove(List<T> list) {
+		// TODO Auto-generated method stub
+		return repo.remove(list);
+	}
+	@Override
 	public int removeForce(T t) {
 		// TODO Auto-generated method stub
 		return repo.removeForce(t);
+	}
+	/**
+	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
+	 * @param t
+	 * @return
+	 */
+	public int removeForce(T... list) {
+		return repo.removeForce(list);
+	}
+	/**
+	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
+	 * @param t
+	 * @return
+	 */
+	public int removeForce(List<T> list) {
+		return repo.removeForce(list);
 	}
 
 	@Override
@@ -195,16 +236,16 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 
 	
 	@Override
-	public int removeByMap(Map<String, Object> params) {
+	public int remove(Map<String, Object> params) {
 		// TODO Auto-generated method stub
-		return repo.removeByMap(params);
+		return repo.remove(params);
 	}
 	
 
 	@Override
-	public int removeForceByMap(Map<String, Object> params) {
+	public int removeForce(Map<String, Object> params) {
 		// TODO Auto-generated method stub
-		return repo.removeByMap(params);
+		return repo.remove(params);
 	}
 
 	@Override
@@ -237,15 +278,15 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public long countByExample(T params) {
+	public long count(T params) {
 		// TODO Auto-generated method stub
-		return repo.countByExample(params);
+		return repo.count(params);
 	}
 
 	@Override
-	public long countByMap(Map<String, Object> params) {
+	public long count(Map<String, Object> params) {
 		// TODO Auto-generated method stub
-		return repo.countByMap(params);
+		return repo.count(params);
 	}
 
 	@Override
@@ -255,15 +296,15 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public boolean existsByExample(T params) {
+	public boolean exists(T params) {
 		// TODO Auto-generated method stub
-		return repo.existsByExample(params);
+		return repo.exists(params);
 	}
 
 	@Override
-	public boolean existsByMap(Map<String, Object> params) {
+	public boolean exists(Map<String, Object> params) {
 		// TODO Auto-generated method stub
-		return repo.existsByMap(params);
+		return repo.exists(params);
 	}
 
 	@Override
@@ -273,18 +314,21 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public BeanMap getMapByMap(Map<String, Object> params, String... fields)
+	public BeanMap getMap(Map<String, Object> params, String... fields)
 			throws IncorrectResultSizeDataAccessException {
 		// TODO Auto-generated method stub
-		return repo.getMapByMap(params, fields);
+		return repo.getMap(params, fields);
 	}
 
 	@Override
-	public List<BeanMap> listMapByMap(Map<String, Object> params, String... fields) {
+	public List<BeanMap> listMap(Map<String, Object> params, String... fields) {
 		// TODO Auto-generated method stub
-		return repo.listMapByMap(params, fields);
+		return repo.listMap(params, fields);
 	}
 
+
+
+	
 
  
 }

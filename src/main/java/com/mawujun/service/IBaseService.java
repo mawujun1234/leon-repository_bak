@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
+import com.mawujun.repository.utils.Condition;
 import com.mawujun.repository.utils.Page;
 
 @Transactional(rollbackOn= {Exception.class})
@@ -40,13 +41,13 @@ public interface IBaseService<T> {
 	 * @param list
 	 * @return
 	 */
-	public List<T> createBatch(List<T> list);
+	public List<T> create(List<T> list);
 	/***
 	 * 批量插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
 	 */
-	public List<T> createBatchByArray(T... list);
+	public List<T> create(T... list);
 	
 	/**
 	 * 如果存在就更新，如果不存在就插入
@@ -59,13 +60,13 @@ public interface IBaseService<T> {
 	 * @param list
 	 * @return
 	 */
-	public List<T> saveBatch(List<T> list);
+	public List<T> save(List<T> list);
 	/***
 	 * 如果存在就更新，如果不存在就插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
 	 */
-	public List<T> saveBatchByArray(T... list);
+	public List<T> save(T... list);
 	
 	
 	public T getById(Serializable id);
@@ -75,7 +76,7 @@ public interface IBaseService<T> {
 	 * @return
 	 * @throws NonUniqueResultException
 	 */
-	public T getByMap(Map<String,Object> params)  throws IncorrectResultSizeDataAccessException;
+	public T get(Map<String,Object> params)  throws IncorrectResultSizeDataAccessException;
 	/**
 	 * 如果有多条记录就返回第一条,如果有多个，将爆出异常
 	 * Example还可以扩展，例如某个属性的名字不是=，而是使用like
@@ -83,21 +84,21 @@ public interface IBaseService<T> {
 	 * @return
 	 * @throws IncorrectResultSizeDataAccessException
 	 */
-	public T getByExample(T params)  throws IncorrectResultSizeDataAccessException;
+	public T get(T params)  throws IncorrectResultSizeDataAccessException;
 	
 	
 	
-	public List<T> listByExample(T params);
+	public List<T> list(T params);
 	
 	//public PageInfo<T> listPageByExample(T params, PageInfo<T> pageinfo);
-	/**
-	 * 满足不了时，请参考listPageByPageInfo
-	 * @param params
-	 * @param page 第几页，第一页是1；
-	 * @param limit 一页放几行
-	 * @return
-	 */
-	public Page<T> listPageByExample(T params, int page,int limit);
+//	/**
+//	 * 满足不了时，请参考listPageByPageInfo
+//	 * @param params
+//	 * @param page 第几页，第一页是1；
+//	 * @param limit 一页放几行
+//	 * @return
+//	 */
+//	public Page<T> listPageByExample(T params, int page,int limit);
 	
 	
 	public List<T> listAll();
@@ -107,7 +108,7 @@ public interface IBaseService<T> {
 	 * @param params
 	 * @return
 	 */
-	public List<T> listByMap(Map<String,Object> params);
+	public List<T> list(Map<String,Object> params);
 	/**
 	 * 参数是PageInfo，封装了sql要用的参数和分页信息。
 	 * PageInfo中的参数可以是Map也可以是T，但不能是其他类型，否则会报异常
@@ -115,7 +116,7 @@ public interface IBaseService<T> {
 	 * @param params 第一页是1，记录数是从0开始
 	 * @return
 	 */
-	public Page<T> listPageByPageInfo(Page<Object> pageinfo);
+	public Page<T> listPage(Condition pageinfo);
 	
 	/**
 	 * 取分页数据，满足不了时，请参考listPageByPageInfo
@@ -124,13 +125,21 @@ public interface IBaseService<T> {
 	 * @param limit 每页的页数
 	 * @return
 	 */
-	public Page<T> listPageByMap(Map<String,Object> params,int page,int limit);
+	public Page<T> listPage(Map<String,Object> params,int page,int limit);
 	/**
 	 * page和limit分页数据，或start和limit分页数据已经包含在params的map参数里面了
 	 * @param params
 	 * @return
 	 */
-	public Page<T> listPageByMap(Map<String,Object> params);
+	public Page<T> listPage(Map<String,Object> params);
+	/**
+	 * 满足不了时，请参考listPageByPageInfo
+	 * @param params
+	 * @param page 第几页，第一页是1；
+	 * @param limit 一页放几行
+	 * @return
+	 */
+	public Page<T> listPage(T params, int page,int limit);
 
 
 	/**
@@ -145,13 +154,13 @@ public interface IBaseService<T> {
 	 * @param t
 	 * @return
 	 */
-	public List<T> updateBatch(List<T> list);
+	public List<T> update(List<T> list);
 	/**
 	 * 更新id为array中的t.id的对象
 	 * @param t
 	 * @return
 	 */
-	public List<T> updateBatchByArray(T... list);
+	public List<T> update(T... list);
 	/**
 	 * sets就是要更新的值
 	 * params是条件
@@ -177,11 +186,35 @@ public interface IBaseService<T> {
 	 */
 	public int remove(T t);
 	/**
+	 * 如果数据量很大，会有性能问题
+	 * @param t
+	 * @return
+	 */
+	public int remove(T... list);
+	/**
+	 * 如果数据量很大，会有性能问题
+	 * @param list
+	 * @return
+	 */
+	public int remove(List<T> list);
+	/**
 	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
 	 * @param t
 	 * @return
 	 */
 	public int removeForce(T t);
+	/**
+	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
+	 * @param t
+	 * @return
+	 */
+	public int removeForce(T... t);
+	/**
+	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
+	 * @param t
+	 * @return
+	 */
+	public int removeForce(List<T> list);
 	/**
 	 * 全部删除
 	 * @param t
@@ -199,13 +232,13 @@ public interface IBaseService<T> {
 	 * @param params
 	 * @return
 	 */
-	public int removeByMap(Map<String,Object> params);
+	public int remove(Map<String,Object> params);
 	/**
 	 * 根据指定的条件强制删除对象
 	 * @param params
 	 * @return
 	 */
-	public int removeForceByMap(Map<String,Object> params);
+	public int removeForce(Map<String,Object> params);
 	/**
 	 * 根据id删除对象
 	 * @param id
@@ -242,13 +275,13 @@ public interface IBaseService<T> {
 	 * @param params
 	 * @return
 	 */
-	public long countByExample(T params);
+	public long count(T params);
 	/**
 	 * 参数为null，就统计所有的记录
 	 * @param params
 	 * @return
 	 */
-	public long countByMap(Map<String,Object> params);
+	public long count(Map<String,Object> params);
 
 	
 	/**
@@ -263,14 +296,14 @@ public interface IBaseService<T> {
 	 * @param params
 	 * @return
 	 */
-	public boolean existsByExample(T params);
+	public boolean exists(T params);
 	/**
 	 * 是否存在相同的对象
 	 * 
 	 * @param params
 	 * @return
 	 */
-	public boolean existsByMap(Map<String,Object> params);
+	public boolean exists(Map<String,Object> params);
 	
 	
 	
@@ -288,12 +321,12 @@ public interface IBaseService<T> {
 	 * @return
 	 * @throws IncorrectResultSizeDataAccessException
 	 */
-	public BeanMap getMapByMap(Map<String,Object> params,String... fields) throws IncorrectResultSizeDataAccessException;
+	public BeanMap getMap(Map<String,Object> params,String... fields) throws IncorrectResultSizeDataAccessException;
 	/**
 	 * 
 	 * @param params
 	 * @param fields 要查询的属性名称
 	 * @return
 	 */
-	public List<BeanMap> listMapByMap(Map<String,Object> params,String... fields);
+	public List<BeanMap> listMap(Map<String,Object> params,String... fields);
 }

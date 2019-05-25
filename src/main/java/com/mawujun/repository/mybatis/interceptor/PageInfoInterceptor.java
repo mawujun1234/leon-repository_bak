@@ -23,7 +23,7 @@ import org.apache.ibatis.session.RowBounds;
 import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.Dialect;
-import com.mawujun.repository.utils.Page;
+import com.mawujun.repository.utils.Condition;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.utils.string.StringUtils;
 
@@ -67,30 +67,47 @@ public class PageInfoInterceptor implements Interceptor {
             Object parameter = args[1];
             
             //判断是否分页
-            boolean isPageInfo=false;
-            Page pageinfo=null;
+            boolean isPageCondition=false;
+            //因为现在只支持参数为Condition的分页方式
+            Condition condition=null;
+            
             if(parameter instanceof Map) {
-            	Collection collections=((Map)parameter).values();
-            	Iterator iterator=collections.iterator();
-            	while(iterator.hasNext()) {
-            		Object o=iterator.next();
-            		if(o instanceof Page) {
-            			isPageInfo=true;
-            			pageinfo=(Page)o;
-            			args[1]=pageinfo.getParams();
-            			parameter=args[1];
-            			break;
-            		}
+            	if(parameter instanceof Condition) {
+            		condition=(Condition)parameter;
+            		isPageCondition=condition.isPageCondition();
+            		
+            		args[1]=condition.getParams();
+        			parameter=args[1];
             	}
             }
+//            if(parameter instanceof Map) {
+//            	Collection collections=((Map)parameter).values();
+//            	Iterator iterator=collections.iterator();
+//            	while(iterator.hasNext()) {
+//            		Object o=iterator.next();
+//            		if(o instanceof Condition) {
+//            			isPageInfo=true;
+//            			Condition condition=(Condition)o;
+//            			args[1]=condition.getParams();
+//            			parameter=args[1];
+//            			break;
+//            		}
+//            	}
+//            }
 
             //如果不是分页就直接返回
-            if(!isPageInfo) {
+            if(!isPageCondition) {
             	return invocation.proceed();
             }
-
+           
+            
+            Page pageinfo=new Page();
+            pageinfo.setStart(condition.getStart());
+            pageinfo.setLimit(condition.getLimit());
+            pageinfo.setPage(condition.getPage());
+            
             //RowBounds rowBounds = (RowBounds) args[2];
-            RowBounds rowBounds = new RowBounds(pageinfo.getStart(),pageinfo.getLimit());
+            RowBounds rowBounds = new RowBounds(condition.getStart(),condition.getLimit());
             args[2]=rowBounds;
             ResultHandler resultHandler = (ResultHandler) args[3];
             Executor executor = (Executor) invocation.getTarget();
@@ -108,7 +125,7 @@ public class PageInfoInterceptor implements Interceptor {
             }
            
             //查询总数,必须放在前面
-            Long count = count(executor, ms, args[1], rowBounds, resultHandler, boundSql,pageinfo);
+            Long count = count(executor, ms, args[1], rowBounds, resultHandler, boundSql,condition);
             pageinfo.setTotal(count.intValue());
             if(count==0) {
             	return pageinfo;
@@ -126,7 +143,7 @@ public class PageInfoInterceptor implements Interceptor {
 
     private Long count(Executor executor, MappedStatement ms, Object parameter,
             RowBounds rowBounds, ResultHandler resultHandler,
-            BoundSql boundSql,Page pageinfo) throws SQLException {
+            BoundSql boundSql,Condition condition) throws SQLException {
 		String countMsId = ms.getId() + MSUtils.countSuffix;
 		Long count;
 		// 先判断是否存在手写的 count 查询
@@ -141,7 +158,7 @@ public class PageInfoInterceptor implements Interceptor {
 				countMs = MSUtils.newCountMappedStatement(ms, countMsId);
 				msCountMap.put(countMsId, countMs);
 			}
-			count = ExecutorUtil.executeAutoCount(dialect, executor, countMs, parameter, boundSql,pageinfo, rowBounds, resultHandler);
+			count = ExecutorUtil.executeAutoCount(dialect, executor, countMs, parameter, boundSql,condition, rowBounds, resultHandler);
 		}
 		return count;
 	}

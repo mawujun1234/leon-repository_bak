@@ -2,8 +2,8 @@ package com.mawujun.repository.mybatis.jpa;
 
 public class Loginc {
 	private String name;
-	private Object defaultValue;
-	private Object deleteValue;
+	private Object defaultValue;//未删除的时候的值
+	private Object deleteValue;//逻辑删除后的值
 	
 	public String getName() {
 		return name;

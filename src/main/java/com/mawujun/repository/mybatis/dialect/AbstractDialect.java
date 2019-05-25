@@ -1,9 +1,5 @@
 package com.mawujun.repository.mybatis.dialect;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,9 +14,8 @@ import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.RowBounds;
 
-import com.mawujun.generator.db.DbColumn;
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
-import com.mawujun.repository.utils.Page;
+import com.mawujun.repository.utils.Condition;
 import com.mawujun.utils.string.StringUtils;
 
 public abstract class AbstractDialect implements Dialect {
@@ -212,7 +207,7 @@ public abstract class AbstractDialect implements Dialect {
 
 
 	@Override
-	public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, Page pageInfo, CacheKey pageKey) {
+	public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, Condition pageInfo, CacheKey pageKey) {
 	        String countColumn = pageInfo.getCountColumn();
 	        if (StringUtils.hasText(countColumn)) {
 	            return getSimpleCountSql(boundSql.getSql(), countColumn);

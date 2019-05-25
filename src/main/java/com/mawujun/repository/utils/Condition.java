@@ -3,6 +3,7 @@ package com.mawujun.repository.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.mawujun.exception.BizException;
 import com.mawujun.utils.string.StringUtils;
 
 public class Condition extends HashMap<String,Object>  implements ICondition{
@@ -81,6 +82,10 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 	//存放操作符
 	private Map<String,OpEnum> op=new HashMap<String,OpEnum>();
 	
+	protected int page = -1;//当前第几页，第一页默认是1
+	protected int limit = 50;// 默认是每页50条
+	protected int start = 0;//第一行默认是0
+	
 	/**
 	 * 如果不存在，默认是eq
 	 * @param key
@@ -102,13 +107,15 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 		op.put(key, OpEnum.eq);
 		return this;
 	}
-//	@Override
-//	public void putAll(Map<? extends String, ? extends Object> m) {
-//		// TODO Auto-generated method stub
-//		this.putAll(m);
-//	}
+	@Override
+	public void putAll(Map<? extends String, ? extends Object> m) {
+		// TODO Auto-generated method stub
+		this.putAll(m);
+	}
 	
 	//=======================================================
+	
+	
 	/**
 	 * 创建一个新的Params对象
 	 * @return
@@ -118,8 +125,72 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 		return utils;
 		
 	}
+	
+	/**
+	 * 
+	 * @param page 第几页,第一页是1
+	 * @param limit 每页多少
+	 * @return
+	 */
+	public static Condition ofPageLimit(int page,int limit){
+		Condition param=new Condition();
+		if(page<1) {
+			throw new IllegalArgumentException("分页的页码是从1开始");
+		}
+		
+		param.setLimit(limit);
+		param.setPage(page);
+		param.isPageCondition=true;
+		//param.setStart((page-1)*limit);
+		
+		return param;
+	}
+	/**
+	 * 
+	 * @param start 哪一行开始
+	 * @param limit 每页多少
+	 * @return
+	 */
+	public static Condition ofStartLimit(int start,int limit){
+		Condition param=new Condition();
+		param.setStart(start);
+		param.setLimit(limit);
+		param.setPage((start/limit)+1);
+		param.isPageCondition=true;
+		return param;
+	}
+	
+	private static String start_key="start";
+	private static String limit_key="limit";
+	private static String page_key="page";
+	protected boolean isPageCondition=false;
+	/**
+	 * 分页的参数名称未page和limit或start和limit,如果map里面有上面这三个参数，就会自动放到里面去
+	 * @param params
+	 * @return
+	 */
 	public static Condition of(Map<String,Object> params) {
-		Condition utils=new Condition();
+		Condition utils=null;
+		int limit=0;
+		if(params.containsKey(limit_key)) {
+			limit=Integer.parseInt(params.get(limit_key).toString());
+		}
+		if(params.containsKey(page_key)) {
+			int page=Integer.parseInt(params.get(page_key).toString());
+			utils= Condition.ofPageLimit(page, limit);
+			utils.isPageCondition=true;
+		} else	if(params.containsKey(start_key)) {
+			int start=Integer.parseInt(params.get(start_key).toString());
+			utils= Condition.ofStartLimit(start, limit);
+			utils.isPageCondition=true;
+		}
+		if(utils==null){
+			utils=new Condition();
+		} else {
+			params.remove(start_key);
+			params.remove(page_key);
+			params.remove(limit_key);
+		}
 		
 		for(Entry<String,Object> entry:params.entrySet()) {
 			utils.add(entry.getKey(), entry.getValue());
@@ -133,6 +204,55 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 		utils.put(key, value);
 		return utils;
 		
+	}
+	
+	public static String example_key="example"; 
+	private boolean isExampleCondition=false;
+	/**
+	 * 设置参数，一般是作为where条件的，可以是map，bean等各种类型
+	 * 
+	 * @author mawujun email:160649888@163.com qq:16064988
+	 * @param params
+	 */
+	public Condition setParams(Object params) {
+		if(params==null) {
+			return this;
+		}
+		if(params instanceof Condition) {
+			this.putAll((Map)params);
+		} else if(params instanceof Map) {
+			this.putAll((Map)params);
+		} else {
+			isExampleCondition=true;
+			this.put(example_key, params);
+		}
+		
+		return this;
+	}
+	/**
+	 * 返回参数，如果设置的时候是实体对象，那就返回实体对象，否则就返回Map
+	 * @return
+	 */
+	public Object getParams(){
+		if(isExampleCondition){
+			return this.get(example_key);
+		} else {
+			return this;
+		}
+	}
+	//=======================================
+	private String countColumn;
+	/**
+	 * 使用哪一列进行统计总数，默认是null,一般可以设置为id
+	 * 只在mybatis中有效
+	 * @param countColumn
+	 */
+	public Condition setCountColumn(String countColumn) {
+		this.countColumn = countColumn;
+		return this;
+	}
+	public String getCountColumn() {
+		return countColumn;
 	}
 	
 //	public Map<String,Object> getParams() {
@@ -374,6 +494,51 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 		this.add(key,OpEnum.notlikesuffix,value+"%");
 		return this;
 	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+		this.isPageCondition=true;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	protected void setLimit(int limit) {
+		this.limit = limit;
+		this.isPageCondition=true;
+	}
+
+	public int getStart() {
+		return start;
+	}
+
+	public void setStart(int start) {
+		this.start = start;
+		this.isPageCondition=true;
+	}
+
+	/**
+	 * 参数是Example
+	 * @return
+	 */
+	public boolean isExampleCondition() {
+		return isExampleCondition;
+	}
+
+	/**
+	 * true：这个是要分页的条件
+	 * @return
+	 */
+	public boolean isPageCondition() {
+		return isPageCondition;
+	}
+
+
 	
 //	/**
 //	 * 会把key相同的值组装成sql中in的形式,'a','b','c'
