@@ -9,6 +9,7 @@ import javax.persistence.NonUniqueResultException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
+import com.mawujun.repository.utils.Condition;
 import com.mawujun.repository.utils.Page;
 
 
@@ -122,6 +123,8 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	public Page<T> listPageByPage(Page<? extends Object> page);
+	
+
 	
 	/**
 	 * 取分页数据，满足不了时，请参考listPageByPageInfo
