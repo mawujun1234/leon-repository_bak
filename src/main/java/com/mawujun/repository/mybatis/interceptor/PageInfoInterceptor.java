@@ -70,6 +70,8 @@ public class PageInfoInterceptor implements Interceptor {
             boolean isPageCondition=false;
             //因为现在只支持参数为Condition的分页方式
             Condition condition=null;
+            分页的returntype必须是Page，JpaMapperProxy方法中如果方法没有jpaInvocation注解，就表示调用的是mybatis，否则就是调用jpaDao的方法。
+            System.out.println(invocation.getMethod().getReturnType()+"==============================");
             
             if(parameter instanceof Map) {
             	if(parameter instanceof Condition) {

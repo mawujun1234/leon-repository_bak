@@ -8,6 +8,7 @@ import javax.persistence.NonUniqueResultException;
 
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
+import com.mawujun.repository.mybatis.jpa.JpaMethod;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.Condition;
 import com.mawujun.repository.utils.Page;
@@ -25,34 +26,40 @@ public interface IRepository<T> {
 	 * 获取id的类型
 	 * @return
 	 */
+	@JpaMethod
 	public Class<Serializable> getIdType();
 	/**
 	 * 获取id的属性名称
 	 * @return
 	 */
+	@JpaMethod
 	public List<String> getIdAttributeNames();
 	/**
 	 * 获取id的属性字符串,如果 有多个属性就以逗号分隔
 	 * @return
 	 */
+	@JpaMethod
 	public String getIdAttributeNames2Str();
 	/**
 	 * 清空持久化上下文中的内容
 	 */
+	@JpaMethod
 	public boolean clear();
-	
+	@JpaMethod
 	public T create(T t);
 	/**
 	 * 批量插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
 	 */
+	@JpaMethod
 	public List<T> create(List<T> list);
 	/***
 	 * 批量插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
 	 */
+	@JpaMethod
 	public List<T> create(T... list);
 	
 	/**
@@ -60,21 +67,24 @@ public interface IRepository<T> {
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public T save(T t);
 	/**
 	 * 如果存在就更新，如果不存在就插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
 	 */
+	@JpaMethod
 	public List<T> save(List<T> list);
 	/***
 	 * 如果存在就更新，如果不存在就插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
 	 */
+	@JpaMethod
 	public List<T> save(T... list);
 	
-	
+	@JpaMethod
 	public T getById(Serializable id);
 	/**
 	 * 如果有多个，将爆出异常
@@ -82,6 +92,7 @@ public interface IRepository<T> {
 	 * @return
 	 * @throws NonUniqueResultException
 	 */
+	@JpaMethod
 	public T get(Map<String,Object> params)  throws IncorrectResultSizeDataAccessException;
 	/**
 	 * 如果有多条记录就返回第一条,如果有多个，将爆出异常
@@ -90,6 +101,7 @@ public interface IRepository<T> {
 	 * @return
 	 * @throws IncorrectResultSizeDataAccessException
 	 */
+	@JpaMethod
 	public T get(T params)  throws IncorrectResultSizeDataAccessException;
 	
 	
@@ -98,8 +110,9 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
+	@JpaMethod
 	public List<T> list(T params);
-	
+	//@JpaMethod
 	//public PageInfo<T> listPageByExample(T params, PageInfo<T> pageinfo);
 
 	/**
@@ -107,11 +120,13 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
+	@JpaMethod
 	public List<T> list(Map<String,Object> params);
 	/**
 	 * 列出所有数据
 	 * @return
 	 */
+	@JpaMethod
 	public List<T> listAll();
 //	/**
 //	 * 参数是PageInfo，封装了sql要用的参数和分页信息。
@@ -120,6 +135,7 @@ public interface IRepository<T> {
 //	 * @param params
 //	 * @return
 //	 */
+//	@JpaMethod
 //	public Page<T> listPageByPage(Page<? extends Object> page);
 	
 	/**
@@ -127,6 +143,7 @@ public interface IRepository<T> {
 	 * @param page
 	 * @return
 	 */
+	@JpaMethod
 	public Page<T> listPage(Condition condition);
 	
 	/**
@@ -136,6 +153,7 @@ public interface IRepository<T> {
 	 * @param limit 每页的页数
 	 * @return
 	 */
+	@JpaMethod
 	public Page<T> listPage(Map<String,Object> params,int page,int limit);
 	/**
 	 * 满足不了时，请参考listPageByPageInfo
@@ -144,6 +162,7 @@ public interface IRepository<T> {
 	 * @param limit 一页放几行
 	 * @return
 	 */
+	@JpaMethod
 	public Page<T> listPage(T params, int page,int limit);
 
 	/**
@@ -152,18 +171,21 @@ public interface IRepository<T> {
 	 * @param t
 	 * @return 返回来的对象和参数对象，可能会不是同个对象
 	 */
+	@JpaMethod
 	public T update(T t);
 	/**
 	 * 更新id为list中的t.id的对象
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public List<T> update(List<T> list);
 	/**
 	 * 更新id为array中的t.id的对象
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public List<T> update(T... list);
 	/**
 	 * sets就是要更新的值
@@ -172,6 +194,7 @@ public interface IRepository<T> {
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public int updateByMap(Map<String,Object> sets,Map<String,Object> params);
 	/**
 	 * 根据id更新内容
@@ -179,6 +202,7 @@ public interface IRepository<T> {
 	 * @param id
 	 * @return
 	 */
+	@JpaMethod
 	public int updateById(Map<String,Object> sets,Serializable id);
 	
 
@@ -188,24 +212,28 @@ public interface IRepository<T> {
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public int remove(T t);
 	/**
 	 * 如果数据量很大，会有性能问题
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public int remove(T... list);
 	/**
 	 * 如果数据量很大，会有性能问题
 	 * @param list
 	 * @return
 	 */
+	@JpaMethod
 	public int remove(List<T> list);
 	/**
 	 * 全部删除，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public int removeAll();
 	
 	/**
@@ -213,66 +241,77 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
+	@JpaMethod
 	public int remove(Map<String,Object> params);
 	/**
 	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public int removeForce(T t);
 	/**
 	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public int removeForce(T... t);
 	/**
 	 * 强制删除，即使注解了@LogicDelect字段，也会被强制删除
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public int removeForce(List<T> list);
 	/**
 	 * 强制删除所有，即使设置了逻辑删除，也会被强制删除
 	 * @param t
 	 * @return
 	 */
+	@JpaMethod
 	public int removeForceAll();
 	/**
 	 * 根据指定的条件强制删除对象
 	 * @param params
 	 * @return
 	 */
+	@JpaMethod
 	public int removeForce(Map<String,Object> params);
 	/**
 	 * 根据id删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param id
 	 * @return
 	 */
+	@JpaMethod
 	public int removeById(Serializable id);
 	/**
 	 * 根据id强制删除
 	 * @param id
 	 * @return
 	 */
+	@JpaMethod
 	public int removeForceById(Serializable id);
 	/**
 	 * 根据id数组删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param ids
 	 * @return
 	 */
+	@JpaMethod
 	public int removeByIds(Serializable... ids);
 	/**
 	 * 根据id数组删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
 	 * @param ids
 	 * @return
 	 */
+	@JpaMethod
 	public int removeByIds(List<Serializable> ids);
 	
 	/**
 	 * 统计所有
 	 * @return
 	 */
+	@JpaMethod
 	public long count();
 	/**
 	 * 类似的对象有几个，如果参数为null，将会返回所有的数据
@@ -280,12 +319,14 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
+	@JpaMethod
 	public long count(T params);
 	/**
 	 * 参数为null，就统计所有的记录
 	 * @param params
 	 * @return
 	 */
+	@JpaMethod
 	public long count(Map<String,Object> params);
 
 	
@@ -294,6 +335,7 @@ public interface IRepository<T> {
 	 * @param id
 	 * @return
 	 */
+	@JpaMethod
 	public boolean existsById(Serializable id);
 	/**
 	 * 是否存在相同的对象
@@ -301,6 +343,7 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
+	@JpaMethod
 	public boolean exists(T params);
 	/**
 	 * 是否存在相同的对象
@@ -308,6 +351,7 @@ public interface IRepository<T> {
 	 * @param params
 	 * @return
 	 */
+	@JpaMethod
 	public boolean exists(Map<String,Object> params);
 	
 	
@@ -318,6 +362,7 @@ public interface IRepository<T> {
 	 * @param fields 要查询的属性名
 	 * @return
 	 */
+	@JpaMethod
 	public BeanMap getMapById(Serializable id,String... fields);
 	/**
 	 * 如果有多条，就抛出异常
@@ -326,6 +371,7 @@ public interface IRepository<T> {
 	 * @return
 	 * @throws IncorrectResultSizeDataAccessException
 	 */
+	@JpaMethod
 	public BeanMap getMap(Map<String,Object> params,String... fields) throws IncorrectResultSizeDataAccessException;
 	/**
 	 * 
@@ -333,6 +379,7 @@ public interface IRepository<T> {
 	 * @param fields 要查询的属性名称
 	 * @return
 	 */
+	@JpaMethod
 	public List<BeanMap> listMap(Map<String,Object> params,String... fields);
 //	/**
 //	 * 
@@ -340,6 +387,7 @@ public interface IRepository<T> {
 //	 * @param params 条件
 //	 * @return
 //	 */
+	//@JpaMethod
 //	public Long sumAsLong(String field,Map<String,Object> params);
 //	
 //	/**
@@ -348,6 +396,7 @@ public interface IRepository<T> {
 //	 * @param params 条件
 //	 * @return
 //	 */
+	//@JpaMethod
 //	public Double sumAsDouble(String field,Map<String,Object> params);
 
 

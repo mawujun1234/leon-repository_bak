@@ -58,6 +58,10 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 	 * 这样的话MyMapperProxy就不需要依赖SessionFactory，MybatisRepository这些类了，直接在外面配置就可以了
 	 */
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		JpaMethod jpaMethod=method.getAnnotation(JpaMethod.class);
+		if(jpaMethod==null) {
+			return super.invoke(proxy, method, args);
+		}
 		if(method.getName().equals("getById")) {
 			sqlSession_.clearCache();
 			return getJpaDao().getById(entityClass, args[0]);
