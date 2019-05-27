@@ -200,6 +200,18 @@ public class JpaDao {
 		em.flush();
 		return result;
 	}
+	
+	public Object create(Class entityClass, Map<String,Object> map) {
+		// return getSimpleJpaRepository(entityClass).saveAndFlush(entity);
+		//insert into p_agentrole (agentid,roleid)  values(?,?)
+		String qlString="inser into "+entityClass.getCanonicalName()+"(xxxxxx) values(yyyyyyyyyy)";
+		String[] fields=new String[map.size()];
+		lllll
+		for(Entry<String,Object> entity:map.entrySet()) {
+			
+		}
+		return em.createQuery(qlString, entityClass);
+	}
 
 	public Object save(Class entityClass, Object entity) {
 		return getSimpleJpaRepository(entityClass).saveAndFlush(entity);
