@@ -207,8 +207,8 @@ public abstract class AbstractDialect implements Dialect {
 
 
 	@Override
-	public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, Condition pageInfo, CacheKey pageKey) {
-	        String countColumn = pageInfo.getCountColumn();
+	public String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, Condition cnd, CacheKey pageKey) {
+	        String countColumn = cnd.getCountColumn();
 	        if (StringUtils.hasText(countColumn)) {
 	            return getSimpleCountSql(boundSql.getSql(), countColumn);
 	        }

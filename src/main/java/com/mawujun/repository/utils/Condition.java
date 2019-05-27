@@ -86,6 +86,11 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 	protected int limit = 50;// 默认是每页50条
 	protected int start = 0;//第一行默认是0
 	
+	public final static String start_key="start";
+	public final static String limit_key="limit";
+	public final static String page_key="page";
+	protected boolean isPageCondition=false;
+	
 	/**
 	 * 如果不存在，默认是eq
 	 * @param key
@@ -160,43 +165,40 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 		return param;
 	}
 	
-	private static String start_key="start";
-	private static String limit_key="limit";
-	private static String page_key="page";
-	protected boolean isPageCondition=false;
+
 	/**
 	 * 分页的参数名称未page和limit或start和limit,如果map里面有上面这三个参数，就会自动放到里面去
 	 * @param params
 	 * @return
 	 */
 	public static Condition of(Map<String,Object> params) {
-		Condition utils=null;
+		Condition cnd=null;
 		int limit=0;
 		if(params.containsKey(limit_key)) {
 			limit=Integer.parseInt(params.get(limit_key).toString());
 		}
 		if(params.containsKey(page_key)) {
 			int page=Integer.parseInt(params.get(page_key).toString());
-			utils= Condition.ofPageLimit(page, limit);
-			utils.isPageCondition=true;
+			cnd= Condition.ofPageLimit(page, limit);
+			cnd.isPageCondition=true;
 		} else	if(params.containsKey(start_key)) {
 			int start=Integer.parseInt(params.get(start_key).toString());
-			utils= Condition.ofStartLimit(start, limit);
-			utils.isPageCondition=true;
+			cnd= Condition.ofStartLimit(start, limit);
+			cnd.isPageCondition=true;
 		}
-		if(utils==null){
-			utils=new Condition();
+		if(cnd==null){
+			cnd=new Condition();
 		} else {
-			params.remove(start_key);
-			params.remove(page_key);
-			params.remove(limit_key);
+			//params.remove(start_key);
+			//params.remove(page_key);
+			//params.remove(limit_key);
 		}
 		
 		for(Entry<String,Object> entry:params.entrySet()) {
-			utils.add(entry.getKey(), entry.getValue());
+			cnd.add(entry.getKey(), entry.getValue());
 		}
 
-		return utils;
+		return cnd;
 		
 	}
 	public static Condition of(String key,Object value) {
@@ -210,6 +212,8 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 	private boolean isExampleCondition=false;
 	/**
 	 * 设置参数，一般是作为where条件的，可以是map，bean等各种类型
+	 * 并且如果设置了bean，再调用put其他参数，会把这个bean参数以map覆盖掉，
+	 * 如果你想把bean和其他参数混合并列存在的话，那就只调用put方法，一个一个放进去。
 	 * 
 	 * @author mawujun email:160649888@163.com qq:16064988
 	 * @param params
@@ -224,6 +228,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 			this.putAll((Map)params);
 		} else {
 			isExampleCondition=true;
+			//再使用的的时候，会提取这个example_key的值作为参数的
 			this.put(example_key, params);
 		}
 		

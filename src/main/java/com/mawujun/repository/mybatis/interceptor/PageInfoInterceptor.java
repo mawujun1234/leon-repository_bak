@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.ibatis.cache.CacheKey;
@@ -20,11 +21,13 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.exception.BizException;
 import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.Dialect;
 import com.mawujun.repository.utils.Condition;
 import com.mawujun.repository.utils.Page;
+import com.mawujun.repository.utils.PageMethodCache;
 import com.mawujun.utils.string.StringUtils;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -64,44 +67,56 @@ public class PageInfoInterceptor implements Interceptor {
 //            	//dialect=new SqlServer2012Dialect();
 
         	}
+            
+//            //这里返回的是Execute的返回值，而不是定义的接口的返回值。，所以不能再这里根据返回值来进行判断 是否分页
+//            Class return_clazz=invocation.getMethod().getReturnType();
+//            System.out.println(return_clazz+"==============================");
+//            //只要返回值是Page，就表示进行分页查询
+//            if(!Page.class.isAssignableFrom(return_clazz)) {
+//            	return invocation.proceed();
+//            }
+            
+            if(!PageMethodCache.exits(ms.getId())) {
+            	//test.mawujun.jpa.JpaMybatisMapper.listPageByMybatis
+            	return invocation.proceed();
+            }
+            
+            
+            
             Object parameter = args[1];
             
             //判断是否分页
             boolean isPageCondition=false;
             //因为现在只支持参数为Condition的分页方式
             Condition condition=null;
-            分页的returntype必须是Page，JpaMapperProxy方法中如果方法没有jpaInvocation注解，就表示调用的是mybatis，否则就是调用jpaDao的方法。
-            System.out.println(invocation.getMethod().getReturnType()+"==============================");
+            //分页的returntype必须是Page，就表示这个查询要使用分页查询
+            
             
             if(parameter instanceof Map) {
+            	//如果只有一个参数，并且参数是Condition
             	if(parameter instanceof Condition) {
             		condition=(Condition)parameter;
-            		isPageCondition=condition.isPageCondition();
+            		
             		
             		args[1]=condition.getParams();
-        			parameter=args[1];
+        			//parameter=args[1];
+            	} else {
+            		//参数可能是随机参数，或者是Condition和其他参数的混合体
+            		condition=Condition.of((Map)parameter);
+            		args[1]=condition.getParams();
+        			//parameter=args[1];
             	}
             }
-//            if(parameter instanceof Map) {
-//            	Collection collections=((Map)parameter).values();
-//            	Iterator iterator=collections.iterator();
-//            	while(iterator.hasNext()) {
-//            		Object o=iterator.next();
-//            		if(o instanceof Condition) {
-//            			isPageInfo=true;
-//            			Condition condition=(Condition)o;
-//            			args[1]=condition.getParams();
-//            			parameter=args[1];
-//            			break;
-//            		}
-//            	}
-//            }
+
 
             //如果不是分页就直接返回
+            isPageCondition=condition.isPageCondition();
             if(!isPageCondition) {
-            	return invocation.proceed();
+            	throw new BizException("分页查询必须具有start或page和limit名称的参数，用于分页");
+            	//return invocation.proceed();
             }
-           
+            //因为参数可能是实体，如果是实体参数的话，其他指定参数能不能 用注意下
+            parameter=condition.getParams();
             
             Page pageinfo=new Page();
             pageinfo.setStart(condition.getStart());

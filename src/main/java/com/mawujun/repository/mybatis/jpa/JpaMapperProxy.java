@@ -2,8 +2,10 @@ package com.mawujun.repository.mybatis.jpa;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperProxy;
@@ -12,6 +14,8 @@ import org.apache.ibatis.session.SqlSession;
 import com.mawujun.exception.BizException;
 import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.utils.Condition;
+import com.mawujun.repository.utils.Page;
+import com.mawujun.repository.utils.PageMethodCache;
 import com.mawujun.utils.ReflectionUtils;
 
 /**
@@ -52,6 +56,8 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		return this.newdao;
 	}
 
+	//存储已经判断过的方法,为了提高性能
+	private Set<String> exist_look=new HashSet<String>();
 	/**
 	 * 在这里进行拦截，如果是指定的方法就
 	 * 额外的处理可以做成处理类，例如建一个InvokeHandler处理类，根据各种规则把处理内容发送到这个类里面进行处理，
@@ -60,6 +66,21 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		JpaMethod jpaMethod=method.getAnnotation(JpaMethod.class);
 		if(jpaMethod==null) {
+			//是mybatis的时候，同时判断该方法是否是分页方法，供后面PageInfoInterceptor使用
+			Class return_clazz=method.getReturnType();
+            //只要返回值是Page，就表示进行分页查询
+			String key=method.getDeclaringClass().getCanonicalName()+"."+method.getName();	
+			if(!exist_look.contains(key)) {
+				exist_look.add(key);
+	            if( Page.class.isAssignableFrom(return_clazz)) {
+	//            	System.out.println(method.getDeclaringClass().getCanonicalName());
+	//            	System.out.println(method.getClass());	
+	            	PageMethodCache.add(key);
+	            }
+			}
+            
+			
+			//如果是调用mybatis中的方法，就直接返回
 			return super.invoke(proxy, method, args);
 		}
 		if(method.getName().equals("getById")) {
