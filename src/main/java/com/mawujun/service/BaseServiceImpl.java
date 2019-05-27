@@ -175,7 +175,7 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	@Override
 	public int updateByMap(Map<String, Object> sets, Map<String, Object> params) {
 		// TODO Auto-generated method stub
-		return repo.updateByMap(sets, params);
+		return repo.update(sets, params);
 	}
 
 	@Override
@@ -324,6 +324,12 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	public List<BeanMap> listMap(Map<String, Object> params, String... fields) {
 		// TODO Auto-generated method stub
 		return repo.listMap(params, fields);
+	}
+
+	@Override
+	public int update(Condition cnd) {
+		// TODO Auto-generated method stub
+		return repo.update(cnd);
 	}
 
 

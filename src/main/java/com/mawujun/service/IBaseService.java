@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
+import com.mawujun.repository.mybatis.jpa.JpaMethod;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.Condition;
 import com.mawujun.repository.utils.Page;
@@ -71,7 +72,7 @@ public interface IBaseService<T> {
 	
 	public T getById(Serializable id);
 	/**
-	 * 如果有多个，将爆出异常
+	 * 如果有多个，将爆出异常，支持Condition
 	 * @param params
 	 * @return
 	 * @throws NonUniqueResultException
@@ -104,7 +105,7 @@ public interface IBaseService<T> {
 	public List<T> listAll();
 	
 	/**
-	 * 参数不能为null,如果为null，将会返回所有数据
+	 * 参数不能为null,如果为null，将会返回所有数据，支持Condition
 	 * @param params
 	 * @return
 	 */
@@ -128,6 +129,7 @@ public interface IBaseService<T> {
 	public Page<T> listPage(Map<String,Object> params,int page,int limit);
 	/**
 	 * page和limit分页数据，或start和limit分页数据已经包含在params的map参数里面了
+	 * ，支持Condition
 	 * @param params
 	 * @return
 	 */
@@ -169,6 +171,15 @@ public interface IBaseService<T> {
 	 * @return
 	 */
 	public int updateByMap(Map<String,Object> sets,Map<String,Object> params);
+	/**
+	 * cnd就是要更新的内容
+	 * params是条件
+	 * 是动态更新
+	 * @param t
+	 * @return
+	 */
+	@JpaMethod
+	public int update(Condition cnd);
 	/**
 	 * 根据id更新内容
 	 * @param sets
@@ -228,13 +239,13 @@ public interface IBaseService<T> {
 	 */
 	public int removeForceAll();
 	/**
-	 * 根据指定的条件删除对象
+	 * 根据指定的条件删除对象，支持Condition
 	 * @param params
 	 * @return
 	 */
 	public int remove(Map<String,Object> params);
 	/**
-	 * 根据指定的条件强制删除对象
+	 * 根据指定的条件强制删除对象，支持Condition
 	 * @param params
 	 * @return
 	 */
@@ -277,7 +288,7 @@ public interface IBaseService<T> {
 	 */
 	public long count(T params);
 	/**
-	 * 参数为null，就统计所有的记录
+	 * 参数为null，就统计所有的记录，支持Condition
 	 * @param params
 	 * @return
 	 */
@@ -299,7 +310,7 @@ public interface IBaseService<T> {
 	public boolean exists(T params);
 	/**
 	 * 是否存在相同的对象
-	 * 
+	 * ，支持Condition
 	 * @param params
 	 * @return
 	 */
@@ -315,7 +326,7 @@ public interface IBaseService<T> {
 	 */
 	public BeanMap getMapById(Serializable id,String... fields);
 	/**
-	 * 如果有多条，就抛出异常
+	 * 如果有多条，就抛出异常，支持Condition
 	 * @param params
 	 * @param fields 要查询的属性名称
 	 * @return
@@ -323,7 +334,7 @@ public interface IBaseService<T> {
 	 */
 	public BeanMap getMap(Map<String,Object> params,String... fields) throws IncorrectResultSizeDataAccessException;
 	/**
-	 * 
+	 * ，支持Condition
 	 * @param params
 	 * @param fields 要查询的属性名称
 	 * @return

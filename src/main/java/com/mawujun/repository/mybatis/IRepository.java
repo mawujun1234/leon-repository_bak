@@ -88,6 +88,7 @@ public interface IRepository<T> {
 	public T getById(Serializable id);
 	/**
 	 * 如果有多个，将爆出异常
+	 * 、，支持Condition
 	 * @param params
 	 * @return
 	 * @throws NonUniqueResultException
@@ -117,6 +118,7 @@ public interface IRepository<T> {
 
 	/**
 	 * 参数不能为null,如果为null，将会返回所有数据
+	 * ，支持Condition
 	 * @param params
 	 * @return
 	 */
@@ -148,6 +150,7 @@ public interface IRepository<T> {
 	
 	/**
 	 * 取分页数据，满足不了时，map参数里面必须有参数start，page和limit。
+	 * ，支持Condition
 	 * @param params 如果为null，按所有数据进行分页
 	 * @param page 第几页  从1 开始
 	 * @param limit 每页的页数
@@ -195,7 +198,16 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	@JpaMethod
-	public int updateByMap(Map<String,Object> sets,Map<String,Object> params);
+	public int update(Map<String,Object> sets,Map<String,Object> params);
+	/**
+	 * cnd就是要更新的内容
+	 * params是条件
+	 * 是动态更新
+	 * @param t
+	 * @return
+	 */
+	@JpaMethod
+	public int update(Condition cnd);
 	/**
 	 * 根据id更新内容
 	 * @param sets
@@ -238,6 +250,7 @@ public interface IRepository<T> {
 	
 	/**
 	 * 根据指定的条件删除对象，如果是逻辑删除，就把注解了@LogicDelecte字段设置为1
+	 * ，支持Condition
 	 * @param params
 	 * @return
 	 */
@@ -272,7 +285,7 @@ public interface IRepository<T> {
 	@JpaMethod
 	public int removeForceAll();
 	/**
-	 * 根据指定的条件强制删除对象
+	 * 根据指定的条件强制删除对象，支持Condition
 	 * @param params
 	 * @return
 	 */
@@ -322,7 +335,7 @@ public interface IRepository<T> {
 	@JpaMethod
 	public long count(T params);
 	/**
-	 * 参数为null，就统计所有的记录
+	 * 参数为null，就统计所有的记录，支持Condition
 	 * @param params
 	 * @return
 	 */
@@ -346,7 +359,7 @@ public interface IRepository<T> {
 	@JpaMethod
 	public boolean exists(T params);
 	/**
-	 * 是否存在相同的对象
+	 * 是否存在相同的对象，支持Condition
 	 * 
 	 * @param params
 	 * @return
@@ -365,7 +378,7 @@ public interface IRepository<T> {
 	@JpaMethod
 	public BeanMap getMapById(Serializable id,String... fields);
 	/**
-	 * 如果有多条，就抛出异常
+	 * 如果有多条，就抛出异常，，支持Condition
 	 * @param params
 	 * @param fields 要查询的属性名称
 	 * @return
@@ -374,7 +387,7 @@ public interface IRepository<T> {
 	@JpaMethod
 	public BeanMap getMap(Map<String,Object> params,String... fields) throws IncorrectResultSizeDataAccessException;
 	/**
-	 * 
+	 * ，支持Condition
 	 * @param params
 	 * @param fields 要查询的属性名称
 	 * @return

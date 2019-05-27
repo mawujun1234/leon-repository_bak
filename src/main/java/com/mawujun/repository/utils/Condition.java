@@ -3,10 +3,9 @@ package com.mawujun.repository.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mawujun.exception.BizException;
 import com.mawujun.utils.string.StringUtils;
 
-public class Condition extends HashMap<String,Object>  implements ICondition{
+public class Condition extends HashMap<String,Object>  implements ICondition,IUpdate{
 	/**
 	 * 
 	 */
@@ -541,6 +540,32 @@ public class Condition extends HashMap<String,Object>  implements ICondition{
 	 */
 	public boolean isPageCondition() {
 		return isPageCondition;
+	}
+
+	//===============================================================================
+	private Map<String,Object> updatefields;
+	@Override
+	public Condition update(String field, Object value) {
+		// TODO Auto-generated method stub
+		if(updatefields==null) {
+			updatefields=new HashMap<String,Object>();
+		}
+		updatefields.put(field, value);
+		return this;
+	}
+
+	@Override
+	public Condition update(Map<String, Object> sets) {
+		// TODO Auto-generated method stub
+		if(updatefields==null) {
+			updatefields=new HashMap<String,Object>();
+		}
+		updatefields.putAll(sets);
+		return this;
+	}
+	
+	public Map<String,Object> getUpdatefields(){
+		return updatefields;
 	}
 
 

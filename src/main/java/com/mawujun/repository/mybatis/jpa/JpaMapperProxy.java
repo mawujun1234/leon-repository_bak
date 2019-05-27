@@ -186,11 +186,25 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 //			return getJpaDao().updateBatch(entityClass, (List)args[0]);
 //		}  else if(method.getName().equals("updateBatchByArray"))  {//数组
 //			return getJpaDao().updateBatchByArray(entityClass, (Object[])args[0]);
-//		}  
+//		}  else if(method.getName().equals("updateByMap"))  {
+//		return getJpaDao().updateByMap(entityClass,(Map<String,Object>)args[0],(Map<String,Object>)args[1]);
+//	} 
 		else if(method.getName().equals("update"))  {
 			if(args[0]==null) {
 				throw new BizException(method.getName()+"参数不能为null");
-			} if(entityClass.isInstance(args[0])) {
+			} else if(args.length==2) {
+				return getJpaDao().updateByMap(entityClass,(Map<String,Object>)args[0],(Map<String,Object>)args[1]);
+			} else if(args.length==1 && args[0] instanceof Condition) {
+				Condition cnd=(Condition)args[0];
+				if(cnd.getUpdatefields()==null || cnd.getUpdatefields().size()==0) {
+					throw new BizException("请调用Condition.update()方法添加更新字段");
+				}
+				Object obj=cnd.getParams();
+				if(obj==null || !(obj instanceof Map) ||((Map)obj).size()==0) {
+					throw new BizException("请调用Condition的方法添加更新条件");
+				}
+				return getJpaDao().updateByMap(entityClass,cnd.getUpdatefields(),cnd);
+			} else if (entityClass.isInstance(args[0])) {
 				return getJpaDao().update(entityClass, args[0]);
 			} else if(args[0] instanceof List) {
 				return getJpaDao().updateBatch(entityClass,(List)args[0]);
@@ -198,9 +212,7 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 				return getJpaDao().updateBatchByArray(entityClass,(Object[])args[0]);
 			}	 
 		}  
-		else if(method.getName().equals("updateByMap"))  {
-			return getJpaDao().updateByMap(entityClass,(Map<String,Object>)args[0],(Map<String,Object>)args[1]);
-		} else if(method.getName().equals("updateById"))  {
+		else if(method.getName().equals("updateById"))  {
 			return getJpaDao().updateById(entityClass,(Map<String,Object>)args[0],args[1]);
 		}  
 		
