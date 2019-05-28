@@ -50,6 +50,12 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 		// TODO Auto-generated method stub
 		return repo.create(t);
 	}
+	
+	@Override
+	public T create(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return repo.create(map);
+	}
 
 	@Override
 	public List<T> create(List<T> list) {
@@ -331,6 +337,8 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 		// TODO Auto-generated method stub
 		return repo.update(cnd);
 	}
+
+
 
 
 

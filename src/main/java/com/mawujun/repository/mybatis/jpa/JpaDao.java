@@ -60,6 +60,7 @@ import com.mawujun.repository.utils.Condition;
 import com.mawujun.utils.CollectionUtils;
 import com.mawujun.utils.ConvertUtils;
 import com.mawujun.utils.ReflectionUtils;
+import com.mawujun.utils.bean.BeanUtils;
 import com.mawujun.utils.string.StringUtils;
 
 @Repository
@@ -204,13 +205,13 @@ public class JpaDao {
 	public Object create(Class entityClass, Map<String,Object> map) {
 		// return getSimpleJpaRepository(entityClass).saveAndFlush(entity);
 		//insert into p_agentrole (agentid,roleid)  values(?,?)
-		String qlString="inser into "+entityClass.getCanonicalName()+"(xxxxxx) values(yyyyyyyyyy)";
-		String[] fields=new String[map.size()];
-		lllll
-		for(Entry<String,Object> entity:map.entrySet()) {
-			
-		}
-		return em.createQuery(qlString, entityClass);
+//		String qlString="inser into "+entityClass.getCanonicalName()+"(xxxxxx) values(yyyyyyyyyy)";
+//		String[] fields=new String[map.size()];
+//		for(Entry<String,Object> entity:map.entrySet()) {
+//			
+//		}
+		Object entity=BeanUtils.mapToObject(map, entityClass);
+		return this.create(entityClass, entity);
 	}
 
 	public Object save(Class entityClass, Object entity) {

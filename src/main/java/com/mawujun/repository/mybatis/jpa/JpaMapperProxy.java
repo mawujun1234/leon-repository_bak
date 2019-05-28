@@ -92,6 +92,8 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 				throw new BizException("create参数不能为null");
 			} if(entityClass.isInstance(args[0])) {
 				return getJpaDao().create(entityClass,args[0]);
+			} if(args[0] instanceof Map) {
+				return getJpaDao().create(entityClass,(Map<String,Object>)args[0]);
 			} else if(args[0] instanceof List) {
 				return getJpaDao().createBatch(entityClass,(List)args[0]);
 			} else {

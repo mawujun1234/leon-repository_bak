@@ -48,6 +48,15 @@ public interface IRepository<T> {
 	@JpaMethod
 	public T create(T t);
 	/**
+	 * 创建对象，注意，字段要和实体是一样的.
+	 * 不是实体类属性的key会跳过。
+	 * 如果类型不匹配，不会报错，例如把“1a”转换成int类型，不会报错，但也不会转换成1.
+	 * @param map
+	 * @return
+	 */
+	@JpaMethod
+	public T create(Map<String,Object> map);
+	/**
 	 * 批量插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
@@ -86,6 +95,7 @@ public interface IRepository<T> {
 	
 	@JpaMethod
 	public T getById(Serializable id);
+	
 	/**
 	 * 如果有多个，将爆出异常
 	 * 、，支持Condition

@@ -38,6 +38,12 @@ public interface IBaseService<T> {
 	
 	public T create(T t);
 	/**
+	 * 创建对象，注意，字段要和实体是一样的
+	 * @param map
+	 * @return
+	 */
+	public T create(Map<String,Object> map);
+	/**
 	 * 批量插入，如果打数据量，请用mybatis，进行性能调优 或者分批次插入
 	 * @param list
 	 * @return
