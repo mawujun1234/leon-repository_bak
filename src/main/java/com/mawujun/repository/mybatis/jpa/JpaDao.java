@@ -48,20 +48,20 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.mawujun.generator.annotation.LogicDelete;
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
 import com.mawujun.repository.mybatis.expression.VarcharLiteralExpression;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
+import com.mawujun.repository.utils.Condition;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.Page;
-import com.mawujun.repository.utils.Condition;
 import com.mawujun.utils.CollectionUtils;
 import com.mawujun.utils.ConvertUtils;
 import com.mawujun.utils.ReflectionUtils;
-import com.mawujun.utils.bean.BeanUtils;
 import com.mawujun.utils.string.StringUtils;
+
+import cn.hutool.core.bean.BeanUtil;
 
 @Repository
 //@Transactional(rollbackOn= {Exception.class})
@@ -210,7 +210,8 @@ public class JpaDao {
 //		for(Entry<String,Object> entity:map.entrySet()) {
 //			
 //		}
-		Object entity=BeanUtils.mapToObject2(map, entityClass);
+		//Object entity=BeanUtils.mapToObject(map, entityClass);
+		Object entity=BeanUtil.mapToBean(map, entityClass, false);
 		return this.create(entityClass, entity);
 	}
 

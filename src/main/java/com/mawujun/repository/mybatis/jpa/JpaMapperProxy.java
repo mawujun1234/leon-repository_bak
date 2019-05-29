@@ -148,7 +148,9 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 //			return getJpaDao().listByMap(entityClass, (Map<String,Object>)args[0]);
 //		} 
 		else if(method.getName().equals("list"))  {
-			if(args[0]==null || args[0] instanceof Map) {
+			if(args==null) {
+				return getJpaDao().listAll(entityClass);
+			} else if(args[0]==null || args[0] instanceof Map) {
 				return getJpaDao().listByMap(entityClass, (Map<String,Object>)args[0]);
 			} else {
 				return getJpaDao().listByExample(entityClass, args[0]);
@@ -157,16 +159,16 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		}  else if(method.getName().equals("listByMap"))  {
 			
 		} 
-		else if(method.getName().equals("listAll"))  {
-			return getJpaDao().listAll(entityClass);
-		} 
+//		else if(method.getName().equals("listAll"))  {
+//			return getJpaDao().listAll(entityClass);
+//		} 
 //		else if(method.getName().equals("listPageByExample"))  {
 //			return getJpaDao().listPageByExample(entityClass, args[0],(int)args[1],(int)args[2]);
 //		}
 //		else if(method.getName().equals("listPageByMap"))  {
 //			return getJpaDao().listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);
 //		} 
-		else if(method.getName().equals("listPage"))  {
+		else if(method.getName().equals("page"))  {
 			if(args.length==3) {
 				if(args[0]==null || args[0] instanceof Map) {
 					return getJpaDao().listPageByMap(entityClass, (Map<String,Object>)args[0],(int)args[1],(int)args[2]);

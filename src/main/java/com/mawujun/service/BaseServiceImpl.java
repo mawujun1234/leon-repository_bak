@@ -118,9 +118,9 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 //	}
 
 	@Override
-	public List<T> listAll() {
+	public List<T> list() {
 		// TODO Auto-generated method stub
-		return repo.listAll();
+		return repo.list();
 	}
 
 	@Override
@@ -130,26 +130,26 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public Page<T> listPage(Condition pageinfo) {
+	public Page<T> page(Condition pageinfo) {
 		if(!pageinfo.isPageCondition()) {
 			throw new BizException("必须添加分页参数：start或page，limit");
 		}
 		// TODO Auto-generated method stub
-		return repo.listPage(pageinfo);
+		return repo.page(pageinfo);
 	}
 
 	@Override
-	public Page<T> listPage(Map<String, Object> params, int page, int limit) {
+	public Page<T> page(Map<String, Object> params, int page, int limit) {
 		// TODO Auto-generated method stub
-		return repo.listPage(params, page, limit);
+		return repo.page(params, page, limit);
 	}
 	@Override
-	public Page<T> listPage(T params, int page, int limit) {
-		return repo.listPage(params, page, limit);
+	public Page<T> page(T params, int page, int limit) {
+		return repo.page(params, page, limit);
 	}
 
 	@Override
-	public Page<T> listPage(Map<String,Object> params){
+	public Page<T> page(Map<String,Object> params){
 //		Page<T> page=new Page<T>();
 //		page.init(params);
 //		return page;
@@ -157,7 +157,7 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 		if(!cnd.isPageCondition()) {
 			throw new BizException("必须添加分页参数：start或page，limit");
 		}
-		return repo.listPage(cnd);
+		return repo.page(cnd);
 	}
 
 	@Override

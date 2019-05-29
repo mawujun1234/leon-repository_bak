@@ -108,7 +108,7 @@ public interface IBaseService<T> {
 //	public Page<T> listPageByExample(T params, int page,int limit);
 	
 	
-	public List<T> listAll();
+	public List<T> list();
 	
 	/**
 	 * 参数不能为null,如果为null，将会返回所有数据，支持Condition
@@ -123,7 +123,7 @@ public interface IBaseService<T> {
 	 * @param params 第一页是1，记录数是从0开始
 	 * @return
 	 */
-	public Page<T> listPage(Condition pageinfo);
+	public Page<T> page(Condition pageinfo);
 	
 	/**
 	 * 取分页数据，满足不了时，请参考listPageByPageInfo
@@ -132,14 +132,14 @@ public interface IBaseService<T> {
 	 * @param limit 每页的页数
 	 * @return
 	 */
-	public Page<T> listPage(Map<String,Object> params,int page,int limit);
+	public Page<T> page(Map<String,Object> params,int page,int limit);
 	/**
 	 * page和limit分页数据，或start和limit分页数据已经包含在params的map参数里面了
 	 * ，支持Condition
 	 * @param params
 	 * @return
 	 */
-	public Page<T> listPage(Map<String,Object> params);
+	public Page<T> page(Map<String,Object> params);
 	/**
 	 * 满足不了时，请参考listPageByPageInfo
 	 * @param params
@@ -147,7 +147,7 @@ public interface IBaseService<T> {
 	 * @param limit 一页放几行
 	 * @return
 	 */
-	public Page<T> listPage(T params, int page,int limit);
+	public Page<T> page(T params, int page,int limit);
 
 
 	/**

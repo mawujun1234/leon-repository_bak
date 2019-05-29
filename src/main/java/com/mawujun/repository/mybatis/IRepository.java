@@ -139,7 +139,7 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	@JpaMethod
-	public List<T> listAll();
+	public List<T> list();
 //	/**
 //	 * 参数是PageInfo，封装了sql要用的参数和分页信息。
 //	 * PageInfo中的参数可以是Map也可以是T，但不能是其他类型，否则会报异常
@@ -156,7 +156,7 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	@JpaMethod
-	public Page<T> listPage(Condition condition);
+	public Page<T> page(Condition condition);
 	
 	/**
 	 * 取分页数据，满足不了时，map参数里面必须有参数start，page和limit。
@@ -167,7 +167,7 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	@JpaMethod
-	public Page<T> listPage(Map<String,Object> params,int page,int limit);
+	public Page<T> page(Map<String,Object> params,int page,int limit);
 	/**
 	 * 满足不了时，请参考listPageByPageInfo
 	 * @param params
@@ -176,7 +176,7 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	@JpaMethod
-	public Page<T> listPage(T params, int page,int limit);
+	public Page<T> page(T params, int page,int limit);
 
 	/**
 	 * 更新id为t.id的对象，所有属性都会更新，如果其他值没有设置，将会被更新为null
