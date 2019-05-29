@@ -210,7 +210,7 @@ public class JpaDao {
 //		for(Entry<String,Object> entity:map.entrySet()) {
 //			
 //		}
-		Object entity=BeanUtils.mapToObject(map, entityClass);
+		Object entity=BeanUtils.mapToObject2(map, entityClass);
 		return this.create(entityClass, entity);
 	}
 
