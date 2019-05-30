@@ -48,6 +48,7 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.mawujun.bean.BeanUtil;
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
@@ -60,8 +61,6 @@ import com.mawujun.utils.CollectionUtils;
 import com.mawujun.utils.ConvertUtils;
 import com.mawujun.utils.ReflectionUtils;
 import com.mawujun.utils.string.StringUtils;
-
-import cn.hutool.core.bean.BeanUtil;
 
 @Repository
 //@Transactional(rollbackOn= {Exception.class})
