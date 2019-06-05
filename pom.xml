@@ -81,12 +81,12 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.4</version>
-			<!-- <scope>test</scope> -->
-		</dependency>
+			<scope>test</scope>
+		</dependency> -->
 
 
 
