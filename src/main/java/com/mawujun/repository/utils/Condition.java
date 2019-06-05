@@ -263,7 +263,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 //		return this;
 //	}
 	/**
-	 *等于eq方法
+	 *等于eq方法,如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -276,6 +276,9 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 		op.put(key, OpEnum.eq);
 		return this;
 	}
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 */
 	public Condition add(String key,OpEnum opEnum,Object value) {
 		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
 			return this;
@@ -284,13 +287,15 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 		op.put(key, opEnum);
 		return this;
 	}
-	
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 */
 	public Condition eq(String key,Object value) {
 		this.add(key,OpEnum.eq,value);
 		return this;
 	}
 	/**
-	 * 忽略大小写的比较
+	 * 忽略大小写的比较,如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -299,12 +304,15 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 		this.add(key,OpEnum.eq_i,value);
 		return this;
 	}
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 */
 	public Condition noteq(String key,Object value) {
 		this.add(key,OpEnum.noteq,value);
 		return this;
 	}
 	/**
-	 * 忽略大小写
+	 * 忽略大小写,如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -315,6 +323,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	}
 	/**
 	 * 大于
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -325,6 +334,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	}
 	/**
 	 * 大于等于
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -335,6 +345,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	}
 	/**
 	 * 小于
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -345,6 +356,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	}
 	/**
 	 * 小于等于
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -353,14 +365,23 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 		this.add(key,OpEnum.le,value);
 		return this;
 	}
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 */
 	public Condition between(String key,Object value1,Object value2) {
 		this.add(key,OpEnum.between,new Object[] {value1,value2});
 		return this;
 	}
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 */
 	public Condition in(String key,Object... value) {
 		this.add(key,OpEnum.in,value);
 		return this;
 	}
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 */
 	public Condition notin(String key,Object... value) {
 		this.add(key,OpEnum.notin,value);
 		return this;
@@ -370,6 +391,23 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 		this.put(key, null);
 		op.put(key, OpEnum.isnull);
 		return this;
+	}
+	@Override
+	public ICondition isnull(String key, Object value) {
+		if(value==null) {
+			return this.isnull(key);
+		} else {
+			return this.add(key, value);
+		}
+	}
+
+	@Override
+	public ICondition isnotnull(String key, Object value) {
+		if(value==null) {
+			return this.isnotnull(key);
+		} else {
+			return this.noteq(key, value);
+		}
 	}
 	public Condition isnotnull(String key) {
 		//this.add(key,OpEnum.isnotnull,null);
@@ -567,6 +605,8 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	public Map<String,Object> getUpdatefields(){
 		return updatefields;
 	}
+
+
 
 
 	

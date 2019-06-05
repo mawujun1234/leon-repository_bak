@@ -19,6 +19,7 @@ public interface ICondition {
 	//==============================================
 	/**
 	 * 默认的操作符是“=”
+	 * 如果值为null，就不会添加这个条件
 	 */
 	ICondition put(String key, Object value);
 	//	@Override
@@ -30,29 +31,48 @@ public interface ICondition {
 	//Map<String, Object> getParams();
 
 	/**
-	 *等于eq方法
+	 *等于eq方法,
+	 *如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
 	 */
 	ICondition add(String key, Object value);
 
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 * @param key
+	 * @param opEnum
+	 * @param value
+	 * @return
+	 */
 	ICondition add(String key, OpEnum opEnum, Object value);
-
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	ICondition eq(String key, Object value);
 
 	/**
-	 * 忽略大小写的比较
+	 * 忽略大小写的比较,如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
 	 */
 	ICondition eq_i(String key, Object value);
-
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	ICondition noteq(String key, Object value);
 
 	/**
 	 * 忽略大小写
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -61,6 +81,7 @@ public interface ICondition {
 
 	/**
 	 * 大于
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -69,6 +90,7 @@ public interface ICondition {
 
 	/**
 	 * 大于等于
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -77,6 +99,7 @@ public interface ICondition {
 
 	/**
 	 * 小于
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -85,24 +108,62 @@ public interface ICondition {
 
 	/**
 	 * 小于等于
+	 * .如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
 	 */
 	ICondition le(String key, Object value);
-
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 * @param key
+	 * @param value1
+	 * @param value2
+	 * @return
+	 */
 	ICondition between(String key, Object value1, Object value2);
-
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	ICondition in(String key, Object... value);
-
+	/**
+	 * 如果值为null，就不会添加这个条件
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	ICondition notin(String key, Object... value);
-
+	/**
+	 * 
+	 * @param key
+	 * @return
+	 */
 	ICondition isnull(String key);
-
+	/**
+	 * 如果值为null，就添加条件is null，如果不为null，就等于eq
+	 * @param key
+	 * @return
+	 */
+	ICondition isnull(String key,Object value);
+	/**
+	 * 如果值为null，就添加条件is not null，如果不为null，就等于noteq
+	 * @param key
+	 * @return
+	 */
+	ICondition isnotnull(String key,Object value);
+	/**
+	 * 如果值为null，就添加条件is not null，如果不为null，就等于noteq
+	 * @param key
+	 * @return
+	 */
 	ICondition isnotnull(String key);
 
 	/**
 	 * 两端like,"%"+value+"%"
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -111,6 +172,7 @@ public interface ICondition {
 
 	/**
 	 * 前端匹配，"%"+value
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -119,6 +181,7 @@ public interface ICondition {
 
 	/**
 	 * 后端匹配，value+"%"
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -127,6 +190,7 @@ public interface ICondition {
 
 	/**
 	 * 两端like,"%"+value+"%",或略大小写
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -135,6 +199,7 @@ public interface ICondition {
 
 	/**
 	 * 前端匹配，"%"+value,或略大小写
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -143,6 +208,7 @@ public interface ICondition {
 
 	/**
 	 * 后端匹配，value+"%",或略大小写
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -150,6 +216,7 @@ public interface ICondition {
 	ICondition likesuffix_i(String key, String value);
 
 	/** 两端like,"%"+value+"%"
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -158,6 +225,7 @@ public interface ICondition {
 
 	/**
 	 * 前端匹配，"%"+value
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return
@@ -166,6 +234,7 @@ public interface ICondition {
 
 	/**
 	 * 后端匹配，value+"%"
+	 * 如果值为null，就不会添加这个条件
 	 * @param key
 	 * @param value
 	 * @return

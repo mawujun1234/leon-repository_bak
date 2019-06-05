@@ -130,12 +130,12 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public Page<T> page(Condition pageinfo) {
-		if(!pageinfo.isPageCondition()) {
+	public Page<T> page(Condition cnd) {
+		if(!cnd.isPageCondition()) {
 			throw new BizException("必须添加分页参数：start或page，limit");
 		}
 		// TODO Auto-generated method stub
-		return repo.page(pageinfo);
+		return repo.page(cnd);
 	}
 
 	@Override
