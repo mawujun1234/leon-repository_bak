@@ -110,6 +110,7 @@ public class JpaDao {
 	private Map<Class, Set<String>> attributeNameCache = new HashMap<Class, Set<String>>();
 
 	public boolean hasAttribute(Class entityClass, String attr_name) {
+		
 		Set<String> attres = attributeNameCache.get(entityClass);
 		if (attres == null) {
 			synchronized (attributeNameCache) {
@@ -399,9 +400,14 @@ public class JpaDao {
 		List<Predicate> predicatesList = new ArrayList<Predicate>();
 		// int i=0;
 		for (Entry<String, Object> param : params.entrySet()) {
-			if(!hasAttribute(itemRoot.getJavaType(),param.getKey())) {
-				logger.info("属性{}不在{}类中!,不能作为条件",param.getKey(),itemRoot.getJavaType());
-				continue;
+			String param_key=param.getKey();
+			if(!hasAttribute(itemRoot.getJavaType(),param_key)) {
+				if(Condition.limit_key.equals(param_key) || Condition.page_key.equals(param_key) || Condition.start_key.equals(param_key)) {
+					continue;
+				} else {
+					logger.info("属性{}不在{}类中!,不能作为条件，已过滤掉了",param.getKey(),itemRoot.getJavaType());
+					continue;
+				}	
 			}
 			Path path = itemRoot.get(param.getKey());
 			Class javatype = path.getJavaType();
