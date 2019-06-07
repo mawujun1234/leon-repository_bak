@@ -13,11 +13,11 @@ public interface IUpdate {
 	 * @param field
 	 * @param value
 	 */
-	public Condition update(String field,Object value);
+	public Cnd update(String field,Object value);
 	/**
 	 * 更新所有的字段
 	 * @param field
 	 * @param value
 	 */
-	public Condition update(Map<String,Object> sets);
+	public Cnd update(Map<String,Object> sets);
 }

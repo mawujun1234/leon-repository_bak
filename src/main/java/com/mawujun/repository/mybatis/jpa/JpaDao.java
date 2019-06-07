@@ -54,7 +54,7 @@ import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
 import com.mawujun.repository.mybatis.expression.VarcharLiteralExpression;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.Condition;
+import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.utils.CollectionUtils;
@@ -395,14 +395,14 @@ public class JpaDao {
 			}
 		}
 
-		boolean isParams = (params instanceof Condition);
+		boolean isParams = (params instanceof Cnd);
 		// Predicate[] predicatesList=new Predicate[params.size()];
 		List<Predicate> predicatesList = new ArrayList<Predicate>();
 		// int i=0;
 		for (Entry<String, Object> param : params.entrySet()) {
 			String param_key=param.getKey();
 			if(!hasAttribute(itemRoot.getJavaType(),param_key)) {
-				if(Condition.limit_key.equals(param_key) || Condition.page_key.equals(param_key) || Condition.start_key.equals(param_key)) {
+				if(Cnd.limit_key.equals(param_key) || Cnd.page_key.equals(param_key) || Cnd.start_key.equals(param_key)) {
 					continue;
 				} else {
 					logger.info("属性{}不在{}类中!,不能作为条件，已过滤掉了",param.getKey(),itemRoot.getJavaType());
@@ -413,7 +413,7 @@ public class JpaDao {
 			Class javatype = path.getJavaType();
 			Object value = param.getValue();
 			if (isParams) {
-				OpEnum opEnum = ((Condition) params).getOpEnum(param.getKey());
+				OpEnum opEnum = ((Cnd) params).getOpEnum(param.getKey());
 				switch (opEnum) {
 				case eq:
 					if (Date.class.isAssignableFrom(javatype)) {
@@ -799,7 +799,7 @@ public class JpaDao {
 		return pageinfo;
 	}
 
-	public <T> Page<T> listPage(Class<T> entityClass, Condition pageinfo) {
+	public <T> Page<T> listPage(Class<T> entityClass, Cnd pageinfo) {
 		Page<T> result=new Page<T>();
 		result.setStart(pageinfo.getStart());
 		result.setPage(pageinfo.getPage());

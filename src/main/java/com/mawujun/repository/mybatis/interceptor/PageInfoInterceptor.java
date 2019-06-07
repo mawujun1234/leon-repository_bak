@@ -25,7 +25,7 @@ import com.mawujun.exception.BizException;
 import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.Dialect;
-import com.mawujun.repository.utils.Condition;
+import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.repository.utils.PageMethodCache;
 import com.mawujun.utils.string.StringUtils;
@@ -88,21 +88,21 @@ public class PageInfoInterceptor implements Interceptor {
             //判断是否分页
             boolean isPageCondition=false;
             //因为现在只支持参数为Condition的分页方式
-            Condition condition=null;
+            Cnd condition=null;
             //分页的returntype必须是Page，就表示这个查询要使用分页查询
             
             
             if(parameter instanceof Map) {
             	//如果只有一个参数，并且参数是Condition
-            	if(parameter instanceof Condition) {
-            		condition=(Condition)parameter;
+            	if(parameter instanceof Cnd) {
+            		condition=(Cnd)parameter;
             		
             		
             		args[1]=condition.getParams();
         			//parameter=args[1];
             	} else {
             		//参数可能是随机参数，或者是Condition和其他参数的混合体
-            		condition=Condition.of((Map)parameter);
+            		condition=Cnd.of((Map)parameter);
             		args[1]=condition.getParams();
         			//parameter=args[1];
             	}
@@ -160,7 +160,7 @@ public class PageInfoInterceptor implements Interceptor {
 
     private Long count(Executor executor, MappedStatement ms, Object parameter,
             RowBounds rowBounds, ResultHandler resultHandler,
-            BoundSql boundSql,Condition condition) throws SQLException {
+            BoundSql boundSql,Cnd condition) throws SQLException {
 		String countMsId = ms.getId() + MSUtils.countSuffix;
 		Long count;
 		// 先判断是否存在手写的 count 查询

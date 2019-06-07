@@ -13,7 +13,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import com.mawujun.exception.BizException;
 import com.mawujun.mvc.SpringContextUtils;
-import com.mawujun.repository.utils.Condition;
+import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.repository.utils.PageMethodCache;
 import com.mawujun.utils.ReflectionUtils;
@@ -177,8 +177,8 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 				}
 				
 			}
-			if(args[0] instanceof Condition) {
-				return getJpaDao().listPage(entityClass, (Condition)args[0]);
+			if(args[0] instanceof Cnd) {
+				return getJpaDao().listPage(entityClass, (Cnd)args[0]);
 			}
 			
 		} 
@@ -198,8 +198,8 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 				throw new BizException(method.getName()+"参数不能为null");
 			} else if(args.length==2) {
 				return getJpaDao().updateByMap(entityClass,(Map<String,Object>)args[0],(Map<String,Object>)args[1]);
-			} else if(args.length==1 && args[0] instanceof Condition) {
-				Condition cnd=(Condition)args[0];
+			} else if(args.length==1 && args[0] instanceof Cnd) {
+				Cnd cnd=(Cnd)args[0];
 				if(cnd.getUpdatefields()==null || cnd.getUpdatefields().size()==0) {
 					throw new BizException("请调用Condition.update()方法添加更新字段");
 				}

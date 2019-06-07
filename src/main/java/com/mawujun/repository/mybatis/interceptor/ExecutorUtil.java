@@ -14,7 +14,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.repository.mybatis.dialect.Dialect;
-import com.mawujun.repository.utils.Condition;
+import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 
 public class ExecutorUtil {
@@ -96,7 +96,7 @@ public class ExecutorUtil {
      */
     public static Long executeAutoCount(Dialect dialect, Executor executor, MappedStatement countMs,
                                         Object parameter, BoundSql boundSql,
-                                        Condition condition,RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
+                                        Cnd condition,RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
         Map<String, Object> additionalParameters = getAdditionalParameter(boundSql);
         //创建 count 查询的缓存 key
         CacheKey countKey = executor.createCacheKey(countMs, parameter, RowBounds.DEFAULT, boundSql);

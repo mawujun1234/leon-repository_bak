@@ -10,7 +10,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import com.mawujun.repository.mybatis.jpa.JpaMethod;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.Condition;
+import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 
 
@@ -156,7 +156,7 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	@JpaMethod
-	public Page<T> page(Condition condition);
+	public Page<T> page(Cnd condition);
 	
 	/**
 	 * 取分页数据，满足不了时，map参数里面必须有参数start，page和limit。
@@ -217,7 +217,7 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	@JpaMethod
-	public int update(Condition cnd);
+	public int update(Cnd cnd);
 	/**
 	 * 根据id更新内容
 	 * @param sets

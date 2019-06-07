@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.mawujun.utils.string.StringUtils;
 
-public class Condition extends HashMap<String,Object>  implements ICondition,IUpdate{
+public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	/**
 	 * 
 	 */
@@ -105,7 +105,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * 默认的操作符是“=”
 	 */
 	@Override
-	public Condition put(String key, Object value) {
+	public Cnd put(String key, Object value) {
 		// TODO Auto-generated method stub
 		super.put(key, value);
 		op.put(key, OpEnum.eq);
@@ -124,8 +124,8 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * 创建一个新的Params对象
 	 * @return
 	 */
-	public static Condition of() {
-		Condition utils=new Condition();
+	public static Cnd of() {
+		Cnd utils=new Cnd();
 		return utils;
 		
 	}
@@ -136,8 +136,8 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param limit 每页多少
 	 * @return
 	 */
-	public static Condition ofPageLimit(int page,int limit){
-		Condition param=new Condition();
+	public static Cnd ofPageLimit(int page,int limit){
+		Cnd param=new Cnd();
 		if(page<1) {
 			throw new IllegalArgumentException("分页的页码是从1开始");
 		}
@@ -155,8 +155,8 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param limit 每页多少
 	 * @return
 	 */
-	public static Condition ofStartLimit(int start,int limit){
-		Condition param=new Condition();
+	public static Cnd ofStartLimit(int start,int limit){
+		Cnd param=new Cnd();
 		param.setStart(start);
 		param.setLimit(limit);
 		param.setPage((start/limit)+1);
@@ -170,23 +170,23 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param params
 	 * @return
 	 */
-	public static Condition of(Map<String,Object> params) {
-		Condition cnd=null;
+	public static Cnd of(Map<String,Object> params) {
+		Cnd cnd=null;
 		int limit=0;
 		if(params.containsKey(limit_key)) {
 			limit=Integer.parseInt(params.get(limit_key).toString());
 		}
 		if(params.containsKey(page_key)) {
 			int page=Integer.parseInt(params.get(page_key).toString());
-			cnd= Condition.ofPageLimit(page, limit);
+			cnd= Cnd.ofPageLimit(page, limit);
 			cnd.isPageCondition=true;
 		} else	if(params.containsKey(start_key)) {
 			int start=Integer.parseInt(params.get(start_key).toString());
-			cnd= Condition.ofStartLimit(start, limit);
+			cnd= Cnd.ofStartLimit(start, limit);
 			cnd.isPageCondition=true;
 		}
 		if(cnd==null){
-			cnd=new Condition();
+			cnd=new Cnd();
 		} else {
 			//params.remove(start_key);
 			//params.remove(page_key);
@@ -200,8 +200,8 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 		return cnd;
 		
 	}
-	public static Condition of(String key,Object value) {
-		Condition utils=new Condition();
+	public static Cnd of(String key,Object value) {
+		Cnd utils=new Cnd();
 		utils.put(key, value);
 		return utils;
 		
@@ -217,11 +217,11 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @author mawujun email:160649888@163.com qq:16064988
 	 * @param params
 	 */
-	public Condition setParams(Object params) {
+	public Cnd setParams(Object params) {
 		if(params==null) {
 			return this;
 		}
-		if(params instanceof Condition) {
+		if(params instanceof Cnd) {
 			this.putAll((Map)params);
 		} else if(params instanceof Map) {
 			this.putAll((Map)params);
@@ -251,7 +251,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * 只在mybatis中有效
 	 * @param countColumn
 	 */
-	public Condition setCountColumn(String countColumn) {
+	public Cnd setCountColumn(String countColumn) {
 		this.countColumn = countColumn;
 		return this;
 	}
@@ -268,7 +268,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition add(String key,Object value) {
+	public Cnd add(String key,Object value) {
 		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
 			return this;
 		}
@@ -279,7 +279,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	/**
 	 * 如果值为null，就不会添加这个条件
 	 */
-	public Condition add(String key,OpEnum opEnum,Object value) {
+	public Cnd add(String key,OpEnum opEnum,Object value) {
 		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
 			return this;
 		}
@@ -290,7 +290,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	/**
 	 * 如果值为null，就不会添加这个条件
 	 */
-	public Condition eq(String key,Object value) {
+	public Cnd eq(String key,Object value) {
 		this.add(key,OpEnum.eq,value);
 		return this;
 	}
@@ -300,14 +300,14 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition eq_i(String key,Object value) {
+	public Cnd eq_i(String key,Object value) {
 		this.add(key,OpEnum.eq_i,value);
 		return this;
 	}
 	/**
 	 * 如果值为null，就不会添加这个条件
 	 */
-	public Condition noteq(String key,Object value) {
+	public Cnd noteq(String key,Object value) {
 		this.add(key,OpEnum.noteq,value);
 		return this;
 	}
@@ -317,7 +317,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition noteq_i(String key,Object value) {
+	public Cnd noteq_i(String key,Object value) {
 		this.add(key,OpEnum.noteq_i,value);
 		return this;
 	}
@@ -328,7 +328,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition gt(String key,Object value) {
+	public Cnd gt(String key,Object value) {
 		this.add(key,OpEnum.gt,value);
 		return this;
 	}
@@ -339,7 +339,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition ge(String key,Object value) {
+	public Cnd ge(String key,Object value) {
 		this.add(key,OpEnum.ge,value);
 		return this;
 	}
@@ -350,7 +350,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition lt(String key,Object value) {
+	public Cnd lt(String key,Object value) {
 		this.add(key,OpEnum.lt,value);
 		return this;
 	}
@@ -361,32 +361,32 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition le(String key,Object value) {
+	public Cnd le(String key,Object value) {
 		this.add(key,OpEnum.le,value);
 		return this;
 	}
 	/**
 	 * 如果值为null，就不会添加这个条件
 	 */
-	public Condition between(String key,Object value1,Object value2) {
+	public Cnd between(String key,Object value1,Object value2) {
 		this.add(key,OpEnum.between,new Object[] {value1,value2});
 		return this;
 	}
 	/**
 	 * 如果值为null，就不会添加这个条件
 	 */
-	public Condition in(String key,Object... value) {
+	public Cnd in(String key,Object... value) {
 		this.add(key,OpEnum.in,value);
 		return this;
 	}
 	/**
 	 * 如果值为null，就不会添加这个条件
 	 */
-	public Condition notin(String key,Object... value) {
+	public Cnd notin(String key,Object... value) {
 		this.add(key,OpEnum.notin,value);
 		return this;
 	}
-	public Condition isnull(String key) {
+	public Cnd isnull(String key) {
 		//this.add(key,OpEnum.isnull,null);
 		this.put(key, null);
 		op.put(key, OpEnum.isnull);
@@ -409,7 +409,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 			return this.noteq(key, value);
 		}
 	}
-	public Condition isnotnull(String key) {
+	public Cnd isnotnull(String key) {
 		//this.add(key,OpEnum.isnotnull,null);
 		this.put(key, null);
 		op.put(key, OpEnum.isnotnull);
@@ -421,7 +421,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition like(String key,String value) {
+	public Cnd like(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -434,7 +434,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition likeprefix(String key,String value) {
+	public Cnd likeprefix(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -448,7 +448,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition likesuffix(String key,String value) {
+	public Cnd likesuffix(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -462,7 +462,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition like_i(String key,String value) {
+	public Cnd like_i(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -475,7 +475,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition likeprefix_i(String key,String value) {
+	public Cnd likeprefix_i(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -489,7 +489,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition likesuffix_i(String key,String value) {
+	public Cnd likesuffix_i(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -502,7 +502,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition notlike(String key,String value) {
+	public Cnd notlike(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -515,7 +515,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition notlikeprefix(String key,String value) {
+	public Cnd notlikeprefix(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -529,7 +529,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	 * @param value
 	 * @return
 	 */
-	public Condition notlikesuffix(String key,String value) {
+	public Cnd notlikesuffix(String key,String value) {
 		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
 			return this;
 		}
@@ -583,7 +583,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	//===============================================================================
 	private Map<String,Object> updatefields;
 	@Override
-	public Condition update(String field, Object value) {
+	public Cnd update(String field, Object value) {
 		// TODO Auto-generated method stub
 		if(updatefields==null) {
 			updatefields=new HashMap<String,Object>();
@@ -593,7 +593,7 @@ public class Condition extends HashMap<String,Object>  implements ICondition,IUp
 	}
 
 	@Override
-	public Condition update(Map<String, Object> sets) {
+	public Cnd update(Map<String, Object> sets) {
 		// TODO Auto-generated method stub
 		if(updatefields==null) {
 			updatefields=new HashMap<String,Object>();

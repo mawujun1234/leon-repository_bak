@@ -11,7 +11,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 import com.mawujun.repository.mybatis.jpa.JpaMethod;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.Condition;
+import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 
 @Transactional(rollbackOn= {Exception.class})
@@ -123,7 +123,7 @@ public interface IBaseService<T> {
 	 * @param params 第一页是1，记录数是从0开始
 	 * @return
 	 */
-	public Page<T> page(Condition pageinfo);
+	public Page<T> page(Cnd pageinfo);
 	
 	/**
 	 * 取分页数据，满足不了时，请参考listPageByPageInfo
@@ -185,7 +185,7 @@ public interface IBaseService<T> {
 	 * @return
 	 */
 	@JpaMethod
-	public int update(Condition cnd);
+	public int update(Cnd cnd);
 	/**
 	 * 根据id更新内容
 	 * @param sets

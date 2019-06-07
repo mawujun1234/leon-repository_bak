@@ -6,7 +6,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.generator.db.DbColumn;
-import com.mawujun.repository.utils.Condition;
+import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 
 /**
@@ -35,7 +35,7 @@ public interface Dialect {
      * @param pageKey         分页缓存 key
      * @return
      */
-    String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject,  Condition condition, CacheKey pageKey);
+    String getCountSql(MappedStatement ms, BoundSql boundSql, Object parameterObject,  Cnd condition, CacheKey pageKey);
 
     public Object processParameterObject(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql, CacheKey pageKey);
 

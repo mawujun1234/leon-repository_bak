@@ -12,7 +12,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import com.mawujun.exception.BizException;
 import com.mawujun.repository.mybatis.IRepository;
 import com.mawujun.repository.mybatis.typeAliases.BeanMap;
-import com.mawujun.repository.utils.Condition;
+import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 
 @Transactional(rollbackOn= {Exception.class})
@@ -130,7 +130,7 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public Page<T> page(Condition cnd) {
+	public Page<T> page(Cnd cnd) {
 		if(!cnd.isPageCondition()) {
 			throw new BizException("必须添加分页参数：start或page，limit");
 		}
@@ -153,7 +153,7 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 //		Page<T> page=new Page<T>();
 //		page.init(params);
 //		return page;
-		Condition cnd=Condition.of(params);
+		Cnd cnd=Cnd.of(params);
 		if(!cnd.isPageCondition()) {
 			throw new BizException("必须添加分页参数：start或page，limit");
 		}
@@ -333,7 +333,7 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public int update(Condition cnd) {
+	public int update(Cnd cnd) {
 		// TODO Auto-generated method stub
 		return repo.update(cnd);
 	}
