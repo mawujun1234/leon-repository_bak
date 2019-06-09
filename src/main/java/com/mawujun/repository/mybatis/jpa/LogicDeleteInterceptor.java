@@ -16,8 +16,8 @@ import org.hibernate.type.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mawujun.convert.Convert;
 import com.mawujun.generator.annotation.LogicDelete;
-import com.mawujun.utils.ConvertUtils;
 import com.mawujun.utils.ReflectionUtils;
 
 public class LogicDeleteInterceptor extends EmptyInterceptor {
@@ -102,8 +102,8 @@ public class LogicDeleteInterceptor extends EmptyInterceptor {
 						conttain=true;
 						Loginc loginc=new Loginc();
 						loginc.setName(attr.getName());
-						loginc.setDefaultValue(ConvertUtils.convert(logicDelete.defaultValue(), attr.getJavaType()));
-						loginc.setDeleteValue(ConvertUtils.convert(logicDelete.deleteValue(), attr.getJavaType()));
+						loginc.setDefaultValue(Convert.convert(attr.getJavaType(),logicDelete.defaultValue()));
+						loginc.setDeleteValue(Convert.convert(attr.getJavaType(),logicDelete.deleteValue()));
 						containLoginDeletefield.put(claz,loginc);
 						break;
 					}

@@ -49,6 +49,7 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.mawujun.bean.BeanUtil;
+import com.mawujun.convert.Convert;
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
@@ -58,7 +59,6 @@ import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.utils.CollectionUtils;
-import com.mawujun.utils.ConvertUtils;
 import com.mawujun.utils.ReflectionUtils;
 import com.mawujun.utils.string.StringUtils;
 
@@ -428,7 +428,7 @@ public class JpaDao {
 						}
 
 					} else {
-						predicatesList.add(criteriaBuilder.equal(path, ConvertUtils.convert(value, javatype)));
+						predicatesList.add(criteriaBuilder.equal(path, Convert.convert(javatype,value)));
 					}
 					break;
 				case eq_i:
@@ -446,11 +446,11 @@ public class JpaDao {
 									"参数" + param.getKey() + "类型不对,应该为日期字符串或Date类型!javatype=" + value);
 						}
 					} else {
-						predicatesList.add(criteriaBuilder.equal(path, ConvertUtils.convert(value, javatype)));
+						predicatesList.add(criteriaBuilder.equal(path, Convert.convert(javatype,value)));
 					}
 					break;
 				case noteq:
-					// predicatesList.add(criteriaBuilder.notEqual(path,ConvertUtils.convert(value,
+					// predicatesList.add(criteriaBuilder.notEqual(path,Convert.convert(value,
 					// javatype)));
 					if (Date.class.isAssignableFrom(javatype)) {
 						if (value instanceof String) {
@@ -464,7 +464,7 @@ public class JpaDao {
 						}
 
 					} else {
-						predicatesList.add(criteriaBuilder.notEqual(path, ConvertUtils.convert(value, javatype)));
+						predicatesList.add(criteriaBuilder.notEqual(path, Convert.convert(javatype,value)));
 					}
 					break;
 				case noteq_i:
@@ -482,14 +482,14 @@ public class JpaDao {
 									"参数" + param.getKey() + "类型不对,应该为日期字符串或Date类型!javatype=" + value);
 						}
 					} else {
-						predicatesList.add(criteriaBuilder.notEqual(path, ConvertUtils.convert(value, javatype)));
+						predicatesList.add(criteriaBuilder.notEqual(path, Convert.convert(javatype,value)));
 					}
 					break;
 				case gt:
 					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
-						predicatesList.add(criteriaBuilder.gt(path, (Number) ConvertUtils.convert(value, javatype)));
+						predicatesList.add(criteriaBuilder.gt(path, (Number) Convert.convert(javatype,value)));
 					} else if (Date.class.isAssignableFrom(javatype)) {
-						// predicatesList.add(criteriaBuilder.greaterThan(path,(Date)ConvertUtils.convert(value,
+						// predicatesList.add(criteriaBuilder.greaterThan(path,(Date)Convert.convert(value,
 						// javatype)));
 						if (value instanceof String) {
 							Expression<String> timeStr = getDateExpression(criteriaBuilder, path, value);
@@ -506,9 +506,9 @@ public class JpaDao {
 					break;
 				case ge:
 					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
-						predicatesList.add(criteriaBuilder.ge(path, (Number) ConvertUtils.convert(value, javatype)));
+						predicatesList.add(criteriaBuilder.ge(path, (Number) Convert.convert(javatype,value)));
 					} else if (Date.class.isAssignableFrom(javatype)) {
-						// predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,(Date)ConvertUtils.convert(value,
+						// predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,(Date)Convert.convert(value,
 						// javatype)));
 						if (value instanceof String) {
 							Expression<String> timeStr = getDateExpression(criteriaBuilder, path, value);
@@ -525,9 +525,9 @@ public class JpaDao {
 					break;
 				case lt:
 					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
-						predicatesList.add(criteriaBuilder.lt(path, (Number) ConvertUtils.convert(value, javatype)));
+						predicatesList.add(criteriaBuilder.lt(path, (Number) Convert.convert(javatype,value)));
 					} else if (Date.class.isAssignableFrom(javatype)) {
-						// predicatesList.add(criteriaBuilder.lessThan(path,(Date)ConvertUtils.convert(value,
+						// predicatesList.add(criteriaBuilder.lessThan(path,(Date)Convert.convert(value,
 						// javatype)));
 						if (value instanceof String) {
 							Expression<String> timeStr = getDateExpression(criteriaBuilder, path, value);
@@ -544,9 +544,9 @@ public class JpaDao {
 					break;
 				case le:
 					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
-						predicatesList.add(criteriaBuilder.le(path, (Number) ConvertUtils.convert(value, javatype)));
+						predicatesList.add(criteriaBuilder.le(path, (Number) Convert.convert(javatype,value)));
 					} else if (Date.class.isAssignableFrom(javatype)) {
-						// predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,(Date)ConvertUtils.convert(value,
+						// predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,(Date)Convert.convert(value,
 						// javatype)));
 						if (value instanceof String) {
 							Expression<String> timeStr = getDateExpression(criteriaBuilder, path, value);
@@ -565,12 +565,12 @@ public class JpaDao {
 					Object[] values = (Object[]) param.getValue();
 					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
 						predicatesList
-								.add(criteriaBuilder.ge(path, (Number) ConvertUtils.convert(values[0], javatype)));
+								.add(criteriaBuilder.ge(path, (Number) Convert.convert(javatype,values[0])));
 						predicatesList
-								.add(criteriaBuilder.le(path, (Number) ConvertUtils.convert(values[1], javatype)));
+								.add(criteriaBuilder.le(path, (Number) Convert.convert(javatype,values[1])));
 					} else if (Date.class.isAssignableFrom(javatype)) {
-						// predicatesList.add(criteriaBuilder.between(path,(Date)ConvertUtils.convert(values[0],
-						// javatype),(Date)ConvertUtils.convert(values[1], javatype)));
+						// predicatesList.add(criteriaBuilder.between(path,(Date)Convert.convert(values[0],
+						// javatype),(Date)Convert.convert(values[1], javatype)));
 						if (values[0] instanceof String) {
 							Expression<String> timeStr = getDateExpression(criteriaBuilder, path, values[0]);
 							predicatesList
@@ -611,7 +611,7 @@ public class JpaDao {
 					} else {
 						In in = criteriaBuilder.in(path);
 						for (Object obj : values) {
-							in.value(ConvertUtils.convert(obj, javatype));
+							in.value(Convert.convert(javatype,obj));
 						}
 						predicatesList.add(in);
 					}
@@ -641,7 +641,7 @@ public class JpaDao {
 					} else {
 						In in = criteriaBuilder.in(path);
 						for (Object obj : values) {
-							in.value(ConvertUtils.convert(obj, javatype));
+							in.value(Convert.convert(javatype,obj));
 						}
 						predicatesList.add(criteriaBuilder.not(in));
 					}
@@ -649,7 +649,7 @@ public class JpaDao {
 //		            	In in = criteriaBuilder.in(path);
 //		            	Object[] values=(Object[])value;
 //		            	for (Object obj:values) {
-//		            		in.value(ConvertUtils.convert(obj, javatype));
+//		            		in.value(Convert.convert(obj, javatype));
 //		            	}
 //		            	predicatesList.add(criteriaBuilder.not(in));
 //		                break;
@@ -694,10 +694,10 @@ public class JpaDao {
 				}
 			} else {
 				predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),
-						ConvertUtils.convert(param.getValue(), javatype)));
+						Convert.convert(javatype,param.getValue())));
 			}
 			// i++;
-			// predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),ConvertUtils.convert(param.getValue(),
+			// predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),Convert.convert(param.getValue(),
 			// javatype)));
 		}
 		return predicatesList.toArray(new Predicate[predicatesList.size()]);
@@ -770,9 +770,9 @@ public class JpaDao {
 //				int i=0;
 //				for(Entry<String,Object> param:params.entrySet()) {   
 //					Class javatype=root.get(param.getKey()).getJavaType();
-//					predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+//					predicatesList[i]=cb.equal(root.get(param.getKey()),Convert.convert(param.getValue(), javatype));
 //					i++;
-//					//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+//					//predicatesList.add(cb.equal(root.get(param.getKey()),Convert.convert(param.getValue(), javatype)));
 //				}
 				predicatesList = genPredicates(cb, root, params);
 
@@ -887,9 +887,9 @@ public class JpaDao {
 //		int i=0;
 //		for(Entry<String,Object> param:params.entrySet()) {   
 //			Class javatype=root.get(param.getKey()).getJavaType();
-//			predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+//			predicatesList[i]=cb.equal(root.get(param.getKey()),Convert.convert(param.getValue(), javatype));
 //			i++;
-//			//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+//			//predicatesList.add(cb.equal(root.get(param.getKey()),Convert.convert(param.getValue(), javatype)));
 //		}
 
 		Predicate[] predicatesList = genPredicates(cb, root, params);
@@ -897,7 +897,7 @@ public class JpaDao {
 
 		for (Entry<String, Object> set : sets.entrySet()) {
 			Class javatype = root.get(set.getKey()).getJavaType();
-			update.set(root.get(set.getKey()), ConvertUtils.convert(set.getValue(), javatype));
+			update.set(root.get(set.getKey()), Convert.convert(javatype,set.getValue()));
 		}
 
 		Query query = em.createQuery(update);
@@ -914,7 +914,7 @@ public class JpaDao {
 		if (!entityInformation.hasCompositeId()) {
 			Predicate[] predicatesList = new Predicate[1];
 			predicatesList[0] = cb.equal(root.get(idAttributeNames.iterator().next()),
-					ConvertUtils.convert(id, id_javatype));
+					Convert.convert(id_javatype,id));
 			return predicatesList;
 
 		} else {
@@ -926,11 +926,11 @@ public class JpaDao {
 				// 当复合id是以一个单独的类的形式存在的时候
 //				boolean complexIdParameterValueDiscovered = idAttributeValue != null&& !query.getParameter(idAttributeName).getParameterType().isAssignableFrom(idAttributeValue.getClass());
 //				if (complexIdParameterValueDiscovered) {
-//					update.where(cb.equal(root.get(idAttributeName),ConvertUtils.convert(id, id_javatype)));
+//					update.where(cb.equal(root.get(idAttributeName),Convert.convert(id, id_javatype)));
 //					break;
 //				} 
 				predicatesList[i] = cb.equal(root.get(idAttributeName),
-						ConvertUtils.convert(idAttributeValue, id_javatype));
+						Convert.convert(id_javatype,idAttributeValue));
 				i++;
 			}
 			return predicatesList;
@@ -957,7 +957,7 @@ public class JpaDao {
 //		Class id_javatype=entityInformation.getIdType();
 //		Iterable<String> idAttributeNames = entityInformation.getIdAttributeNames();
 //		if (!entityInformation.hasCompositeId()) {
-//			update.where(cb.equal(root.get(idAttributeNames.iterator().next()),ConvertUtils.convert(id, id_javatype)));
+//			update.where(cb.equal(root.get(idAttributeNames.iterator().next()),Convert.convert(id, id_javatype)));
 //		} else {
 //			Predicate[] predicatesList=new Predicate[((Collection)idAttributeNames).size()];
 //			int i=0;
@@ -967,10 +967,10 @@ public class JpaDao {
 //				//当复合id是以一个单独的类的形式存在的时候
 ////				boolean complexIdParameterValueDiscovered = idAttributeValue != null&& !query.getParameter(idAttributeName).getParameterType().isAssignableFrom(idAttributeValue.getClass());
 ////				if (complexIdParameterValueDiscovered) {
-////					update.where(cb.equal(root.get(idAttributeName),ConvertUtils.convert(id, id_javatype)));
+////					update.where(cb.equal(root.get(idAttributeName),Convert.convert(id, id_javatype)));
 ////					break;
 ////				} 
-//				predicatesList[i]=cb.equal(root.get(idAttributeName),ConvertUtils.convert(idAttributeValue, id_javatype));
+//				predicatesList[i]=cb.equal(root.get(idAttributeName),Convert.convert(idAttributeValue, id_javatype));
 //				i++;
 //			}
 //			update.where(predicatesList);	
@@ -978,7 +978,7 @@ public class JpaDao {
 
 		for (Entry<String, Object> set : sets.entrySet()) {
 			Class javatype = root.get(set.getKey()).getJavaType();
-			update.set(root.get(set.getKey()), ConvertUtils.convert(set.getValue(), javatype));
+			update.set(root.get(set.getKey()), Convert.convert(javatype,set.getValue()));
 		}
 
 		Query query = em.createQuery(update);
@@ -1296,7 +1296,7 @@ public class JpaDao {
 //			for (Entry<String, Object> param : params.entrySet()) {
 //				Class javatype = root.get(param.getKey()).getJavaType();
 //				predicatesList[i] = cb.equal(root.get(param.getKey()),
-//						ConvertUtils.convert(param.getValue(), javatype));
+//						Convert.convert(param.getValue(), javatype));
 //				i++;
 //			}
 			Predicate[] predicatesList = genPredicates(cb, root, params);
@@ -1329,9 +1329,9 @@ public class JpaDao {
 ////				int i=0;
 ////				for(Entry<String,Object> param:params.entrySet()) {   
 ////					Class javatype=root.get(param.getKey()).getJavaType();
-////					predicatesList[i]=cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype));
+////					predicatesList[i]=cb.equal(root.get(param.getKey()),Convert.convert(param.getValue(), javatype));
 ////					i++;
-////					//predicatesList.add(cb.equal(root.get(param.getKey()),ConvertUtils.convert(param.getValue(), javatype)));
+////					//predicatesList.add(cb.equal(root.get(param.getKey()),Convert.convert(param.getValue(), javatype)));
 ////				}
 ////				
 ////			} 

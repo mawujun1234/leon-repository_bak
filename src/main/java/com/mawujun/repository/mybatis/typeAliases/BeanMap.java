@@ -1,15 +1,11 @@
 package com.mawujun.repository.mybatis.typeAliases;
 
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.ibatis.type.Alias;
 
-import com.mawujun.utils.ConvertUtils;
+import com.mawujun.convert.Convert;
 import com.mawujun.utils.DateUtils;
 
 /**
@@ -30,7 +26,7 @@ public class BeanMap extends CaseInsensitiveMap{
 
 	public Date getDate(String var1) {
 		Object var2 = this.get(var1);
-		return ConvertUtils.convert1(var2, Date.class);
+		return Convert.convert(Date.class,var2);
 	}
 
 	public String getDateString(String var1) {
@@ -99,7 +95,7 @@ public class BeanMap extends CaseInsensitiveMap{
 	}
 	
 	public Boolean getBoolean(String var1) {
-		return ConvertUtils.convert1(var1, Boolean.class);
+		return Convert.convert(Boolean.class,var1);
 //		boolean var2 = false;
 //		Object var3 = this.get(var1);
 //		if (var3 == null) {
@@ -141,7 +137,7 @@ public class BeanMap extends CaseInsensitiveMap{
 		}
 	}
 	public static double str2double(Object var0) {
-		return ConvertUtils.convert1(var0, Double.class);
+		return Convert.convert( Double.class,var0);
 	}
 //	public static double str2double(Object var0, double var1) {
 //		double var3 = var1;
@@ -171,7 +167,7 @@ public class BeanMap extends CaseInsensitiveMap{
 	}
 
 	public static float str2float(Object var0, float var1) {
-		return ConvertUtils.convert1(var0, float.class);
+		return Convert.convert(float.class,var0);
 //		if (var0 == null) {
 //			return var1;
 //		} else if (var0 instanceof Number) {
@@ -198,7 +194,7 @@ public class BeanMap extends CaseInsensitiveMap{
 	}
 
 	public static int object2int(Object var0, int var1) {
-		return ConvertUtils.convert1(var0, int.class);
+		return Convert.convert( int.class,var0);
 //		if (isEmpty(var0, true)) {
 //			return var1;
 //		} else {
@@ -228,7 +224,7 @@ public class BeanMap extends CaseInsensitiveMap{
 		return object2long(var0, 0L);
 	}
 	public static long object2long(Object var0, long var1) {
-		return ConvertUtils.convert1(var0, long.class);
+		return Convert.convert( long.class,var0);
 //		if (isEmpty(var0, true)) {
 //			return var1;
 //		} else {
