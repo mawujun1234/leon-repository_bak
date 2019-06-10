@@ -16,7 +16,7 @@ import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.repository.utils.PageMethodCache;
-import com.mawujun.utils.ReflectionUtils;
+import com.mawujun.util.ReflectUtil;
 
 /**
  * z这个类也可以自己扩展，例如要把某些逻辑写在持久层里的时候，可以为某些类专门指定使用哪个Proxy
@@ -47,7 +47,7 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 		sqlSession_=sqlSession;
 		
 		//this.newdao=SpringContextUtils.getBean(JpaDao.class);
-		this.entityClass = ReflectionUtils.getGenericInterfaces(mapperInterface,0);
+		this.entityClass = ReflectUtil.getGenericInterfaces(mapperInterface,0);
 	}
 	public JpaDao getJpaDao() {
 		if(this.newdao==null) {

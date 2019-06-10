@@ -8,8 +8,8 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.date.DateUtil;
 import com.mawujun.generator.db.DbColumn;
-import com.mawujun.utils.DateUtils;
 
 /**
  * @author mwj
@@ -17,6 +17,9 @@ import com.mawujun.utils.DateUtils;
 public class OracleDialect extends AbstractDialect{
 
 	//https://www.cnblogs.com/henuyuxiang/p/4062558.html
+	/**
+     * 主要用于sql查询的时候，根据查询条件自动对数据库的日志转换成对应的格式进行比较
+     */
 	private  Map<String, String> date_pattern_map=new LinkedHashMap<String,String>(){{
 		
 		this.put("yyyy-MM-dd","yyyy-MM-dd");
@@ -61,7 +64,7 @@ public class OracleDialect extends AbstractDialect{
 
 	@Override
 	public String getDateFormatStr(String dateStr) {
-		String date_pattern=DateUtils.resolverDateFormat(dateStr);
+		String date_pattern= DateUtil.resolverDateFormat(dateStr);
 		String db_pattern=date_pattern_map.get(date_pattern);
 		if(db_pattern==null) {
 			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr+",需要新增的话，新建date.pattern.properties文件，按"+getAlias()+".yyyy-MM-dd=yyyy-MM-dd,同时添加regular.yyyy-MM-dd=^\\\\\\\\d{4}-\\\\\\\\d{1,2}-\\\\\\\\d{1,2}$模式编写");

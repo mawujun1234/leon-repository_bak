@@ -58,9 +58,9 @@ import com.mawujun.repository.mybatis.typeAliases.BeanMap;
 import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.Page;
-import com.mawujun.utils.CollectionUtils;
-import com.mawujun.utils.ReflectionUtils;
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.ArrayUtil;
+import com.mawujun.util.ReflectUtil;
+import com.mawujun.util.StringUtils;
 
 @Repository
 //@Transactional(rollbackOn= {Exception.class})
@@ -97,7 +97,7 @@ public class JpaDao {
 		if (entityInformationCache.containsKey(entityClass)) {
 			return entityInformationCache.get(entityClass);
 		}
-		JpaEntityInformation entityInformation = (JpaEntityInformation) ReflectionUtils
+		JpaEntityInformation entityInformation = (JpaEntityInformation) ReflectUtil
 				.getFieldValue(getSimpleJpaRepository(entityClass), "entityInformation");
 		
 		entityInformationCache.put(entityClass, entityInformation);
@@ -123,7 +123,7 @@ public class JpaDao {
 					Set attributes = et.getAttributes();
 					for (Object obj : attributes) {
 						Attribute attr = (Attribute) obj;
-						Field field = ReflectionUtils.getField(entityClass, attr.getName());
+						Field field = ReflectUtil.getField(entityClass, attr.getName());
 						if (field == null) {
 							continue;
 						}
@@ -229,7 +229,7 @@ public class JpaDao {
 
 	public List saveBatchByArray(Class entityClass, Object... list) {
 		SimpleJpaRepository repository = getSimpleJpaRepository(entityClass);
-		List resylt = repository.saveAll(CollectionUtils.arrayToList(list));
+		List resylt = repository.saveAll(ArrayUtil.arrayToList(list));
 		repository.flush();
 		return resylt;
 //		for (int i = 0; i < list.length; i++) {
@@ -486,7 +486,7 @@ public class JpaDao {
 					}
 					break;
 				case gt:
-					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
+					if (Number.class.isAssignableFrom(javatype) || ReflectUtil.isPrimitiveNumber(value)) {
 						predicatesList.add(criteriaBuilder.gt(path, (Number) Convert.convert(javatype,value)));
 					} else if (Date.class.isAssignableFrom(javatype)) {
 						// predicatesList.add(criteriaBuilder.greaterThan(path,(Date)Convert.convert(value,
@@ -505,7 +505,7 @@ public class JpaDao {
 					}
 					break;
 				case ge:
-					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
+					if (Number.class.isAssignableFrom(javatype) || ReflectUtil.isPrimitiveNumber(value)) {
 						predicatesList.add(criteriaBuilder.ge(path, (Number) Convert.convert(javatype,value)));
 					} else if (Date.class.isAssignableFrom(javatype)) {
 						// predicatesList.add(criteriaBuilder.greaterThanOrEqualTo(path,(Date)Convert.convert(value,
@@ -524,7 +524,7 @@ public class JpaDao {
 					}
 					break;
 				case lt:
-					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
+					if (Number.class.isAssignableFrom(javatype) || ReflectUtil.isPrimitiveNumber(value)) {
 						predicatesList.add(criteriaBuilder.lt(path, (Number) Convert.convert(javatype,value)));
 					} else if (Date.class.isAssignableFrom(javatype)) {
 						// predicatesList.add(criteriaBuilder.lessThan(path,(Date)Convert.convert(value,
@@ -543,7 +543,7 @@ public class JpaDao {
 					}
 					break;
 				case le:
-					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
+					if (Number.class.isAssignableFrom(javatype) || ReflectUtil.isPrimitiveNumber(value)) {
 						predicatesList.add(criteriaBuilder.le(path, (Number) Convert.convert(javatype,value)));
 					} else if (Date.class.isAssignableFrom(javatype)) {
 						// predicatesList.add(criteriaBuilder.lessThanOrEqualTo(path,(Date)Convert.convert(value,
@@ -563,7 +563,7 @@ public class JpaDao {
 					break;
 				case between: {
 					Object[] values = (Object[]) param.getValue();
-					if (Number.class.isAssignableFrom(javatype) || ReflectionUtils.isPrimitiveNumber(value)) {
+					if (Number.class.isAssignableFrom(javatype) || ReflectUtil.isPrimitiveNumber(value)) {
 						predicatesList
 								.add(criteriaBuilder.ge(path, (Number) Convert.convert(javatype,values[0])));
 						predicatesList

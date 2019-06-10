@@ -1,18 +1,6 @@
 package com.mawujun.repository.mybatis.jpa;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.ibatis.binding.MapperProxyFactory;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Component;
-
-import com.mawujun.utils.ReflectionUtils;
 //@Component
 public class JpaMapperListener {//implements ApplicationListener<ContextRefreshedEvent> {
 

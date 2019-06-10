@@ -34,8 +34,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.mawujun.mvc.SpringContextUtils;
-import com.mawujun.repository.mybatis.interceptor.PageInfoInterceptor;
-import com.mawujun.utils.ReflectionUtils;
+import com.mawujun.util.ReflectUtil;
 
 @org.springframework.context.annotation.Configuration
 @ConditionalOnClass({ SqlSessionFactory.class, SqlSessionFactoryBean.class })
@@ -100,7 +99,7 @@ public class JpaMybatisAutoConfiguration {
 	    
 	    springContextUtils();
 	    JpaMapperRegistry mapperRegistry=new JpaMapperRegistry(configuration);
-	    ReflectionUtils.setFieldValue(configuration, "mapperRegistry", mapperRegistry);
+	    ReflectUtil.setFieldValue(configuration, "mapperRegistry", mapperRegistry);
 	    if(StringUtils.hasText(properties.getTypeAliasesPackage())) {
 	    	 properties.setTypeAliasesPackage("com.mawujun.repository.mybatis.typeAliases,"+properties.getTypeAliasesPackage());
 	    } else {
@@ -243,15 +242,15 @@ public class JpaMybatisAutoConfiguration {
 //		Configuration conf=sqlSessionFactory.getConfiguration();
 //		MapperRegistry mapperRegistry=conf.getMapperRegistry();
 //		//Map<Class<?>, MapperProxyFactory<?>> knownMappers=(Map<Class<?>, MapperProxyFactory<?>>)ReflectUtils.getFieldValue(mapperRegistry, "knownMappers");
-//		Map<Class<?>, MapperProxyFactory<?>> knownMappers_ =(Map<Class<?>, MapperProxyFactory<?>>)ReflectionUtils.getFieldValue (mapperRegistry, "knownMappers");
+//		Map<Class<?>, MapperProxyFactory<?>> knownMappers_ =(Map<Class<?>, MapperProxyFactory<?>>)ReflectUtil.getFieldValue (mapperRegistry, "knownMappers");
 //				
 //		
 //		JpaMapperRegistry jpaMapperRegistry=new JpaMapperRegistry(conf);
 //		jpaMapperRegistry.setKnownMappers_(knownMappers_);
-//		ReflectionUtils.setFieldValue(jpaMapperRegistry, "knownMappers", knownMappers_);
+//		ReflectUtil.setFieldValue(jpaMapperRegistry, "knownMappers", knownMappers_);
 //		//BeanUtils.copyProperties(mapperRegistry, jpaMapperRegistry);
 //		
-//		ReflectionUtils.setFieldValue(conf, "mapperRegistry", jpaMapperRegistry);
+//		ReflectUtil.setFieldValue(conf, "mapperRegistry", jpaMapperRegistry);
 //		//Collection<Class<?>> list=conf.getMapperRegistry().getMappers();
 //		//System.out.println(list);
 //		//MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory)

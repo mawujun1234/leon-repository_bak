@@ -16,7 +16,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
 import com.mawujun.repository.utils.Cnd;
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.StringUtils;
 
 public abstract class AbstractDialect implements Dialect {
 
@@ -41,7 +41,8 @@ public abstract class AbstractDialect implements Dialect {
      */
     public abstract String getDateFormatFunction();
    /**
-    * 获取日期格式化字符串
+    * 获取日期格式化字符串 
+    * 主要用于sql查询的时候，根据查询条件自动对数据库的日志转换成对应的格式进行比较
     * @param dateStr 日期的字符串2018-11-12 这种形式
     * @return
     */

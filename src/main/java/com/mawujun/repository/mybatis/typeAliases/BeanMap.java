@@ -6,7 +6,6 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.ibatis.type.Alias;
 
 import com.mawujun.convert.Convert;
-import com.mawujun.utils.DateUtils;
 
 /**
  * 不区分大小写,主要可用于mybatis
@@ -29,15 +28,15 @@ public class BeanMap extends CaseInsensitiveMap{
 		return Convert.convert(Date.class,var2);
 	}
 
-	public String getDateString(String var1) {
-		Date var2 = this.getDate(var1);
-		String var3 = "";
-		if (var2 != null) {
-			var3 = DateUtils.date2String(var2);
-		}
-
-		return var3;
-	}
+//	public String getDateString(String var1) {
+//		Date var2 = this.getDate(var1);
+//		String var3 = "";
+//		if (var2 != null) {
+//			var3 = DateUtils.date2String(var2);
+//		}
+//
+//		return var3;
+//	}
 
 	public double getdouble(String var1) {
 		Object var2 = this.get(var1);

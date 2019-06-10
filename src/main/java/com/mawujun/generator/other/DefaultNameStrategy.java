@@ -1,6 +1,6 @@
 package com.mawujun.generator.other;
 
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.StringUtils;
 
 
 /**

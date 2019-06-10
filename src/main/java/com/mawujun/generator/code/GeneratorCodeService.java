@@ -17,10 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mawujun.generator.other.JarFileSearch;
-import com.mawujun.utils.Assert;
+import com.mawujun.io.FileUtil;
+import com.mawujun.lang.Assert;
+import com.mawujun.util.StringUtils;
 import com.mawujun.utils.PropertiesUtils;
-import com.mawujun.utils.file.FileUtils;
-import com.mawujun.utils.string.StringUtils;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
@@ -102,7 +102,7 @@ public class GeneratorCodeService {
 		try {
 			initConfiguration();
 			
-			FileUtils.createDir(outputdir);
+			FileUtil.mkParentDirs(outputdir);
 
 			List<EntityTable> root = dbTableMetadataService.getTablesInfo(tablenames);
 			for (EntityTable et : root) {
@@ -150,7 +150,7 @@ public class GeneratorCodeService {
 		try {
 			initConfiguration();
 			
-			FileUtils.createDir(outputdir);
+			FileUtil.mkParentDirs(outputdir);
 
 			for (Class cls : clazzs) {
 				/* 创建数据模型 */
@@ -209,28 +209,28 @@ public class GeneratorCodeService {
 		List<File> files = null;
 		if (ftldir.startsWith("classpath:")) {
 			ftlpath = ftldir.substring("classpath:".length());
-			files = FileUtils.findFiles(FileUtils.getClassRootPath(GeneratorCodeService.class) + ftlpath, "*.ftl");
+			files = FileUtil.findFiles(FileUtil.getClassRootPath(GeneratorCodeService.class) + ftlpath, "*.ftl");
 
 		} else if (ftldir.startsWith("classpath*:")) {
 			ftlpath = ftldir.substring("classpath*:".length());
-			files = FileUtils.findFiles(FileUtils.getClassRootPath(GeneratorCodeService.class) + ftlpath, "*.ftl");
+			files = FileUtil.findFiles(FileUtil.getClassRootPath(GeneratorCodeService.class) + ftlpath, "*.ftl");
 			if (files == null || files.size() == 0) {
 				// String basePath=this.getClass().getResource("").getPath().toString();
 				// GeneratorService.class.getProtectionDomain().getCodeSource().getLocation().getFile()获取jar文件
 				// 因为是开发环境，leon-generator是直接存在的，所以直接到leon-generator中获取默认的模板文件了
 				// String path =
 				// GeneratorService.class.getProtectionDomain().getCodeSource().getLocation().getFile()+classpath;
-				// files=FileUtils.findFiles(path, "*.ftl");
+				// files=FileUtil.findFiles(path, "*.ftl");
 
-				URL url = FileUtils.getJarPath(GeneratorCodeService.class);
+				URL url = FileUtil.getJarPath(GeneratorCodeService.class);
 				if ("file".equals(url.getProtocol()) && url.getFile().indexOf(".jar!") == -1) {
 					//File classpath_file = new File(url.getFile() + "/../../src/main/resources".replaceAll("\\\\/", File.separator) + ftlpath);
 					File classpath_file = new File(url.getFile().substring(0,url.getFile().length()-16)+File.separator+"src"+File.separator+"main"+File.separator+"resources" + ftlpath);
-					files = FileUtils.findFiles(classpath_file.getAbsolutePath(), "*.ftl");
+					files = FileUtil.findFiles(classpath_file.getAbsolutePath(), "*.ftl");
 
 					System.out.println("查找路径："+classpath_file);
 				} else {
-					String jarpath=FileUtils.getJarAbstractPath(GeneratorCodeService.class);
+					String jarpath=FileUtil.getJarAbstractPath(GeneratorCodeService.class);
 					//jarpath="E:\\workspace\\leon-generator\\target\\leon-generator.jar";
 					//把文件内容写到临时目录中
 					files=JarFileSearch.unzipJarFile(jarpath, ftlpath, ".ftl");
@@ -242,7 +242,7 @@ public class GeneratorCodeService {
 				// 然后再把这些模板文件读取出来，用来生成代码。
 
 //				
-//				String dir=FileUtils.getCurrentClassPath(this)+"../lib";
+//				String dir=FileUtil.getCurrentClassPath(this)+"../lib";
 //				ArrayList<InputStream> list=new ArrayList<InputStream>();
 //				JarFileSearch.searchFtl(dir, list);
 			}
@@ -250,7 +250,7 @@ public class GeneratorCodeService {
 			// 从绝对路径中获取
 			// 从当前项目的相对路径中获取
 			ftlpath = ftldir;
-			files = FileUtils.findFiles(FileUtils.getProjectPath() + ftlpath, "*.ftl");
+			files = FileUtil.findFiles(FileUtil.getProjectPath() + ftlpath, "*.ftl");
 
 		}
 		if (files == null || files.size() == 0) {
@@ -373,7 +373,7 @@ public class GeneratorCodeService {
 //		String filePath=dirPath+ftlfilepath+File.separatorChar+fileName;
 
 		String ftlfilepath=ftlfile.getParentpath();
-		if(com.mawujun.utils.SystemUtils.IS_OS_WINDOWS) {
+		if(SystemUtils.IS_OS_WINDOWS) {
 			if(ftlfilepath.indexOf(ftlpath.replace('/', '\\'))!=-1) {
 				//System.out.println(ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('/', '\\'))+ftlpath.length()+1));
 				ftlfilepath=ftlfilepath.substring(ftlfilepath.indexOf(ftlpath.replace('/', '\\')));

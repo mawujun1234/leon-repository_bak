@@ -25,10 +25,7 @@
 package com.mawujun.repository.mybatis.dialect;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -36,10 +33,7 @@ import javax.sql.DataSource;
 
 import org.apache.ibatis.mapping.MappedStatement;
 
-import com.mawujun.repository.mybatis.interceptor.PageException;
-import com.mawujun.utils.DateUtils;
 import com.mawujun.utils.PropertiesUtils;
-import com.mawujun.utils.string.StringUtils;
 
 /**
  * 自动选择数据库适配器

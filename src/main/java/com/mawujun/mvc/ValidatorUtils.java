@@ -12,7 +12,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import com.mawujun.exception.BizException;
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.StringUtils;
 
 public class ValidatorUtils {
 	 //private final Log logger = LogFactory.getLog(getClass());

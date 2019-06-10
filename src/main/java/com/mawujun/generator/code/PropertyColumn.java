@@ -1,6 +1,6 @@
 package com.mawujun.generator.code;
 
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.StringUtils;
 
 public class PropertyColumn {
 	private String column;//列名

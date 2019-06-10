@@ -28,7 +28,7 @@ import com.mawujun.repository.mybatis.dialect.Dialect;
 import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.repository.utils.PageMethodCache;
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.StringUtils;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Intercepts(

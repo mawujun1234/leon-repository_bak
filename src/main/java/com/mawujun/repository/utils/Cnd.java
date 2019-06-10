@@ -3,7 +3,7 @@ package com.mawujun.repository.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.StringUtils;
 
 public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	/**

@@ -5,7 +5,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import com.mawujun.repository.mybatis.interceptor.PageException;
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.StringUtils;
 
 public class DialectUtils {
     public static  DBAlias getDialect_name(Connection conn) {

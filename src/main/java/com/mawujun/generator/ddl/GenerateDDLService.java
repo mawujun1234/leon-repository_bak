@@ -41,11 +41,11 @@ import org.slf4j.LoggerFactory;
 import com.mawujun.generator.annotation.ColDefine;
 import com.mawujun.generator.annotation.FK;
 import com.mawujun.generator.annotation.TableDefine;
-import com.mawujun.utils.Assert;
+import com.mawujun.io.FileUtil;
+import com.mawujun.lang.Assert;
+import com.mawujun.util.ReflectUtil;
+import com.mawujun.util.StringUtils;
 import com.mawujun.utils.PropertiesUtils;
-import com.mawujun.utils.ReflectionUtils;
-import com.mawujun.utils.file.FileUtils;
-import com.mawujun.utils.string.StringUtils;
 
 public class GenerateDDLService {
 	private final static Logger logger = LoggerFactory.getLogger(GenerateDDLService.class);
@@ -78,7 +78,7 @@ public class GenerateDDLService {
 		assignCommentAndDefault(metadata);
 
 		SchemaExport export = new SchemaExport();
-		String path = FileUtils.getProjectPath() + outputFile + File.separator + "create-drop.sql";
+		String path = FileUtil.getProjectPath() + outputFile + File.separator + "create-drop.sql";
 		File aaaa = new File(path);
 		if (aaaa.exists()) {
 			aaaa.delete();
@@ -140,17 +140,17 @@ public class GenerateDDLService {
 		builder.append("");
 		builder.append("");
 
-		File file = new File(FileUtils.getTempDirectory() + File.separator + "hibernate.cfg.xml");
+		File file = new File(FileUtil.getTempDirectory() + File.separator + "hibernate.cfg.xml");
 		logger.info("cfg文件生成地址为:" + file.getAbsolutePath());
 		System.out.println(file.getAbsolutePath());
-		try {
-			FileUtils.writeStringToFile(file, builder.toString(), Charset.forName("UTF-8"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("生成文件失败！", e);
-
-		}
+		//try {
+			FileUtil.writeString(builder.toString(), file, Charset.forName("UTF-8"));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			logger.error("生成文件失败！", e);
+//
+//		}
 		return file;
 
 	}
@@ -303,7 +303,7 @@ public class GenerateDDLService {
 	}
 
 	private static void assignColCommentAndDefaultvalue(Class clazz, String property, Column col) {
-		Field field = ReflectionUtils.getField(clazz, property);
+		Field field = ReflectUtil.getField(clazz, property);
 		System.out.println(property + "......");
 		if (field == null) {
 			return;

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mawujun.convert.Convert;
 import com.mawujun.generator.annotation.LogicDelete;
-import com.mawujun.utils.ReflectionUtils;
+import com.mawujun.util.ReflectUtil;
 
 public class LogicDeleteInterceptor extends EmptyInterceptor {
 	private static Logger logger=LoggerFactory.getLogger(LogicDeleteInterceptor.class);
@@ -93,7 +93,7 @@ public class LogicDeleteInterceptor extends EmptyInterceptor {
 			Set<?> attributes=entityType.getAttributes();//entityType.getSingularAttributes();//(Set<Attribute<Object,Object>>)entityType.getAttributes();
 			for(Object obj:attributes) {
 				Attribute attr=(Attribute)obj;
-					Field field=ReflectionUtils.getField(claz,attr.getName());
+					Field field=ReflectUtil.getField(claz,attr.getName());
 					if(field==null) {
 						continue;
 					}

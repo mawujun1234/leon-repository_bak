@@ -11,9 +11,9 @@ import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.RowBounds;
 
+import com.mawujun.date.DateUtil;
 import com.mawujun.generator.db.DbColumn;
 import com.mawujun.repository.mybatis.interceptor.MetaObjectUtil;
-import com.mawujun.utils.DateUtils;
 
 /**
  * A dialect compatible with the H2 database.
@@ -81,7 +81,7 @@ public class H2Dialect extends AbstractDialect {
 	public String getDateFormatStr(String dateStr) {
 		//http://www.mamicode.com/info-detail-1026392.html#formatdatetime
 		//和java一致
-		String date_pattern=DateUtils.resolverDateFormat(dateStr);
+		String date_pattern=DateUtil.resolverDateFormat(dateStr);
 		if(date_pattern==null) {
 			throw new IllegalArgumentException("当前的日期格式不支持:"+dateStr+",需要新增的话，新建date.pattern.properties文件，按"+getAlias()+".yyyy-MM-dd=yyyy-MM-dd,同时添加regular.yyyy-MM-dd=^\\\\\\\\d{4}-\\\\\\\\d{1,2}-\\\\\\\\d{1,2}$模式编写");
 		}

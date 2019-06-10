@@ -5,7 +5,7 @@ import java.util.Map;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.wrapper.MapWrapper;
 
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.StringUtils;
 
 public class JpaMapWrapper extends MapWrapper {
 	public JpaMapWrapper(MetaObject metaObject, Map<String, Object> map) {

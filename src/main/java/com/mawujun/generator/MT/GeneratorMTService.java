@@ -21,7 +21,6 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 
@@ -29,10 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mawujun.generator.annotation.ColDefine;
-import com.mawujun.utils.Assert;
+import com.mawujun.lang.Assert;
+import com.mawujun.util.StringUtils;
 import com.mawujun.utils.PropertiesUtils;
-import com.mawujun.utils.file.FileUtils;
-import com.mawujun.utils.string.StringUtils;
 
 /**
  * 生成的类用来快速的引用某个领域类的字段，这样既可以保证字段的准确度，又可以快速引用
@@ -40,7 +38,7 @@ import com.mawujun.utils.string.StringUtils;
  *
  */
 public class GeneratorMTService {
-	static Logger logger = LoggerFactory.getLogger(FileUtils.class);
+	static Logger logger = LoggerFactory.getLogger(GeneratorMTService.class);
 	
 	//private Class annotationClass=javax.persistence.Entity.class;
 	//private Class annotationTable=javax.persistence.Table.class;

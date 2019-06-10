@@ -27,9 +27,9 @@ import com.mawujun.generator.annotation.LogicDelete;
 import com.mawujun.generator.annotation.TableDefine;
 import com.mawujun.generator.other.DefaultNameStrategy;
 import com.mawujun.generator.other.NameStrategy;
+import com.mawujun.util.ReflectUtil;
+import com.mawujun.util.StringUtils;
 import com.mawujun.utils.PropertiesUtils;
-import com.mawujun.utils.ReflectionUtils;
-import com.mawujun.utils.string.StringUtils;
 
 /**
  * 用于从领域模型中读取 meta信息的
@@ -149,7 +149,7 @@ public class JavaEntityMetadataService {
 
 		
 		
-		Field[] fields=ReflectionUtils.getAllDeclaredFields(clazz);
+		Field[] fields=ReflectUtil.getFields(clazz);
 		//List<PropertyColumn> propertyColumns =new ArrayList<PropertyColumn>();
 		//存放需要产生查询条件的属性
 		//List<PropertyColumn> queryProperties =new ArrayList<PropertyColumn>();
@@ -215,7 +215,7 @@ public class JavaEntityMetadataService {
 			//表示可嵌入类的组合主键
 			EmbeddedId embeddedId=field.getAnnotation(EmbeddedId.class);
 			if(embeddedId!=null) {
-				Field[] embeddedIdFields=ReflectionUtils.getAllDeclaredFields(field.getType());
+				Field[] embeddedIdFields=ReflectUtil.getFields(field.getType());
 				String[] idColumns=new String[embeddedIdFields.length];
 				String[] idPropertys=new String[embeddedIdFields.length];
 				
@@ -256,7 +256,7 @@ public class JavaEntityMetadataService {
 					root.setIdGenEnum(IDGenEnum.none);
 					root.setIdSequenceName(null);
 					
-					Field[] idClass_fields=ReflectionUtils.getAllDeclaredFields(idClass.value());
+					Field[] idClass_fields=ReflectUtil.getFields(idClass.value());
 					for(Field idField:idClass_fields) {
 						assignComment(idField,propertyColumn);
 					}

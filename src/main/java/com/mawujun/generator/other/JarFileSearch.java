@@ -1,9 +1,7 @@
 package com.mawujun.generator.other;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -13,7 +11,7 @@ import java.util.zip.ZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mawujun.utils.FileUtils;
+import com.mawujun.io.FileUtil;
 
 //http://hanxuedog.iteye.com/blog/1825723
 //http://blog.csdn.net/hfhwfw/article/details/7266957
@@ -31,7 +29,7 @@ public class JarFileSearch {
 	 */
 	public static List<File> unzipJarFile(String dir , String pathprefix) {
 		List<File> list=new ArrayList<File>();
-		JarFileSearch.unzipJarFile(dir ,list, pathprefix, FileUtils.getTempDirectoryPath());
+		JarFileSearch.unzipJarFile(dir ,list, pathprefix, FileUtil.getTempDirectoryPath());
 		return list;
 	}
 	
@@ -94,17 +92,17 @@ public class JarFileSearch {
                             		continue;
                             	}
                             	
-                            	//FileUtils.forceMkdirParent(file);
+                            	//FileUtil.forceMkdirParent(file);
                             	
                             	list.add(file);
                             	FileOutputStream fos=new FileOutputStream(file);
-                            	FileUtils.copyStream(zip.getInputStream(entry), fos);
+                            	FileUtil.copyStream(zip.getInputStream(entry), fos);
                             	logger.info("解压文件到:"+file.getAbsolutePath());
 //                                BufferedReader r = new BufferedReader(new InputStreamReader(zip.getInputStream(entry)));  
 //
 //                                while(r.read()!=-1){  
 //                                    String tempStr = r.readLine();  
-//                                    FileUtils.write(file, tempStr, "UTF-8",true);
+//                                    FileUtil.write(file, tempStr, "UTF-8",true);
 ////                                    if(null!=tempStr && tempStr.indexOf(condition)>-1){  
 ////                                        this.jarFiles.add(filename + "  --->  " + thisClassName);  
 ////                                        break;  

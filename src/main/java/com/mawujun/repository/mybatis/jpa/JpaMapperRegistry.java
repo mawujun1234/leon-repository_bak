@@ -8,9 +8,8 @@ import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
 
-import com.mawujun.utils.ReflectionUtils;
+import com.mawujun.util.ReflectUtil;
 
 public class JpaMapperRegistry extends MapperRegistry {
 	private  Map<Class<?>, MapperProxyFactory<?>> knownMappers_ = new HashMap<Class<?>, MapperProxyFactory<?>>();
@@ -61,8 +60,8 @@ public class JpaMapperRegistry extends MapperRegistry {
 			}
 			
 			if(!hasSynchronized) {
-				ReflectionUtils.setFieldValue(this, "knownMappers", knownMappers_);
-				ReflectionUtils.setFieldValue(this, "config", config_);
+				ReflectUtil.setFieldValue(this, "knownMappers", knownMappers_);
+				ReflectUtil.setFieldValue(this, "config", config_);
 				hasSynchronized=true;
 			}
 		}
