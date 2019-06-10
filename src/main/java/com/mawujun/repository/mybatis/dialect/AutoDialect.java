@@ -33,7 +33,7 @@ import javax.sql.DataSource;
 
 import org.apache.ibatis.mapping.MappedStatement;
 
-import com.mawujun.utils.PropertiesUtils;
+import com.mawujun.util.PropertiesUtils;
 
 /**
  * 自动选择数据库适配器

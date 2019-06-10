@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
 import com.mawujun.generator.other.JarFileSearch;
 import com.mawujun.io.FileUtil;
 import com.mawujun.lang.Assert;
+import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.StringUtils;
-import com.mawujun.utils.PropertiesUtils;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;

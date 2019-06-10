@@ -27,9 +27,9 @@ import com.mawujun.generator.annotation.LogicDelete;
 import com.mawujun.generator.annotation.TableDefine;
 import com.mawujun.generator.other.DefaultNameStrategy;
 import com.mawujun.generator.other.NameStrategy;
+import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.ReflectUtil;
 import com.mawujun.util.StringUtils;
-import com.mawujun.utils.PropertiesUtils;
 
 /**
  * 用于从领域模型中读取 meta信息的

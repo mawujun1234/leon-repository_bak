@@ -18,7 +18,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import com.mawujun.repository.mybatis.dialect.Dialect;
-import com.mawujun.utils.PropertiesUtils;
+import com.mawujun.util.PropertiesUtils;
 
 /**
  * 为ibatis3提供基于方言(Dialect)的分页查询的插件

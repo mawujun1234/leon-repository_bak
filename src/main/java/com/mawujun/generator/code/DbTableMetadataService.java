@@ -17,8 +17,8 @@ import com.mawujun.generator.other.NameStrategy;
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
 import com.mawujun.repository.mybatis.dialect.DialectUtils;
+import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.StringUtils;
-import com.mawujun.utils.PropertiesUtils;
 
 /**
  * 专门用来读取表结构的

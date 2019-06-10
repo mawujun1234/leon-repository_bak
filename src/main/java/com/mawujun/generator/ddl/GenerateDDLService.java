@@ -43,9 +43,9 @@ import com.mawujun.generator.annotation.FK;
 import com.mawujun.generator.annotation.TableDefine;
 import com.mawujun.io.FileUtil;
 import com.mawujun.lang.Assert;
+import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.ReflectUtil;
 import com.mawujun.util.StringUtils;
-import com.mawujun.utils.PropertiesUtils;
 
 public class GenerateDDLService {
 	private final static Logger logger = LoggerFactory.getLogger(GenerateDDLService.class);

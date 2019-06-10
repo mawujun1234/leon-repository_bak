@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import com.mawujun.generator.annotation.ColDefine;
 import com.mawujun.lang.Assert;
+import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.StringUtils;
-import com.mawujun.utils.PropertiesUtils;
 
 /**
  * 生成的类用来快速的引用某个领域类的字段，这样既可以保证字段的准确度，又可以快速引用
