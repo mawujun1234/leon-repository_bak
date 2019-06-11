@@ -4,15 +4,16 @@ package ${basepackage}.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
-
+import com.mawujun.common.utils.M;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.mawujun.mvc.R;
 import com.mawujun.repository.utils.Page;
-import com.mawujun.repository.utils.Params;
+import com.mawujun.repository.utils.Cnd;
 
 import ${entityClassName};
 import ${basepackage}.service.${entitySimpleClassName}Service;
@@ -26,7 +27,7 @@ import ${basepackage}.service.${entitySimpleClassName}Service;
 @Slf4j
 </#if>
 @Controller
-//@RequestMapping("/${simpleClassNameFirstLower}")
+@RequestMapping("/${module}")
 public class ${entitySimpleClassName}Controller {
 
 	@Resource
@@ -42,27 +43,31 @@ public class ${entitySimpleClassName}Controller {
 	@RequestMapping("/${simpleClassNameFirstLower}/list")
 	@ResponseBody
 	public R list() {//括号里面写参数
-		Params params=Params.of();//Params.of().like(M.${entitySimpleClassName}.name, "test");
-		List<${entitySimpleClassName}> ${simpleClassNameFirstLower}es=${simpleClassNameFirstLower}Service.listByMap(params);
+		Cnd cnd=Cnd.of();//Cnd.of().like(M.${entitySimpleClassName}.name, "test");
+		List<${entitySimpleClassName}> ${simpleClassNameFirstLower}es=${simpleClassNameFirstLower}Service.list(cnd);
 		return R.ok(${simpleClassNameFirstLower}es);
 	}
 
-	/**
-	 * 这是基于分页的几种写法,的例子，请按自己的需求修改
-	 * @author mawujun email:16064988@163.com qq:16064988
-	 * @param start
-	 * @param limit
-	 * @param userName
-	 * @return
-	 */
-	@RequestMapping("/${simpleClassNameFirstLower}/listPage")
-	@ResponseBody
-	public R listPage(Integer start,Integer limit){
-		//Page<${entitySimpleClassName}> page=Page.of(start,limit).eq(M.${entitySimpleClassName}.name, "宁波");
-		Page<${entitySimpleClassName}> page=Page.of(start,limit);
-		${simpleClassNameFirstLower}Service.listPageByPageInfo(page);
-		return R.ok().data(page);
-	}
+//	/**
+//	 * 这是基于分页的几种写法,的例子，请按自己的需求修改
+//	 * @author mawujun email:16064988@163.com qq:16064988
+//	 * @param start
+//	 * @param limit
+//	 * @param userName
+//	 * @return
+//	 */
+//	@RequestMapping("/${simpleClassNameFirstLower}/page")
+//	@ResponseBody
+//	public R page(Integer start,Integer limit<#list cndPropertys as pc>,${pc.simpleClassName} ${pc.property}<#if pc?has_next>,</#if></#list>) {
+//	//public R list(@RequestParam Map<String, Object> params){
+//	//	//Page<${entitySimpleClassName}> pager = ${simpleClassNameFirstLower}Service.queryPage(params);
+//		Page<${entitySimpleClassName}> pager=${simpleClassNameFirstLower}Service.page(Cnd.ofStartLimit(start, limit)
+//			<#list cndPropertys as pc>
+//			.add(M.${entitySimpleClassName}.${pc.property}, ${pc.property})
+//			</#list>
+//			);
+//		return R.ok().data(pager);
+//	}
 		/**
 	 * 这是基于分页的几种写法,的例子，请按自己的需求修改
 	 * @author mawujun email:16064988@163.com qq:16064988
@@ -71,12 +76,14 @@ public class ${entitySimpleClassName}Controller {
 	 * @param userName
 	 * @return
 	 */
-	@RequestMapping("/${simpleClassNameFirstLower}/listPage")
+	@RequestMapping("/${simpleClassNameFirstLower}/page")
 	@ResponseBody
-	public R listPage(Integer page,Integer limit){
-		//Page<${entitySimpleClassName}> pager=Page.of(start,limit).eq(M.${entitySimpleClassName}.name, "宁波");
-		Page<${entitySimpleClassName}> pager=Page.of_1(page,limit);
-		${simpleClassNameFirstLower}Service.listPageByPageInfo(pager);
+	public R page(Integer page,Integer limit<#list cndPropertys as pc>,${pc.simpleClassName} ${pc.property}<#if pc?has_next>,</#if></#list>) {
+		Page<${entitySimpleClassName}> pager=${simpleClassNameFirstLower}Service.page(Cnd.ofPageLimit(page, limit)
+			<#list cndPropertys as pc>
+			.add(M.${entitySimpleClassName}.${pc.property}, ${pc.property})
+			</#list>
+			);
 		return R.ok().data(pager);
 	}
 
@@ -88,9 +95,9 @@ public class ${entitySimpleClassName}Controller {
 	}
 	
 
-	@RequestMapping("/${simpleClassNameFirstLower}/get")
+	@RequestMapping("/${simpleClassNameFirstLower}/get/{id}")
 	@ResponseBody
-	public R get(${idClassName} id) {
+	public R get(@PathVariable("id")${idClassName} id) {
 		${entitySimpleClassName} ${simpleClassNameFirstLower}=${simpleClassNameFirstLower}Service.getById(id);
 		return R.ok().data(${simpleClassNameFirstLower});
 	}
@@ -109,16 +116,16 @@ public class ${entitySimpleClassName}Controller {
 		return R.ok().data(${simpleClassNameFirstLower});
 	}
 	
-	@RequestMapping("/${simpleClassNameFirstLower}/removeById")
+	@RequestMapping("/${simpleClassNameFirstLower}/removeById/{id}")
 	@ResponseBody
-	public R removeById(${idClassName} id) {
+	public R removeById(@PathVariable("id")${idClassName} id) {
 		${simpleClassNameFirstLower}Service.removeById(id);
 		return R.ok().data(id);
 	}
 	
 	@RequestMapping("/${simpleClassNameFirstLower}/removeByIds")
 	@ResponseBody
-	public R removeByIds(String[] ids) {
+	public R removeByIds(@RequestBody ${idSimpleClassName}[] ids) {
 		${simpleClassNameFirstLower}Service.removeByIds(ids);
 		return R.ok().data(ids);
 	}

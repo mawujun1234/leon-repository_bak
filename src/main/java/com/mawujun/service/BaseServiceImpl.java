@@ -118,9 +118,9 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 //	}
 
 	@Override
-	public List<T> list() {
+	public List<T> listAll() {
 		// TODO Auto-generated method stub
-		return repo.list();
+		return repo.listAll();
 	}
 
 	@Override
@@ -267,7 +267,7 @@ public class BaseServiceImpl<M extends IRepository<T>, T> implements IBaseServic
 	}
 
 	@Override
-	public int removeByIds(Serializable... ids) {
+	public int removeByIds(Serializable[] ids) {
 		// TODO Auto-generated method stub
 		return repo.removeByIds(ids);
 	}

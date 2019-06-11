@@ -27,6 +27,12 @@ public @interface ColDefine {
      * @return
      */
     String defaultValue() default "";  
+    
+    /**
+     * 是否作为查询条件,会自动生成查询条件
+     * @return
+     */
+    boolean cndable() default false;  
       
   
     

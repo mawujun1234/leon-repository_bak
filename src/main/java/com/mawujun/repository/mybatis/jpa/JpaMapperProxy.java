@@ -147,8 +147,11 @@ public class JpaMapperProxy<T> extends MapperProxy<T> {
 //		}  else if(method.getName().equals("listByMap"))  {
 //			return getJpaDao().listByMap(entityClass, (Map<String,Object>)args[0]);
 //		} 
+		else if(method.getName().equals("listAll"))  {
+			return getJpaDao().listAll(entityClass);
+		}
 		else if(method.getName().equals("list"))  {
-			if(args==null) {
+			if(args==null) {//这个已经用listAll替换了
 				return getJpaDao().listAll(entityClass);
 			} else if(args[0]==null || args[0] instanceof Map) {
 				return getJpaDao().listByMap(entityClass, (Map<String,Object>)args[0]);

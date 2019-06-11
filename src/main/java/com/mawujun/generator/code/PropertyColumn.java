@@ -1,5 +1,8 @@
 package com.mawujun.generator.code;
 
+import java.util.List;
+import java.util.Map;
+
 import com.mawujun.util.StringUtils;
 
 public class PropertyColumn {
@@ -11,7 +14,9 @@ public class PropertyColumn {
 	private String label;//列的中文名，如果没有设置，就使用column
 	private String comment;//注释
 	private String defaultValue;//默认值
-	
+	private boolean cndable;//是否在前端生成查询条件
+
+
 	private Integer length=255;//列的长度,只有当类型为varchar等的时候才有用
 	private Integer precision=null;//当为数字的时候有用
 	private Integer scale=null;
@@ -21,12 +26,15 @@ public class PropertyColumn {
 	private boolean insertable=true;
 	private boolean updatable=true;
 	
+	private boolean persistable=true;//是否是進行持久化的字段
+	
 //	public boolean hidden=false;//是否是隐藏字段
 //	private Boolean nullable=true;//true表示可以为空
 //	private Integer sort=0;//显示的顺序
 //	private boolean genQuery=false;//是否生成查询条件，主要是在grid
 	
 	private Boolean isEnum=false;
+	private List<Map<String,Object>> enumValues;
 //	private String showType="none";//显示的类型，是textfield，还是combobox，还是radio，还是
 //	private Map<String,String> showType_values=new HashMap<String,String>();
 
@@ -358,7 +366,37 @@ public class PropertyColumn {
 
 
 
+	
+	public boolean isCndable() {
+		return cndable;
+	}
 
+	public void setCndable(boolean cndable) {
+		this.cndable = cndable;
+	}
+
+	public List<Map<String, Object>> getEnumValues() {
+		return enumValues;
+	}
+
+	public void setEnumValues(List<Map<String, Object>> enumValues) {
+		this.enumValues = enumValues;
+	}
+
+	public void setVersion(boolean isVersion) {
+		this.isVersion = isVersion;
+	}
+
+	public void setLogicDelete(boolean isLogicDelete) {
+		this.isLogicDelete = isLogicDelete;
+	}
+	public boolean isPersistable() {
+		return persistable;
+	}
+
+	public void setPersistable(boolean persistable) {
+		this.persistable = persistable;
+	}
 	
 
 }

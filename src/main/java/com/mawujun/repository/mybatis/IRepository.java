@@ -139,7 +139,7 @@ public interface IRepository<T> {
 	 * @return
 	 */
 	@JpaMethod
-	public List<T> list();
+	public List<T> listAll();
 //	/**
 //	 * 参数是PageInfo，封装了sql要用的参数和分页信息。
 //	 * PageInfo中的参数可以是Map也可以是T，但不能是其他类型，否则会报异常

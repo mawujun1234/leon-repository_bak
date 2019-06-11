@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -338,6 +339,12 @@ public class JavaEntityMetadataService {
 				propertyColumn.setIsLogicDelete(true);
 			}
 			
+			//判断是否进行持久化
+			Transient ttransient = field.getAnnotation(Transient.class);
+			if(ttransient==null){
+				propertyColumn.setPersistable(true);
+			}
+			
 			//
 			//if(field.isEnumConstant()) {
 			if(field.getType().isEnum()) {
@@ -383,6 +390,8 @@ public class JavaEntityMetadataService {
 			if(StringUtils.hasText(colDefinition.comment())) {
 				propertyColumn.setComment(colDefinition.comment());
 			}
+			
+			propertyColumn.setCndable(colDefinition.cndable());
 		}
 	}
 	

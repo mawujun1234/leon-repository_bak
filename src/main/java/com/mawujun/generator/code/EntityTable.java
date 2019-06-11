@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class EntityTable {
 	//private String dbName;
+	
+	private String module;//所属的模块
 	private Class entityClass;
 	private String entityTableName;//表名
 	private String entitySimpleClassName;//类名，不带包名的
@@ -38,12 +40,16 @@ public class EntityTable {
 	private String idSequenceName;//序列化的时候的名字,如oralce、DB、SAP DB、PostgerSQL、McKoi中的sequence。MySQL这种不支持sequence的数据库则不行（可以使用identity）。
 	
 	private boolean uselombok;
+	
+	
+
 
 	List<PropertyColumn> propertyColumns=new ArrayList<PropertyColumn>();
 	Map<String,PropertyColumn> propertyColumns_map=new HashMap<String,PropertyColumn>();
 	//List<PropertyColumn> baseTypePropertyColumns=new ArrayList<PropertyColumn>();
 	//存放需要产生查询条件的属性
-	List<PropertyColumn> queryProperties =new ArrayList<PropertyColumn>();
+	private boolean cndable=false;//判断是否具有条件查询，true表示有，false表示没有
+	List<PropertyColumn> cndPropertys =new ArrayList<PropertyColumn>();
 	/**
 	 * 会自动设置
 	 * entitySimpleClassName，entitySimpleClassNameUncap，entityClassName，entityPackage
@@ -56,6 +62,8 @@ public class EntityTable {
 		this.entitySimpleClassNameUncap=StringUtils.uncapitalize(this.getEntitySimpleClassName());
 		this.entityClassName=entityClass.getName();
 		this.entityPackage=entityClass.getPackage().getName();
+		String[] packages=this.entityPackage.split("\\.");
+		this.module=packages[packages.length-2];//一般实体类是放在entity下面，所以模块就取前一个
 		
 	}
 	/**
@@ -116,8 +124,12 @@ public class EntityTable {
 	public void addPropertyColumn(PropertyColumn pc) {
 		this.propertyColumns.add(pc);
 		this.propertyColumns_map.put(pc.getProperty(), pc);
+		if(pc.isCndable()) {
+			this.setCndable(true);
+			cndPropertys.add(pc);
+		}
 	}
-	
+
 	public String getUncapitalizeSimpleClassName() {
 		return this.entitySimpleClassNameUncap;
 	}
@@ -168,15 +180,6 @@ public class EntityTable {
 
 	public void setPropertyColumns(List<PropertyColumn> propertyColumns) {
 		this.propertyColumns = propertyColumns;
-	}
-
-
-	public List<PropertyColumn> getQueryProperties() {
-		return queryProperties;
-	}
-
-	public void setQueryProperties(List<PropertyColumn> queryProperties) {
-		this.queryProperties = queryProperties;
 	}
 
 	public String getAlias() {
@@ -285,6 +288,18 @@ public class EntityTable {
 	}
 	public void setUselombok(boolean uselombok) {
 		this.uselombok = uselombok;
+	}
+	public boolean isCndable() {
+		return cndable;
+	}
+	public void setCndable(boolean cndable) {
+		this.cndable = cndable;
+	}
+	public String getModule() {
+		return module;
+	}
+	public List<PropertyColumn> getCndPropertys() {
+		return cndPropertys;
 	}
 
 

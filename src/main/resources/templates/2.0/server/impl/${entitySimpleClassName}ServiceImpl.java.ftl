@@ -24,7 +24,7 @@ import ${basepackage}.repository.${entitySimpleClassName}Repository;
 <#if uselombok==true>
 @Slf4j
 </#if>
-public class ${entitySimpleClassName}ServiceImpl  extends BaseService<${entitySimpleClassName}Repository, ${entitySimpleClassName}> implements ${entitySimpleClassName}Service{
+public class ${entitySimpleClassName}ServiceImpl  extends BaseServiceImpl<${entitySimpleClassName}Repository, ${entitySimpleClassName}> implements ${entitySimpleClassName}Service{
 
 
 }

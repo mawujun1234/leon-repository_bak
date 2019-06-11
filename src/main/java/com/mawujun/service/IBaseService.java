@@ -107,8 +107,11 @@ public interface IBaseService<T> {
 //	 */
 //	public Page<T> listPageByExample(T params, int page,int limit);
 	
-	
-	public List<T> list();
+	/**
+	 * 显示所有的数据
+	 * @return
+	 */
+	public List<T> listAll();
 	
 	/**
 	 * 参数不能为null,如果为null，将会返回所有数据，支持Condition
@@ -273,7 +276,7 @@ public interface IBaseService<T> {
 	 * @param ids
 	 * @return
 	 */
-	public int removeByIds(Serializable... ids);
+	public int removeByIds(Serializable[] ids);
 	/**
 	 * 根据id数组删除对象
 	 * @param ids
