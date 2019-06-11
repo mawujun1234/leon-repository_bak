@@ -1,8 +1,11 @@
 package com.mawujun.generator.code;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mawujun.generator.rules.AbstractRule;
 import com.mawujun.util.StringUtils;
 
 public class PropertyColumn {
@@ -51,6 +54,8 @@ public class PropertyColumn {
 	private boolean isVersion=false;
 	private boolean isLogicDelete=false;
 	
+	//存放的是前端的校验规则
+	Map<String,List<AbstractRule>> formRules=new HashMap<String,List<AbstractRule>>();
 	
 	//private Boolean isIdProperty=false;//是不是属于id的列
 	//private Boolean isComponentType=false;
@@ -60,7 +65,19 @@ public class PropertyColumn {
 	//private Boolean isConstantType=false;//判断是不是常数
 	
 	//List<PropertyColumn> propertyColumns=new ArrayList<PropertyColumn>();
-	
+	/**
+	 * 增加验证规则
+	 * @param fieldname
+	 * @param rule
+	 */
+	public void addRule(String fieldname,AbstractRule rule) {
+		List<AbstractRule> list=formRules.get(fieldname);
+		if(list==null) {
+			list=new ArrayList<AbstractRule>();
+		}
+		list.add(rule);
+		formRules.put(fieldname, list);
+	}
 	/**
 	 * 获取@Column注解需要的属性值
 	 * @return

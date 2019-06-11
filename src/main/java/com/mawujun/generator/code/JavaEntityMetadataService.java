@@ -17,17 +17,27 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.ibatis.type.Alias;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
 
 import com.mawujun.generator.annotation.ColDefine;
 import com.mawujun.generator.annotation.LogicDelete;
 import com.mawujun.generator.annotation.TableDefine;
 import com.mawujun.generator.other.DefaultNameStrategy;
 import com.mawujun.generator.other.NameStrategy;
+import com.mawujun.generator.rules.EmailRule;
+import com.mawujun.generator.rules.NumberRule;
+import com.mawujun.generator.rules.RequireRule;
+import com.mawujun.generator.rules.StringRule;
 import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.ReflectUtil;
 import com.mawujun.util.StringUtils;
@@ -351,7 +361,74 @@ public class JavaEntityMetadataService {
 				propertyColumn.setIsEnum(true);
 			}
 			
+			//构建校验规则
+			//先判断
+			//boolean required=false;//!propertyColumn.isNullable();
+			//String required_msg=null;
+			if(notNull!=null) {
+				RequireRule rule=new RequireRule();
+				rule.setMessage(notNull.message());
+				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+			}
+			NotBlank rule_notblank=field.getAnnotation(NotBlank.class);
+			if(rule_notblank!=null) {
+				RequireRule rule=new RequireRule();
+				rule.setMessage(rule_notblank.message());
+				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+			}
+			NotEmpty rule_notempty=field.getAnnotation(NotEmpty.class);
+			if(rule_notempty!=null) {
+				RequireRule rule=new RequireRule();
+				rule.setMessage(rule_notempty.message());
+				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+			}
+
 			
+			Size rule_size=field.getAnnotation(Size.class);
+			if(rule_size!=null) {
+				StringRule rule=new StringRule();
+				rule.setMessage(rule_size.message());
+				rule.setMin(rule_size.min());
+				rule.setMax(rule_size.max());
+				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+			}
+			Length rule_length=field.getAnnotation(Length.class);
+			if(rule_length!=null) {
+				StringRule rule=new StringRule();
+				rule.setMessage(rule_length.message());
+				rule.setMin(rule_length.min());
+				rule.setMax(rule_length.max());
+				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+			}
+			
+			Min rule_min=field.getAnnotation(Min.class);
+			Max rule_max=field.getAnnotation(Max.class);
+			if(rule_min!=null || rule_max!=null) {
+				NumberRule rule=new NumberRule();
+				if(rule_min!=null) {
+					rule.setMessage(rule_min.message());
+					rule.setMin((int)rule_min.value());
+				}
+				if(rule_max!=null) {
+					rule.setMessage(rule.getMessage()!=null?(rule.getMessage()+","+rule_max.message()):rule_max.message());
+					rule.setMax((int)rule_max.value());
+				}
+				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+			}
+			Range rule_range=field.getAnnotation(Range.class);
+			if(rule_range!=null) {
+				StringRule rule=new StringRule();
+				rule.setMessage(rule_range.message());
+				rule.setMin((int)rule_range.min());
+				rule.setMax((int)rule_range.max());
+				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+			}
+			Email rule_email=field.getAnnotation(Email.class);
+			if(rule_email!=null) {
+				EmailRule rule=new EmailRule();
+				rule.setMessage(rule_range.message());
+				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+			}
 			
 			
 			//propertyColumns.add(propertyColumn);
