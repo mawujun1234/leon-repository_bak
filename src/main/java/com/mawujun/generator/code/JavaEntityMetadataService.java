@@ -46,7 +46,7 @@ import com.mawujun.generator.rules.StringRule;
 import com.mawujun.generator.rules.URLRule;
 import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.ReflectUtil;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 /**
  * 用于从领域模型中读取 meta信息的
@@ -69,7 +69,7 @@ public class JavaEntityMetadataService {
 		try {
 			PropertiesUtils aa = PropertiesUtils.load("generator.properties");
 			String className=aa.getProperty("nameStrategy");
-			if(StringUtils.hasText(className)) {
+			if(StringUtil.hasText(className)) {
 				Class clazz=Class.forName(className);
 				nameStrategy=(NameStrategy) clazz.newInstance();
 			}
@@ -123,7 +123,7 @@ public class JavaEntityMetadataService {
 		//ll
 		Table tableAnnotation=(Table)clazz.getAnnotation(Table.class);
 		if(tableAnnotation!=null){
-			if(StringUtils.hasText(tableAnnotation.name())) {
+			if(StringUtil.hasText(tableAnnotation.name())) {
 				root.setEntityTableName(tableAnnotation.name());
 			} else {
 				//throw new RuntimeException("@Table注解的表名需要设置");
@@ -159,7 +159,7 @@ public class JavaEntityMetadataService {
 		
 		TableDefine tableDefine=(TableDefine)clazz.getAnnotation(TableDefine.class);
 		if(tableDefine!=null) {
-			if(StringUtils.hasText(tableDefine.comment())) {
+			if(StringUtil.hasText(tableDefine.comment())) {
 				root.setComment(tableDefine.comment());
 			}
 		}
@@ -212,7 +212,7 @@ public class JavaEntityMetadataService {
 				propertyColumn.setUnique(column.unique());
 				propertyColumn.setInsertable(column.insertable());
 				propertyColumn.setUpdatable(column.updatable());
-				if(StringUtils.hasText(column.name())) {
+				if(StringUtil.hasText(column.name())) {
 					propertyColumn.setColumn(column.name());
 				} else {
 					propertyColumn.setColumn(nameStrategy.propertyToColumnName(propertyColumn.getProperty(),code_columnPrefix));
@@ -549,14 +549,14 @@ public class JavaEntityMetadataService {
 	private void assignComment(Field field,PropertyColumn propertyColumn) {
 		ColDefine colDefinition=field.getAnnotation(ColDefine.class);
 		if(colDefinition!=null) {
-			if(StringUtils.hasText(colDefinition.defaultValue())) {
+			if(StringUtil.hasText(colDefinition.defaultValue())) {
 				propertyColumn.setDefaultValue(colDefinition.defaultValue());
 			}
-			if(StringUtils.hasText(colDefinition.label())) {
+			if(StringUtil.hasText(colDefinition.label())) {
 				propertyColumn.setLabel(colDefinition.label());
 				propertyColumn.setComment(colDefinition.label());
 			}
-			if(StringUtils.hasText(colDefinition.comment())) {
+			if(StringUtil.hasText(colDefinition.comment())) {
 				propertyColumn.setComment(colDefinition.comment());
 			}
 			

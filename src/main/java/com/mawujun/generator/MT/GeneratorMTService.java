@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.mawujun.generator.annotation.ColDefine;
 import com.mawujun.lang.Assert;
 import com.mawujun.util.PropertiesUtils;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 /**
  * 生成的类用来快速的引用某个领域类的字段，这样既可以保证字段的准确度，又可以快速引用
@@ -340,7 +340,7 @@ public class GeneratorMTService {
     	Table table = (Table) clazz.getAnnotation(Table.class);
 		if (table != null) {
 			// String[] aa=new String[2];
-			if (StringUtils.hasText(table.name())) {
+			if (StringUtil.hasText(table.name())) {
 				builder.append("	* 对应的表名是："+table.name()+" \n");
 			}
 		}else {
@@ -349,7 +349,7 @@ public class GeneratorMTService {
 		org.hibernate.annotations.Table table_hibernate = (org.hibernate.annotations.Table) clazz.getAnnotation(org.hibernate.annotations.Table.class);
 		if (table_hibernate != null) {
 			// String[] aa=new String[2];
-			if (StringUtils.hasText(table_hibernate.comment())) {
+			if (StringUtil.hasText(table_hibernate.comment())) {
 				builder.append("	* 对应的表注释是："+table_hibernate.comment()+" \n");
 			}
 		}
@@ -366,10 +366,10 @@ public class GeneratorMTService {
     	ColDefine colDefine = (ColDefine) field.getAnnotation(ColDefine.class);
 		if (colDefine != null) {
 			// String[] aa=new String[2];
-			if (StringUtils.hasText(colDefine.comment())) {
+			if (StringUtil.hasText(colDefine.comment())) {
 				builder.append("	*"+colDefine.comment()+" \n");
 			}
-			if (StringUtils.hasText(colDefine.defaultValue())) {
+			if (StringUtil.hasText(colDefine.defaultValue())) {
 				builder.append("	* 默认值是:"+colDefine.defaultValue()+" \n");
 			}
 
@@ -448,7 +448,7 @@ public class GeneratorMTService {
                  		fileWrite.append(generateComment(embeddedIdfield));
                  		 Column columnAnnotation=(Column)embeddedIdfield.getAnnotation(Column.class);
                  		 if(columnAnnotation==null || (columnAnnotation!=null && columnAnnotation.name().equals(""))){
-             				 fileWrite.append("		public static final String "+StringUtils.camelToUnderline(embeddedIdfield.getName())+"=\""+StringUtils.camelToUnderline(embeddedIdfield.getName())+"\";\n");
+             				 fileWrite.append("		public static final String "+StringUtil.camelToUnderline(embeddedIdfield.getName())+"=\""+StringUtil.camelToUnderline(embeddedIdfield.getName())+"\";\n");
              			 } else {
              				 fileWrite.append("		public static final String "+columnAnnotation.name()+"=\""+columnAnnotation.name()+"\";\n");
              			 }
@@ -491,8 +491,8 @@ public class GeneratorMTService {
                 	 for (Field embeddedIdfield : embeddedIdFields) { 
                 		 fileWrite.append(generateComment(embeddedIdfield));
                 		 Column columnAnnotation=(Column)embeddedIdfield.getAnnotation(Column.class);
-                		 if(columnAnnotation==null || (columnAnnotation!=null && !StringUtils.hasText(columnAnnotation.name()))){
-            				 fileWrite.append("		public static final String "+StringUtils.camelToUnderline(embeddedIdfield.getName())+"=\""+StringUtils.camelToUnderline(embeddedIdfield.getName())+"\";\n");
+                		 if(columnAnnotation==null || (columnAnnotation!=null && !StringUtil.hasText(columnAnnotation.name()))){
+            				 fileWrite.append("		public static final String "+StringUtil.camelToUnderline(embeddedIdfield.getName())+"=\""+StringUtil.camelToUnderline(embeddedIdfield.getName())+"\";\n");
             			 } else {
             				 fileWrite.append("		public static final String "+columnAnnotation.name()+"=\""+columnAnnotation.name()+"\";\n");
             			 }
@@ -503,8 +503,8 @@ public class GeneratorMTService {
                 	 for (Field embeddedIdfield : embeddedIdFields) {
                 		 fileWrite.append(generateComment(embeddedIdfield));
                 		 Column columnAnnotation=(Column)embeddedIdfield.getAnnotation(Column.class);
-                		 if(columnAnnotation==null || (columnAnnotation!=null && !StringUtils.hasText(columnAnnotation.name()))){
-            				 fileWrite.append("	public static final String "+StringUtils.camelToUnderline(embeddedIdfield.getName())+"=\""+StringUtils.camelToUnderline(embeddedIdfield.getName())+"\";\n");
+                		 if(columnAnnotation==null || (columnAnnotation!=null && !StringUtil.hasText(columnAnnotation.name()))){
+            				 fileWrite.append("	public static final String "+StringUtil.camelToUnderline(embeddedIdfield.getName())+"=\""+StringUtil.camelToUnderline(embeddedIdfield.getName())+"\";\n");
             			 } else {
             				 fileWrite.append("	public static final String "+columnAnnotation.name()+"=\""+columnAnnotation.name()+"\";\n");
             			 }
@@ -512,8 +512,8 @@ public class GeneratorMTService {
             	 }  else if(isBaseType(field.getType()) || field.getType().isEnum()){
             		 	fileWrite.append(generateComment(field));
             			 Column columnAnnotation=(Column)field.getAnnotation(Column.class);
-            			 if(columnAnnotation==null || (columnAnnotation!=null && !StringUtils.hasText(columnAnnotation.name()))){
-            				 fileWrite.append("	public static final String "+StringUtils.camelToUnderline(field.getName())+"=\""+StringUtils.camelToUnderline(field.getName())+"\";\n");
+            			 if(columnAnnotation==null || (columnAnnotation!=null && !StringUtil.hasText(columnAnnotation.name()))){
+            				 fileWrite.append("	public static final String "+StringUtil.camelToUnderline(field.getName())+"=\""+StringUtil.camelToUnderline(field.getName())+"\";\n");
             			 } else {
             				 fileWrite.append("	public static final String "+columnAnnotation.name()+"=\""+columnAnnotation.name()+"\";\n");
             			 }
@@ -521,11 +521,11 @@ public class GeneratorMTService {
                  } else if(!isOf(field.getType(),Map.class) && !isOf(field.getType(),Collection.class)){ 
                 	 fileWrite.append(generateComment(field));
                 	 Column columnAnnotation=(Column)field.getAnnotation(Column.class);
-                    	 if(columnAnnotation==null || (columnAnnotation!=null && !StringUtils.hasText(columnAnnotation.name()))){
+                    	 if(columnAnnotation==null || (columnAnnotation!=null && !StringUtil.hasText(columnAnnotation.name()))){
                     		 fileWrite.append("	/**\n");
-                        	 fileWrite.append("	* 访问外键的列名，用于sql的时候，返回的是"+StringUtils.camelToUnderline(field.getName())+"_id\n");
+                        	 fileWrite.append("	* 访问外键的列名，用于sql的时候，返回的是"+StringUtil.camelToUnderline(field.getName())+"_id\n");
                         	 fileWrite.append("	*/\n");
-                        	 fileWrite.append("	public static final String "+StringUtils.camelToUnderline(field.getName())+"_id=\""+StringUtils.camelToUnderline(field.getName())+"_id\";\n");
+                        	 fileWrite.append("	public static final String "+StringUtil.camelToUnderline(field.getName())+"_id=\""+StringUtil.camelToUnderline(field.getName())+"_id\";\n");
                     	 } else {
                     		 fileWrite.append("	/**\n");
                         	 fileWrite.append("	* 访问外键的列名，用于sql的时候，返回的是"+columnAnnotation.name()+"_id\n");

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.mawujun.generator.rules.AbstractRule;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 public class PropertyColumn {
 	private String column;//列名
@@ -100,13 +100,13 @@ public class PropertyColumn {
 	
 	public String getColDefine() {
 		StringBuilder builder=new StringBuilder();
-		if(StringUtils.hasText(comment)) {
+		if(StringUtil.hasText(comment)) {
 			builder.append(",comment=\""+comment+"\"");
 		}
-		if(StringUtils.hasText(label)) {
+		if(StringUtil.hasText(label)) {
 			builder.append(",label=\""+label+"\"");
 		}
-		if(StringUtils.hasText(defaultValue)) {
+		if(StringUtil.hasText(defaultValue)) {
 			builder.append(",defaultValue=\""+defaultValue+"\"");
 		}
 		if(builder.length()>0) {

@@ -3,7 +3,7 @@ package com.mawujun.repository.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	/**
@@ -269,7 +269,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd add(String key,Object value) {
-		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.isNotEmpty(value)) {
 			return this;
 		}
 		this.put(key, value);
@@ -280,7 +280,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * 如果值为null，就不会添加这个条件
 	 */
 	public Cnd add(String key,OpEnum opEnum,Object value) {
-		if(!StringUtils.hasText(key) || !StringUtils.isNotEmpty(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.isNotEmpty(value)) {
 			return this;
 		}
 		this.put(key, value);
@@ -422,7 +422,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd like(String key,String value) {
-		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.like,"%"+value+"%");
@@ -435,7 +435,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd likeprefix(String key,String value) {
-		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.likeprefix,"%"+value);
@@ -449,7 +449,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd likesuffix(String key,String value) {
-		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.likesuffix,value+"%");
@@ -463,7 +463,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd like_i(String key,String value) {
-		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.like_i,"%"+value+"%");
@@ -476,7 +476,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd likeprefix_i(String key,String value) {
-		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.likeprefix_i,"%"+value);
@@ -490,7 +490,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd likesuffix_i(String key,String value) {
-		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.likesuffix_i,value+"%");
@@ -503,7 +503,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd notlike(String key,String value) {
-		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.notlike,"%"+value+"%");
@@ -516,7 +516,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd notlikeprefix(String key,String value) {
-		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.notlikeprefix,"%"+value);
@@ -530,7 +530,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	 * @return
 	 */
 	public Cnd notlikesuffix(String key,String value) {
-		if(!StringUtils.hasText(key) || !StringUtils.hasText(value)) {
+		if(!StringUtil.hasText(key) || !StringUtil.hasText(value)) {
 			return this;
 		}
 		this.add(key,OpEnum.notlikesuffix,value+"%");

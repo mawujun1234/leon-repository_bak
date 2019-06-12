@@ -45,7 +45,7 @@ import com.mawujun.io.FileUtil;
 import com.mawujun.lang.Assert;
 import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.ReflectUtil;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 public class GenerateDDLService {
 	private final static Logger logger = LoggerFactory.getLogger(GenerateDDLService.class);
@@ -226,7 +226,7 @@ public class GenerateDDLService {
 			SimpleValue kv = (SimpleValue) pc.getIdentifier();
 			for (Column col : pk_list) {
 				// 简单粗暴的处理了,兼容id直接设置为驼峰形式和下划线形式
-				assignColCommentAndDefaultvalue(pc.getMappedClass(), StringUtils.underlineToCamel(col.getName()), col);
+				assignColCommentAndDefaultvalue(pc.getMappedClass(), StringUtil.underlineToCamel(col.getName()), col);
 				assignColCommentAndDefaultvalue(pc.getMappedClass(), col.getName(), col);
 			}
 		}
@@ -248,7 +248,7 @@ public class GenerateDDLService {
 		if(tableDefine==null) {
 			return;
 		}
-		if(StringUtils.hasText(tableDefine.comment())) {
+		if(StringUtil.hasText(tableDefine.comment())) {
 			table.setComment(tableDefine.comment());
 		}
 		FK[] fks=tableDefine.fks();
@@ -291,7 +291,7 @@ public class GenerateDDLService {
 			}
 			
 			//keyDefinition应该是和colDefinition一样，自己定义的东西
-			ForeignKey foreignKey=table.createForeignKey("fk_"+StringUtils.randomStr(8), 
+			ForeignKey foreignKey=table.createForeignKey("fk_"+StringUtil.randomStr(8), 
 					keyColumns, 
 					referencedEntityName, null,  
 					referencedColumns);
@@ -311,10 +311,10 @@ public class GenerateDDLService {
 		ColDefine colDefine = (ColDefine) field.getAnnotation(ColDefine.class);
 		if (colDefine != null) {
 			// String[] aa=new String[2];
-			if (StringUtils.hasText(colDefine.comment())) {
+			if (StringUtil.hasText(colDefine.comment())) {
 				col.setComment(colDefine.comment());
 			}
-			if (StringUtils.hasText(colDefine.defaultValue())) {
+			if (StringUtil.hasText(colDefine.defaultValue())) {
 				col.setDefaultValue(colDefine.defaultValue());
 			}
 

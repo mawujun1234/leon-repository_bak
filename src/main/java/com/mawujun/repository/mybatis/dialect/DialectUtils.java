@@ -5,7 +5,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import com.mawujun.repository.mybatis.interceptor.PageException;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 public class DialectUtils {
     public static  DBAlias getDialect_name(Connection conn) {
@@ -13,7 +13,7 @@ public class DialectUtils {
     	DBAlias dbAlias_result=null;
     	try {
 			String jdbcUrl=conn.getMetaData().getURL();
-	        if (StringUtils.isEmpty(jdbcUrl)) {
+	        if (StringUtil.isEmpty(jdbcUrl)) {
 	          throw new PageException("无法自动获取jdbcUrl，请在分页插件中配置leon.mybatis.dialect参数!");
 	        }
 			

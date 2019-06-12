@@ -12,7 +12,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import com.mawujun.exception.BizException;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 public class ValidatorUtils {
 	 //private final Log logger = LogFactory.getLog(getClass());
@@ -72,7 +72,7 @@ public class ValidatorUtils {
 		for (ConstraintViolation violation : constraintViolations) {
 			errorMessages.add(violation.getMessage());
 		}
-		return StringUtils.join(errorMessages, separator);
+		return StringUtil.join(errorMessages, separator);
 	}
 
 	/**

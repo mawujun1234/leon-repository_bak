@@ -20,7 +20,7 @@ import com.mawujun.generator.other.JarFileSearch;
 import com.mawujun.io.FileUtil;
 import com.mawujun.lang.Assert;
 import com.mawujun.util.PropertiesUtils;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 import freemarker.cache.FileTemplateLoader;
 import freemarker.cache.MultiTemplateLoader;
@@ -421,7 +421,7 @@ public class GeneratorCodeService {
 	 * @throws IOException
 	 */
 	private static void generator(EntityTable root, String ftl, Writer writer) throws TemplateException, IOException {
-		if (!StringUtils.hasLength(ftl)) {
+		if (!StringUtil.hasLength(ftl)) {
 			throw new NullArgumentException("模板文件名称不能为null");
 		}
 

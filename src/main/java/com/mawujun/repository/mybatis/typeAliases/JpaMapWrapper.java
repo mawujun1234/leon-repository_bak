@@ -5,7 +5,7 @@ import java.util.Map;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.wrapper.MapWrapper;
 
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 public class JpaMapWrapper extends MapWrapper {
 	public JpaMapWrapper(MetaObject metaObject, Map<String, Object> map) {
@@ -16,7 +16,7 @@ public class JpaMapWrapper extends MapWrapper {
 	@Override
 	public String findProperty(String name, boolean useCamelCaseMapping) {
 		if(useCamelCaseMapping){      
-			return StringUtils.underlineToCamel(name);
+			return StringUtil.underlineToCamel(name);
 		}
 		return name;
 	}

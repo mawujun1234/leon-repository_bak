@@ -60,7 +60,7 @@ import com.mawujun.repository.utils.OpEnum;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.util.ArrayUtil;
 import com.mawujun.util.ReflectUtil;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 @Repository
 //@Transactional(rollbackOn= {Exception.class})
@@ -160,7 +160,7 @@ public class JpaDao {
 		// JpaEntityInformation entityInformation=getEntityInformation(entityClass);
 		// return
 		// StringUtils.collectionToDelimitedString(entityInformation.getIdAttributeNames().iterator());
-		return StringUtils.collectionToCommaDelimitedString(getIdAttributeNames(entityClass));
+		return StringUtil.collectionToCommaDelimitedString(getIdAttributeNames(entityClass));
 	}
 
 	public Object create(Class entityClass, Object entity) {

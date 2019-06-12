@@ -1,6 +1,6 @@
 package com.mawujun.generator.other;
 
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 
 /**
@@ -14,7 +14,7 @@ public class DefaultNameStrategy implements NameStrategy {
 	//public static  String tablePrefix = "t_";
 	public String classToTableName(String className,String tablePrefix) {
 		// TODO Auto-generated method stub
-		return tablePrefix + StringUtils.camelToUnderline(StringUtils.uncapitalize(className));
+		return tablePrefix + StringUtil.camelToUnderline(StringUtil.uncapitalize(className));
 	}
 	@Override
 	public String classToAlias(String className) {
@@ -26,10 +26,10 @@ public class DefaultNameStrategy implements NameStrategy {
 	 * 默认无前缀，并且驼峰变下划线
 	 */
 	public String propertyToColumnName(String propertyName,String columnPrefix) {
-		if(StringUtils.hasText(columnPrefix)) {
-			return columnPrefix + StringUtils.camelToUnderline(propertyName);
+		if(StringUtil.hasText(columnPrefix)) {
+			return columnPrefix + StringUtil.camelToUnderline(propertyName);
 		} else {
-			return  StringUtils.camelToUnderline(propertyName);
+			return  StringUtil.camelToUnderline(propertyName);
 		}
 		
 	}
@@ -53,7 +53,7 @@ public class DefaultNameStrategy implements NameStrategy {
     }
     
     public String underlineToCamel(String name) {
-    	return StringUtils.underlineToCamel(name);
+    	return StringUtil.underlineToCamel(name);
     }
 	
     /**
@@ -64,7 +64,7 @@ public class DefaultNameStrategy implements NameStrategy {
      * @return
      */
     public  String removePrefix(String name, String... prefix) {
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtil.isEmpty(name)) {
             return "";
         }
         if (null != prefix) {

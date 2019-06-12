@@ -18,7 +18,7 @@ import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
 import com.mawujun.repository.mybatis.dialect.DialectUtils;
 import com.mawujun.util.PropertiesUtils;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 /**
  * 专门用来读取表结构的
@@ -52,7 +52,7 @@ public class DbTableMetadataService {
 		try {
 			PropertiesUtils aa = PropertiesUtils.load("generator.properties");
 			String className = aa.getProperty("nameStrategy");
-			if (StringUtils.hasText(className)) {
+			if (StringUtil.hasText(className)) {
 				Class clazz = Class.forName(className);
 				nameStrategy = (NameStrategy) clazz.newInstance();
 			}
@@ -66,26 +66,26 @@ public class DbTableMetadataService {
 			// code_basepackage=aa.getProperty("code.schemaname");
 
 			String db_tablePrefix = aa.getProperty("db.tablePrefix");
-			if (StringUtils.hasText(db_tablePrefix)) {
+			if (StringUtil.hasText(db_tablePrefix)) {
 				tablePrefix = db_tablePrefix.split(",");
 			} else {
 				tablePrefix = new String[0];
 			}
 			String db_columnPrefix = aa.getProperty("db.columnPrefix");
-			if (StringUtils.hasText(db_columnPrefix)) {
+			if (StringUtil.hasText(db_columnPrefix)) {
 				columnPrefix = db_columnPrefix.split(",");
 			} else {
 				columnPrefix = new String[0];
 			}
 
 			String db_include = aa.getProperty("db.include");
-			if (StringUtils.hasText(db_include)) {
+			if (StringUtil.hasText(db_include)) {
 				include = db_include.split(",");
 			} else {
 				include = new String[0];
 			}
 			String db_exclude = aa.getProperty("db.exclude");
-			if (StringUtils.hasText(db_exclude)) {
+			if (StringUtil.hasText(db_exclude)) {
 				exclude = db_exclude.split(",");
 			} else {
 				exclude = new String[0];
@@ -94,14 +94,14 @@ public class DbTableMetadataService {
 			
 			
 			String db_version = aa.getProperty("db.version.column");
-			if (StringUtils.hasText(db_version)) {
+			if (StringUtil.hasText(db_version)) {
 				version = db_version.split(",");
 			} else {
 				version = new String[]{"version"};
 			}
 			
 			String db_logicdelete = aa.getProperty("db.logicdelete.column");
-			if (StringUtils.hasText(db_logicdelete)) {
+			if (StringUtil.hasText(db_logicdelete)) {
 				logicdelete = db_logicdelete.split(",");
 			} else {
 				logicdelete = new String[]{"deleted"};
@@ -202,7 +202,7 @@ public class DbTableMetadataService {
 			if (DBAlias.mysql == dbQuery.dbType()) {
 				if (tablenames != null && tablenames.length > 0) {
 
-					tablesSql = tablesSql + " where name in (" + StringUtils.joinAround(tablenames, ",", "'") + ")";
+					tablesSql = tablesSql + " where name in (" + StringUtil.joinAround(tablenames, ",", "'") + ")";
 				}
 			} else if (DBAlias.postgresql == dbQuery.dbType()) {
 				tablesSql = String.format(tablesSql, db_schemaname);
@@ -240,7 +240,7 @@ public class DbTableMetadataService {
 				}
 				String tableName = results.getString(dbQuery.tableName());
 
-				if (StringUtils.isNotEmpty(tableName)) {
+				if (StringUtil.isNotEmpty(tableName)) {
 					// 把前缀不匹配，但是不在include中的都去掉
 					isadd = true;
 
@@ -375,7 +375,7 @@ public class DbTableMetadataService {
 
 				String key = results.getString(dbQuery.fieldKey());
 
-				boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");
+				boolean isId = StringUtil.isNotEmpty(key) && key.toUpperCase().equals("PRI");
 				// 处理ID
 				if (isId) {
 					field.setIsId(true);

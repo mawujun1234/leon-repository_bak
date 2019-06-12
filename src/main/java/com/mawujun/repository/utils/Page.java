@@ -9,7 +9,7 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import com.mawujun.exception.BizException;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 /**
  * 继承List的原因是mybatis的接口只能返回list，继承list就可以以Page的形式返回了

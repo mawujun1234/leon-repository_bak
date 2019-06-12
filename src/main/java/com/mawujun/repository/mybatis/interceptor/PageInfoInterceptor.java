@@ -28,7 +28,7 @@ import com.mawujun.repository.mybatis.dialect.Dialect;
 import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.repository.utils.PageMethodCache;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Intercepts(
@@ -54,7 +54,7 @@ public class PageInfoInterceptor implements Interceptor {
             MappedStatement ms = (MappedStatement) args[0];
             if(dialect==null) {	
             	String dialect_classname=SpringContextUtils.getEnvironment().getProperty("leon.mybatis.dialect");
-            	if(StringUtils.hasText(dialect_classname)) {
+            	if(StringUtil.hasText(dialect_classname)) {
 					try {
 						Class<?> aClass = Class.forName(dialect_classname);
 						dialect = (Dialect) aClass.newInstance();
