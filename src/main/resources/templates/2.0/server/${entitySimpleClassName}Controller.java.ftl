@@ -143,9 +143,9 @@ public class ${entitySimpleClassName}Controller {
 	@RequestMapping("/${simpleClassNameFirstLower}/remove")
 	@ResponseBody
 	@RequiresPermissions("${module}:${entitySimpleClassNameUncap}:remove")
-	public ${entitySimpleClassName} remove(@RequestBody ${entitySimpleClassName} ${simpleClassNameFirstLower}) {
+	public R remove(@RequestBody ${entitySimpleClassName} ${simpleClassNameFirstLower}) {
 		${simpleClassNameFirstLower}Service.remove(${simpleClassNameFirstLower});
-		return ${simpleClassNameFirstLower};
+		return R.ok().data(${simpleClassNameFirstLower});
 	}
 	
 	
