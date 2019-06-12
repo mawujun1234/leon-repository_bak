@@ -28,6 +28,7 @@ import javax.validation.constraints.Size;
 import org.apache.ibatis.type.Alias;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.URL;
 
 import com.mawujun.generator.annotation.ColDefine;
 import com.mawujun.generator.annotation.LogicDelete;
@@ -35,9 +36,14 @@ import com.mawujun.generator.annotation.TableDefine;
 import com.mawujun.generator.other.DefaultNameStrategy;
 import com.mawujun.generator.other.NameStrategy;
 import com.mawujun.generator.rules.EmailRule;
+import com.mawujun.generator.rules.Mobile;
+import com.mawujun.generator.rules.MobileRule;
 import com.mawujun.generator.rules.NumberRule;
+import com.mawujun.generator.rules.Phone;
+import com.mawujun.generator.rules.PhoneRule;
 import com.mawujun.generator.rules.RequireRule;
 import com.mawujun.generator.rules.StringRule;
+import com.mawujun.generator.rules.URLRule;
 import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.ReflectUtil;
 import com.mawujun.util.StringUtils;
@@ -367,43 +373,83 @@ public class JavaEntityMetadataService {
 			//String required_msg=null;
 			if(notNull!=null) {
 				RequireRule rule=new RequireRule();
-				rule.setMessage(notNull.message());
-				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+				if("{javax.validation.constraints.NotNull.message}".equals(notNull.message())) {
+					rule.setMessage(propertyColumn.getLabel()+"不能为空!");
+				} else {
+					rule.setMessage(notNull.message());
+				}
+				
+				root.addRule(propertyColumn.getProperty(), rule);
 			}
 			NotBlank rule_notblank=field.getAnnotation(NotBlank.class);
 			if(rule_notblank!=null) {
 				RequireRule rule=new RequireRule();
-				rule.setMessage(rule_notblank.message());
-				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+				if("{javax.validation.constraints.NotBlank.message}".equals(rule_notblank.message())) {
+					rule.setMessage(propertyColumn.getLabel()+"不能为空!");
+				} else {
+					rule.setMessage(rule_notblank.message());
+				}
+				root.addRule(propertyColumn.getProperty(), rule);
 			}
 			NotEmpty rule_notempty=field.getAnnotation(NotEmpty.class);
 			if(rule_notempty!=null) {
 				RequireRule rule=new RequireRule();
-				rule.setMessage(rule_notempty.message());
-				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+				if("{javax.validation.constraints.NotEmpty.message}".equals(rule_notempty.message())) {
+					rule.setMessage(propertyColumn.getLabel()+"不能为空!");
+				} else {
+					rule.setMessage(rule_notempty.message());
+				}			
+				root.addRule(propertyColumn.getProperty(), rule);
 			}
 
 			
 			Size rule_size=field.getAnnotation(Size.class);
 			if(rule_size!=null) {
 				StringRule rule=new StringRule();
-				rule.setMessage(rule_size.message());
+				if(propertyColumn.getClazz()!=String.class) {
+					rule.setType("'number'");
+				}
+				if("{javax.validation.constraints.Size.message}".equals(rule_size.message())) {
+					if("'number'".equals(rule.getType())) {
+						rule.setMessage(propertyColumn.getLabel()+"请输入"+rule_size.min()+"~"+rule_size.max()+"范围内的值。!");
+						propertyColumn.setNumberValidRule(true);
+					} else {
+						rule.setMessage(propertyColumn.getLabel()+"长度应在"+rule_size.min()+"到"+rule_size.max()+" 个字符!");
+					}				
+				} else {
+					rule.setMessage(rule_size.message());
+				}	
+				
 				rule.setMin(rule_size.min());
 				rule.setMax(rule_size.max());
-				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+				root.addRule(propertyColumn.getProperty(), rule);
 			}
 			Length rule_length=field.getAnnotation(Length.class);
 			if(rule_length!=null) {
 				StringRule rule=new StringRule();
-				rule.setMessage(rule_length.message());
+				if(propertyColumn.getClazz()!=String.class) {
+					rule.setType("'number'");
+				}
+				if("{org.hibernate.validator.constraints.Length.message}".equals(rule_length.message())) {
+					if("'number'".equals(rule.getType())) {
+						rule.setMessage(propertyColumn.getLabel()+"请输入"+rule_length.min()+"~"+rule_length.max()+"范围内的值。!");
+						propertyColumn.setNumberValidRule(true);
+					} else {
+						rule.setMessage(propertyColumn.getLabel()+"长度应在"+rule_length.min()+"到"+rule_length.max()+" 个字符!");
+					}				
+				} else {
+					rule.setMessage(rule_length.message());
+				}	
+				
 				rule.setMin(rule_length.min());
 				rule.setMax(rule_length.max());
-				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+				root.addRule(propertyColumn.getProperty(), rule);
 			}
 			
 			Min rule_min=field.getAnnotation(Min.class);
 			Max rule_max=field.getAnnotation(Max.class);
 			if(rule_min!=null || rule_max!=null) {
+				propertyColumn.setNumberValidRule(true);
 				NumberRule rule=new NumberRule();
 				if(rule_min!=null) {
 					rule.setMessage(rule_min.message());
@@ -413,21 +459,67 @@ public class JavaEntityMetadataService {
 					rule.setMessage(rule.getMessage()!=null?(rule.getMessage()+","+rule_max.message()):rule_max.message());
 					rule.setMax((int)rule_max.value());
 				}
-				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+				root.addRule(propertyColumn.getProperty(), rule);
 			}
 			Range rule_range=field.getAnnotation(Range.class);
 			if(rule_range!=null) {
-				StringRule rule=new StringRule();
-				rule.setMessage(rule_range.message());
+				propertyColumn.setNumberValidRule(true);
+				NumberRule rule=new NumberRule();
+				if("{org.hibernate.validator.constraints.Range.message}".equals(rule_range.message())) {
+					rule.setMessage(propertyColumn.getLabel()+"请输入"+rule_range.min()+"~"+rule_range.max()+"范围内的值。!");
+				} else {
+					rule.setMessage(rule_range.message());
+				}
+				
 				rule.setMin((int)rule_range.min());
 				rule.setMax((int)rule_range.max());
-				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+				root.addRule(propertyColumn.getProperty(), rule);
 			}
 			Email rule_email=field.getAnnotation(Email.class);
 			if(rule_email!=null) {
 				EmailRule rule=new EmailRule();
-				rule.setMessage(rule_range.message());
-				propertyColumn.addRule(propertyColumn.getProperty(), rule);
+				if("{javax.validation.constraints.Email.message}".equals(rule_email.message())) {
+					rule.setMessage(propertyColumn.getLabel()+"格式不正确!");
+				} else {
+					rule.setMessage(rule_email.message());
+				}
+				
+				root.addRule(propertyColumn.getProperty(), rule);
+			}
+			
+			Mobile rule_mobile=field.getAnnotation(Mobile.class);
+			if(rule_mobile!=null) {
+				MobileRule rule=new MobileRule();
+				if("{com.mawujun.generator.rules.Mobile.message}".equals(rule_mobile.message())) {
+					//rule.setMessage(propertyColumn.getLabel()+"格式不正确!");
+				} else {
+					rule.setMessage(rule_mobile.message());
+				}
+				
+				root.addRule(propertyColumn.getProperty(), rule);
+			}
+			Phone rule_phone=field.getAnnotation(Phone.class);
+			if(rule_phone!=null) {
+				PhoneRule rule=new PhoneRule();
+				if("{com.mawujun.generator.rules.Phone.message}".equals(rule_phone.message())) {
+					//rule.setMessage(propertyColumn.getLabel()+"格式不正确!");
+				} else {
+					rule.setMessage(rule_phone.message());
+				}
+				
+				root.addRule(propertyColumn.getProperty(), rule);
+			}
+			
+			URL rule_url=field.getAnnotation(URL.class);
+			if(rule_url!=null) {
+				URLRule rule=new URLRule();
+				if("{org.hibernate.validator.constraints.URL.message}".equals(rule_url.message())) {
+					//rule.setMessage(propertyColumn.getLabel()+"格式不正确!");
+				} else {
+					rule.setMessage(rule_url.message());
+				}
+				
+				root.addRule(propertyColumn.getProperty(), rule);
 			}
 			
 			

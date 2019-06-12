@@ -1,13 +1,12 @@
 package com.mawujun.generator.rules;
 
-public class NumberRule extends AbstractRule{
-	private String type="'number'";
+public class MobileRule extends AbstractRule{
+	private String type="'string'";
+	
+	private String validator="function(rule, value, callback){if(!(/^1[0-9]{10}$/.test(value))){callback(new Error('手机号格式错误'));} else {callback()}}";
 	
 	
-	private Integer min;
-	private Integer max;
-	
-	private String trigger= "['blur', 'change']";
+	private String trigger= "['blur','change']";
 
 	public String getType() {
 		return type;
@@ -15,22 +14,6 @@ public class NumberRule extends AbstractRule{
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public Integer getMin() {
-		return min;
-	}
-
-	public void setMin(Integer min) {
-		this.min = min;
-	}
-
-	public Integer getMax() {
-		return max;
-	}
-
-	public void setMax(Integer max) {
-		this.max = max;
 	}
 
 	public String getTrigger() {
@@ -46,14 +29,9 @@ public class NumberRule extends AbstractRule{
 		StringBuilder builder=new  StringBuilder();
 		builder.append("{");
 		builder.append("type:"+type);
+		builder.append(",validator:"+validator);
 		if(super.getMessage()!=null) {
 			builder.append(",message:'"+super.getMessage()+"'");
-		}
-		if(min!=null) {
-			builder.append(",min:"+min);
-		}
-		if(max!=null) {
-			builder.append(",max:"+max);
 		}
 		builder.append(",trigger:"+trigger);
 		builder.append("}");
@@ -61,6 +39,5 @@ public class NumberRule extends AbstractRule{
 		return builder.toString();
 	}
 
-	
 
 }

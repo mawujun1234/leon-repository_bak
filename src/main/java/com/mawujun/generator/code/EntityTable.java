@@ -8,6 +8,8 @@ import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.mawujun.generator.rules.AbstractRule;
+
 public class EntityTable {
 	//private String dbName;
 	
@@ -50,6 +52,26 @@ public class EntityTable {
 	//存放需要产生查询条件的属性
 	private boolean cndable=false;//判断是否具有条件查询，true表示有，false表示没有
 	List<PropertyColumn> cndPropertys =new ArrayList<PropertyColumn>();
+	
+	//存放的是前端的校验规则
+	Map<String,List<AbstractRule>> formRules=new HashMap<String,List<AbstractRule>>();
+	
+	
+	/**
+	 * 增加验证规则
+	 * @param fieldname
+	 * @param rule
+	 */
+	public void addRule(String fieldname,AbstractRule rule) {
+		List<AbstractRule> list=formRules.get(fieldname);
+		if(list==null) {
+			list=new ArrayList<AbstractRule>();
+		}
+		list.add(rule);
+		formRules.put(fieldname, list);
+	}
+	
+	
 	/**
 	 * 会自动设置
 	 * entitySimpleClassName，entitySimpleClassNameUncap，entityClassName，entityPackage
@@ -300,6 +322,11 @@ public class EntityTable {
 	}
 	public List<PropertyColumn> getCndPropertys() {
 		return cndPropertys;
+	}
+
+
+	public Map<String, List<AbstractRule>> getFormRules() {
+		return formRules;
 	}
 
 

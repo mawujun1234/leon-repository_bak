@@ -1,7 +1,7 @@
 package com.mawujun.generator.rules;
 
 public class RequireRule extends AbstractRule{
-	private String type="string";
+	private String type="'string'";
 	private Boolean  required=true;
 	
 	
@@ -40,7 +40,7 @@ public class RequireRule extends AbstractRule{
 		builder.append("type:"+type);
 		builder.append(",required:"+required);
 		if(super.getMessage()!=null) {
-			builder.append(",message:"+super.getMessage());
+			builder.append(",message:'"+super.getMessage()+"'");
 		}
 		builder.append(",trigger:"+trigger);
 		builder.append("}");

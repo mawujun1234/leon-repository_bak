@@ -47,7 +47,7 @@ public class StringRule extends AbstractRule{
 		builder.append("{");
 		builder.append("type:"+type);
 		if(super.getMessage()!=null) {
-			builder.append(",message:"+super.getMessage());
+			builder.append(",message:'"+super.getMessage()+"'");
 		}
 		if(min!=null) {
 			builder.append(",min:"+min);

@@ -6,9 +6,15 @@
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <#list propertyColumns as pc>
       <#if pc.persistable==true>
+      <#if pc.numberValidRule==true>
+      <el-form-item label="${pc.label}"  prop="${pc.property}">
+        <el-input v-model.number="dataForm.${pc.property}" placeholder="${pc.label}"></el-input>
+      </el-form-item>
+      <#else>
       <el-form-item label="${pc.label}"  prop="${pc.property}">
         <el-input v-model="dataForm.${pc.property}" placeholder="${pc.label}"></el-input>
       </el-form-item>
+      </#if>
       </#if>
       </#list>
       <!--
@@ -36,36 +42,6 @@
   import { isEmail, isMobile } from '@/utils/validate'
   export default {
     data () {
-      var validatePassword = (rule, value, callback) => {
-        if (!this.dataForm.id && !/\S/.test(value)) {
-          callback(new Error('密码不能为空'))
-        } else {
-          callback()
-        }
-      }
-      var validateComfirmPassword = (rule, value, callback) => {
-        if (!this.dataForm.id && !/\S/.test(value)) {
-          callback(new Error('确认密码不能为空'))
-        } else if (this.dataForm.password !== value) {
-          callback(new Error('确认密码与密码输入不一致'))
-        } else {
-          callback()
-        }
-      }
-      var validateEmail = (rule, value, callback) => {
-        if (!isEmail(value)) {
-          callback(new Error('邮箱格式错误'))
-        } else {
-          callback()
-        }
-      }
-      var validateMobile = (rule, value, callback) => {
-        if (!isMobile(value)) {
-          callback(new Error('手机号格式错误'))
-        } else {
-          callback()
-        }
-      }
       return {
         visible: false,
         dataForm: {
@@ -75,24 +51,18 @@
           </#if>
 		  </#list>
         },
-        dataRule: {
-          userName: [
-            { required: true, message: '用户名不能为空', trigger: 'blur' }
-          ],
-          password: [
-            { validator: validatePassword, trigger: 'blur' }
-          ],
-          comfirmPassword: [
-            { validator: validateComfirmPassword, trigger: 'blur' }
-          ],
-          email: [
-            { required: true, message: '邮箱不能为空', trigger: 'blur' },
-            { validator: validateEmail, trigger: 'blur' }
-          ],
-          mobile: [
-            { required: true, message: '手机号不能为空', trigger: 'blur' },
-            { validator: validateMobile, trigger: 'blur' }
-          ]
+        dataRule: { 
+        <#-- <#if formRules?exists && formRules.size>0> <#if formRules??>使用这种方法也可以 -->
+        <#if formRules??>
+        <#assign  keys=formRules?keys/>
+        <#list keys as key>
+          ${key}: [
+          	<#list formRules[key] as rule>
+          	${rule}<#if rule?has_next>,</#if>
+          	</#list> 
+          ]<#if key?has_next>,</#if>
+        </#list>
+        </#if>
         }
       }
     },
