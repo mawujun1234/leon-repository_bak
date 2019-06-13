@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
+import org.springframework.util.StringUtils;
+
+import com.mawujun.exception.BizException;
 import com.mawujun.io.FileUtil;
 import com.mawujun.lang.UUID;
 import com.mawujun.util.ArrayUtil;
@@ -23,25 +26,95 @@ import com.mawujun.util.URLUtil;
 public class Document {
 
 	/**
-	 * 文档名称
+	 * 文档名称,包含group的名稱，即包含子路径的名称，例如aa/bbb/ccc.jpg
 	 */
 	private String fullName;
 	
+	/**
+	 * 文档名称，不包含目录
+	 */
+	private String fileName;
+	
+	/**
+	 * 文档的原始名称
+	 */
+	private String originalFullName;
+	
+	/**
+	 * 文档的原始名称，不包含目录
+	 */
+	private String originalFileName;
+
+	/**
+	 * 是否使用原始的文件名保存文件
+	 */
+	private boolean userOrginalFileName=false;
 	/**
 	 * 最后一次修改时间
 	 */
 	private Date lastModified;
 	
+	public final static String spart_char="__" ;
 	/**
 	 * 文档内容的字节缓冲流
 	 */
 	private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 	
 	/**
-	 * @param fullName 文档的全名
+	 * fullName=ccc.jpg表是把jpg文件存放在指定的根目录下
+	 * fullName=aa/bbb/ccc.jpg:表示将文件存放在根目录下，并且生成子目录
+	 * @param fullName 文档的全名,
 	 */
+	public Document(String fullName,Boolean userOrginalFileName) {
+		if(!StringUtils.hasText(fullName)) {
+			throw new BizException("文件名不能为空!");
+		}
+		fullName=FileUtil.normalize(fullName);
+		this.userOrginalFileName=userOrginalFileName;
+		this.originalFullName= FileUtil.stripStartSlash(FileUtil.stripEndSlash(fullName));;
+		this.originalFileName=FileUtil.getFileName(fullName);
+		
+		if(userOrginalFileName) {
+			this.fileName=this.originalFileName;
+			this.fullName =originalFullName;
+		} else {
+			String aa[]=this.originalFileName.split(".");
+			this.fileName=aa[0]+spart_char+uniqueName()+"."+aa[1];
+			this.fullName = FileUtil.getFileParentPath(this.originalFullName)+File.separator+this.fileName;
+		}
+
+	}
 	public Document(final String fullName) {
-		this.fullName = FileUtil.stripStartSlash(FileUtil.stripEndSlash(FileUtil.normalize(fullName)));
+		this(fullName,false);
+	}
+	/**
+	 * @param fullName 文档的全名，可以是文件名，也可以带路径
+	 */
+	public Document(String groupName,final String filename,Boolean userOrginalFileName) {
+		
+		if(!StringUtils.hasText(filename)) {
+			throw new BizException("文件名不能为空!");
+		}
+		//groupName=FileUtil.normalize(groupName);
+		//fullName=FileUtil.normalize(fullName);
+		this.userOrginalFileName=userOrginalFileName;
+		if(groupName==null) {
+			groupName="";
+		}
+		this.originalFileName=FileUtil.getFileName(filename);
+		this.originalFullName = FileUtil.stripStartSlash(FileUtil.stripEndSlash(FileUtil.combine(groupName, filename)));
+		
+		if(userOrginalFileName) {
+			this.fileName=this.originalFileName;
+			this.fullName =originalFullName;
+		} else {
+			String aa[]=this.originalFileName.split("\\.");
+			this.fileName=aa[0]+spart_char+uniqueName()+"."+aa[1];
+			this.fullName = FileUtil.getFileParentPath(this.originalFullName)+"/"+this.fileName;
+		}		
+	}
+	public Document(String groupName,final String fullName) {
+		this(groupName,fullName,false);
 	}
 	
 //	/**
@@ -70,12 +143,7 @@ public class Document {
 		return UUID.randomUUID().toString();
 	}
 	
-	/**
-	 * @return 文档的名称
-	 */
-	public String getName() {
-		return this.fullName;
-	}
+
 	
 	/**
 	 * @return 文档的大小，按字节算
@@ -84,36 +152,6 @@ public class Document {
 		return this.buffer.size();
 	}
 	
-	/**
-	 * 加载文件的内容到文档中去，文档的名称是文件的名称
-	 * 
-	 * @param file 需要加载的文件
-	 * @return 加载的新文档
-	 * @throws IOException 如果读取文件时出错
-	 */
-	public static Document fromLocalFile(final File file) throws IOException {
-		return fromLocalFile(file.getAbsolutePath(), file);
-	}
-	
-	/**
-	 * @param fullName 文档的名称
-	 * @param file 需要加载的文件
-	 * @return 加载的新文件
-	 * @throws IOException 如果读取文件时出错
-	 */
-	public static Document fromLocalFile(final String fullName, final File file) throws IOException {
-		
-		Document document = new Document(fullName);
-		try (InputStream in = new FileInputStream(file)) {
-			for (int b = in.read(); b != -1; b = in.read()) {
-				document.buffer.write((byte) b);
-			}
-			document.lastModified = new Date(file.lastModified());
-		} catch (IOException e) {
-			throw e;
-		}
-		return document;
-	}
 
 	/**
 	 * @return 文档的最后修改日期
@@ -182,4 +220,14 @@ public class Document {
 	public void write(final byte[] bytes, final int offset, final int length) {
 		this.buffer.write(bytes, offset, length);
 	}
+	public String getFileName() {
+		return fileName;
+	}
+	public String getFullName() {
+		return fullName;
+	}
+	public boolean isUserOrginalFileName() {
+		return userOrginalFileName;
+	}
+
 }

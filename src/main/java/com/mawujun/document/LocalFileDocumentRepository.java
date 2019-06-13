@@ -1,10 +1,12 @@
 package com.mawujun.document;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -29,19 +31,6 @@ public class LocalFileDocumentRepository implements DocumentRepository {
 	@Value("${leon.doc.rootdir}")
 	private String root;
 	
-//	/**
-//	 * 获取文件的存放目录
-//	 * @param element
-//	 */
-//	public void configure(final Element element) {
-//		
-//		this.name = XmlUtil.getAttribute(element, "name");
-//		String value = XmlUtil.getChildElementText(element, "repository-root-directory", "");
-//		if (StringUtil.isNotBlank(value)) {
-//			this.root = Preference.instance().substitute(value);
-//		}
-//		this.root = StringUtil.trimNotNull(this.root);
-//	}
 	
 	public void checkRoot() {
 		if(!StringUtil.hasText(root)) {
@@ -80,17 +69,48 @@ public class LocalFileDocumentRepository implements DocumentRepository {
 		checkRoot();
 		File doc = new File(new File(this.root), fullName);
 		if (doc.isFile() && doc.exists()) {
-			return Document.fromLocalFile(doc);
+			return fromLocalFile(doc);
 		} else {
 			return null;
 		}
+	}
+	
+	/**
+	 * 加载文件的内容到文档中去，文档的名称是文件的名称
+	 * 
+	 * @param file 需要加载的文件
+	 * @return 加载的新文档
+	 * @throws IOException 如果读取文件时出错
+	 */
+	public Document fromLocalFile(final File file) throws IOException {
+		return fromLocalFile(file.getAbsolutePath(), file);
+	}
+	
+	/**
+	 * @param fullName 文档的名称
+	 * @param file 需要加载的文件
+	 * @return 加载的新文件
+	 * @throws IOException 如果读取文件时出错
+	 */
+	public Document fromLocalFile(final String fullName, final File file) throws IOException {
+		
+		Document document = new Document(fullName);
+		try (InputStream in = new FileInputStream(file)) {
+			for (int b = in.read(); b != -1; b = in.read()) {
+				document.write((byte) b);
+			}
+			document.setLastModified(new Date(file.lastModified()));
+		} catch (IOException e) {
+			throw e;
+		}
+		return document;
 	}
 
 	@Override
 	public boolean save(final Document document) throws IOException {
 		checkRoot();
 		if (document != null) {
-			File file = new File(new File(this.root), document.getName());
+			File file = new File(new File(this.root), document.getFullName());
 			try {
 				if ((file.getParentFile() != null) && (!file.getParentFile().exists())) {
 					file.getParentFile().mkdirs();
