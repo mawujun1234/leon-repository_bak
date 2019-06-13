@@ -109,12 +109,12 @@ public class R extends HashMap<String, Object> {
 		return this.putCode(value);
 	}
 	
-	public R putMsg(Object value) {
+	public R msg(Object value) {
 		super.put("msg", value);
 		return this;
 	}
 	public R setMsg(Object value) {
-		return this.putMsg(value);
+		return this.msg(value);
 	}
 	
 	

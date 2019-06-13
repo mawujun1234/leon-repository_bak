@@ -66,6 +66,9 @@ public class LocalFileDocumentRepository implements DocumentRepository {
 
 	@Override
 	public Document load(final String fullName) throws IOException {
+		if(!StringUtil.hasText(fullName)) {
+			throw new BizException("fullName参数不能为空!");
+		}
 		checkRoot();
 		File doc = new File(new File(this.root), fullName);
 		if (doc.isFile() && doc.exists()) {
@@ -94,7 +97,7 @@ public class LocalFileDocumentRepository implements DocumentRepository {
 	 */
 	public Document fromLocalFile(final String fullName, final File file) throws IOException {
 		
-		Document document = new Document(fullName);
+		Document document = new Document(fullName,true);
 		try (InputStream in = new FileInputStream(file)) {
 			for (int b = in.read(); b != -1; b = in.read()) {
 				document.write((byte) b);

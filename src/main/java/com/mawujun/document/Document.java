@@ -64,6 +64,7 @@ public class Document {
 	 * fullName=ccc.jpg表是把jpg文件存放在指定的根目录下
 	 * fullName=aa/bbb/ccc.jpg:表示将文件存放在根目录下，并且生成子目录
 	 * @param fullName 文档的全名,
+	 * @param userOrginalFileName 使用文件原来的名字，应用场景是load/download已经存在的文件的时候，还有就是保存的时候，按照原来的名字进行保存
 	 */
 	public Document(String fullName,Boolean userOrginalFileName) {
 		if(!StringUtils.hasText(fullName)) {
@@ -78,7 +79,7 @@ public class Document {
 			this.fileName=this.originalFileName;
 			this.fullName =originalFullName;
 		} else {
-			String aa[]=this.originalFileName.split(".");
+			String aa[]=this.originalFileName.split("\\.");
 			this.fileName=aa[0]+spart_char+uniqueName()+"."+aa[1];
 			this.fullName = FileUtil.getFileParentPath(this.originalFullName)+File.separator+this.fileName;
 		}
@@ -89,6 +90,7 @@ public class Document {
 	}
 	/**
 	 * @param fullName 文档的全名，可以是文件名，也可以带路径
+	 * @param userOrginalFileName 使用文件原来的名字，应用场景是load/download已经存在的文件的时候，还有就是保存的时候，按照原来的名字进行保存
 	 */
 	public Document(String groupName,final String filename,Boolean userOrginalFileName) {
 		
@@ -198,6 +200,31 @@ public class Document {
 		return this.buffer;
 	}
 	/**
+	 * 江文件的内容输出到外部的OutputStream，例如response.getOutputStream();
+	 * @param os
+	 * @return
+	 * @throws IOException 
+	 */
+	public void writeToOutputStream(OutputStream out) throws IOException {
+		 // 读取要下载的文件，保存到文件输入流
+        InputStream in = this.getInputStream();
+        // 创建输出流
+        //OutputStream out = response.getOutputStream();
+        // 创建缓冲区
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        // 循环将输入流中的内容读取到缓冲区当中
+        while ((len = in.read(buffer)) > 0) {
+            // 输出缓冲区的内容到浏览器，实现文件下载
+            out.write(buffer, 0, len);
+        }
+        // 关闭文件输入流
+        in.close();
+        // 关闭输出流
+        out.close();
+	}
+	
+	/**
 	 * @param b 写入的字节
 	 */
 	public void write(final byte b) {
@@ -228,6 +255,18 @@ public class Document {
 	}
 	public boolean isUserOrginalFileName() {
 		return userOrginalFileName;
+	}
+	public String getOriginalFullName() {
+		return originalFullName;
+	}
+	public String getOriginalFileName() {
+		return originalFileName;
+	}
+	public static String getSpartChar() {
+		return spart_char;
+	}
+	public ByteArrayOutputStream getBuffer() {
+		return buffer;
 	}
 
 }
