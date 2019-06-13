@@ -1,4 +1,4 @@
-package com.mawujun.generator.annotation;
+package com.mawujun.repository.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -33,6 +33,11 @@ public @interface ColDefine {
      * @return
      */
     boolean cndable() default false;  
+    /**
+     * 设置为true，将会在前端自动生成文件上传，下载，删除的代码
+     * @return
+     */
+    boolean uploadable() default false;  
       
   
     

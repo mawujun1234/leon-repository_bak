@@ -27,8 +27,8 @@ import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mawujun.generator.annotation.ColDefine;
 import com.mawujun.lang.Assert;
+import com.mawujun.repository.annotation.ColDefine;
 import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.StringUtil;
 

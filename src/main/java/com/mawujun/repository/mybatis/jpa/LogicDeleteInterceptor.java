@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mawujun.convert.Convert;
-import com.mawujun.generator.annotation.LogicDelete;
+import com.mawujun.repository.annotation.LogicDelete;
 import com.mawujun.util.ReflectUtil;
 
 public class LogicDeleteInterceptor extends EmptyInterceptor {

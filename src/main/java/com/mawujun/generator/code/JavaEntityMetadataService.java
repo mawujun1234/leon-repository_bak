@@ -30,9 +30,6 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.URL;
 
-import com.mawujun.generator.annotation.ColDefine;
-import com.mawujun.generator.annotation.LogicDelete;
-import com.mawujun.generator.annotation.TableDefine;
 import com.mawujun.generator.other.DefaultNameStrategy;
 import com.mawujun.generator.other.NameStrategy;
 import com.mawujun.generator.rules.EmailRule;
@@ -44,6 +41,9 @@ import com.mawujun.generator.rules.PhoneRule;
 import com.mawujun.generator.rules.RequireRule;
 import com.mawujun.generator.rules.StringRule;
 import com.mawujun.generator.rules.URLRule;
+import com.mawujun.repository.annotation.ColDefine;
+import com.mawujun.repository.annotation.LogicDelete;
+import com.mawujun.repository.annotation.TableDefine;
 import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.ReflectUtil;
 import com.mawujun.util.StringUtil;
@@ -561,6 +561,8 @@ public class JavaEntityMetadataService {
 			}
 			
 			propertyColumn.setCndable(colDefinition.cndable());
+			
+			propertyColumn.setUploadable(colDefinition.uploadable());
 		}
 	}
 	

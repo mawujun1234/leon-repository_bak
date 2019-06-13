@@ -1,3 +1,4 @@
+<#assign uploadable = false>
 <template>
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
@@ -9,6 +10,23 @@
       <#if pc.numberValidRule==true>
       <el-form-item label="${pc.label}"  prop="${pc.property}">
         <el-input v-model.number="dataForm.${pc.property}" placeholder="${pc.label}"></el-input>
+      </el-form-item>
+      <#elseif pc.uploadable==true>
+      <el-form-item label="${pc.label}"  prop="${pc.property}">
+        <el-upload
+          class="upload-demo"
+          :limit="1"
+          :action="upload_action"
+          :headers="${pc.property}_headers"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          :on-exceed="handleExceed"
+          :on-success="handleSuccess"
+          :file-list="${pc.property}_fileList"
+          >
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
       </el-form-item>
       <#else>
       <el-form-item label="${pc.label}"  prop="${pc.property}">
@@ -39,11 +57,16 @@
 </template>
 
 <script>
-  import { isEmail, isMobile } from '@/utils/validate'
+  //import { isEmail, isMobile } from '@/utils/validate'
   export default {
     data () {
       return {
         visible: false,
+        <#list propertyColumns as pc>
+        <#if pc.uploadable==true>
+        '${pc.property}_fileList': [],
+        </#if>
+		</#list>
         dataForm: {
           <#list propertyColumns as pc>
           <#if pc.persistable==true>
@@ -82,6 +105,18 @@
               this.dataForm.${pc.property} = data.data.${pc.property};
               </#if>
 		      </#list>
+		      
+		      <#list propertyColumns as pc>
+	          <#if pc.uploadable==true>
+	          <#assign uploadable = true>
+	          //初始化上传文件列表
+	          if(this.dataForm.${pc.property}){
+                let name=this.getOrginalFileName(this.dataForm.${pc.property});
+                this.${pc.property}_fileList=[];
+                this.${pc.property}_fileList.push({name:name,url:this.dataForm.${pc.property}});
+              }
+	          </#if>
+			  </#list>
             }
           })
         }//
@@ -118,6 +153,51 @@
           }
         })
       }//dataFormSubmit
+      <#if uploadable==true>
+      ,handlePreview(file) {
+        let vm=this;
+        this.$http.download('/sys/document/download',file.name,{fullName:file.url},function(result){
+          if(result.success==false){
+            vm.$message.error(result.msg)
+          }
+        });
+      },
+      handleExceed(files, fileList) {
+        this.$message.warning(`当前限制选择 1 个文件，<#noparse>本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件</#noparse>`);
+      },
+      handleSuccess(response, file, fileList){
+        if(response.success==true){
+          this.$message({
+            message: '上传成功',
+            type: 'success'
+          });
+          this.dataForm.video=response.fullName;
+          file.url=response.fullName;
+        } else {
+          this.$message.error("上传失败:"+response.msg)
+        }
+      },
+      beforeRemove(file, fileList) {
+        return this.$confirm(`<#noparse>确定移除 ${ file.name }？</#noparse>`);
+      },
+      handleRemove(file, fileList) {
+         this.dataForm.video=null;
+      }
+      </#if>
+    },
+    computed: {
+    <#if uploadable==true>
+      <#list propertyColumns as pc>
+      <#if pc.uploadable==true>
+      ${pc.property}_headers: function () {
+        return {"token":this.$cookie.get("token"),group:"/${entitySimpleClassNameUncap}/${pc.property}"};
+      },
+      </#if>
+	  </#list>
+      upload_action:function(){
+        return this.$http.adornUrl(`/sys/document/upload`);
+      }
+    </#if>
     }
   }
 </script>
