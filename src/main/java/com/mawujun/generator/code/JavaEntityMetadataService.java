@@ -2,6 +2,7 @@ package com.mawujun.generator.code;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
@@ -365,7 +366,17 @@ public class JavaEntityMetadataService {
 			//if(field.isEnumConstant()) {
 			if(field.getType().isEnum()) {
 				propertyColumn.setIsEnum(true);
+				//添加枚举类型的值
+				Class<Enum> enumClass=(Class<Enum>) field.getType();
+				Enum[] enumConstants = enumClass.getEnumConstants();
+				//根据方法名获取方法
+                Method label = enumClass.getMethod("getLabel");
+                for (Enum enum1 : enumConstants) {
+                	Object label_str = label.invoke(enum1);
+                	propertyColumn.addEnumValues(enum1.name(), (String)label_str);
+                }
 			}
+
 			
 			//构建校验规则
 			//先判断

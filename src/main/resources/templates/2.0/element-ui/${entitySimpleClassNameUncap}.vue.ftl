@@ -28,12 +28,34 @@
         width="50">
       </el-table-column>
       <#list propertyColumns as pc>
+      <#if pc.isEnum==true>
+      <el-table-column
+        prop="${pc.property}"
+        header-align="center"
+        align="center"
+        label="${pc.label}">
+        <template slot-scope="scope">
+          <#if pc.enumValues??>
+          <#assign  keys=pc.enumValues?keys/>
+          <#list keys as key>
+          <#if key?is_first>
+            <el-tag v-if="scope.row.${pc.property} == '${key}'" size="small">${pc.enumValues[key]}</el-tag>
+          <#else>
+          	<el-tag v-else-if="scope.row.${pc.property} == '${key}'" size="small">${pc.enumValues[key]}</el-tag>
+          </#if>
+          </#list>
+            <!--<el-tag v-else size="small"></el-tag>-->
+          </#if>
+        </template>
+      </el-table-column>
+      <#else>
       <el-table-column
         prop="${pc.property}"
         header-align="center"
         align="center"
         label="${pc.label}">
       </el-table-column>
+      </#if>
       </#list>
      <!--
       <el-table-column

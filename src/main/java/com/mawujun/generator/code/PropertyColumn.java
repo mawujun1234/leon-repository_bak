@@ -1,11 +1,9 @@
 package com.mawujun.generator.code;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mawujun.generator.rules.AbstractRule;
 import com.mawujun.util.StringUtil;
 
 public class PropertyColumn {
@@ -37,7 +35,7 @@ public class PropertyColumn {
 //	private boolean genQuery=false;//是否生成查询条件，主要是在grid
 	
 	private Boolean isEnum=false;
-	private List<Map<String,Object>> enumValues;
+	private Map<String,Object> enumValues=new LinkedHashMap<String,Object>();
 //	private String showType="none";//显示的类型，是textfield，还是combobox，还是radio，还是
 //	private Map<String,String> showType_values=new HashMap<String,String>();
 
@@ -67,6 +65,14 @@ public class PropertyColumn {
 	//private Boolean isConstantType=false;//判断是不是常数
 	
 	//List<PropertyColumn> propertyColumns=new ArrayList<PropertyColumn>();
+	/**
+	 * 增加枚举类型值
+	 * @param key
+	 * @param value
+	 */
+	public void addEnumValues(String key,String value) {
+		this.enumValues.put(key, value);
+	}
 
 	/**
 	 * 获取@Column注解需要的属性值
@@ -382,13 +388,10 @@ public class PropertyColumn {
 		this.cndable = cndable;
 	}
 
-	public List<Map<String, Object>> getEnumValues() {
+	public Map<String, Object> getEnumValues() {
 		return enumValues;
 	}
 
-	public void setEnumValues(List<Map<String, Object>> enumValues) {
-		this.enumValues = enumValues;
-	}
 
 	public void setVersion(boolean isVersion) {
 		this.isVersion = isVersion;

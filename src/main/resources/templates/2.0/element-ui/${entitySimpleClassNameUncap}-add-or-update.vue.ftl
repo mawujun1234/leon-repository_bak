@@ -29,6 +29,17 @@
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
       </el-form-item>
+      <#elseif pc.isEnum==true>
+      <el-form-item label="${pc.label}" size="mini" prop="${pc.property}">
+        <el-radio-group v-model="dataForm.${pc.property}">
+          <#if pc.enumValues??>
+          <#assign  keys=pc.enumValues?keys/>
+          <#list keys as key>
+            <el-radio label="${key}">${pc.enumValues[key]}</el-radio>
+          </#list>
+          </#if>
+        </el-radio-group>
+      </el-form-item>
       <#else>
       <el-form-item label="${pc.label}"  prop="${pc.property}">
         <el-input v-model="dataForm.${pc.property}" placeholder="${pc.label}"></el-input>
@@ -41,12 +52,6 @@
         <el-checkbox-group v-model="dataForm.roleIdList">
           <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
         </el-checkbox-group>
-      </el-form-item>
-      <el-form-item label="状态" size="mini" prop="status">
-        <el-radio-group v-model="dataForm.status">
-          <el-radio :label="0">禁用</el-radio>
-          <el-radio :label="1">正常</el-radio>
-        </el-radio-group>
       </el-form-item>
       -->
     </el-form>
@@ -65,7 +70,7 @@
         visible: false,
         <#list propertyColumns as pc>
         <#if pc.uploadable==true>
-        '${pc.property}_fileList': [],//用于${pc.label}的文件上传
+        '${pc.property}_fileList': [],//用于${pc.label}（${pc.property}）的文件上传
         </#if>
 		</#list>
         dataForm: {
