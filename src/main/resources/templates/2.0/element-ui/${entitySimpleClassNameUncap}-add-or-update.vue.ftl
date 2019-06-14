@@ -22,6 +22,7 @@
           :on-remove="handleRemove"
           :before-remove="beforeRemove"
           :on-exceed="handleExceed"
+          :before-upload="beforeUpload"
           :on-success="handleSuccess"
           :file-list="${pc.property}_fileList"
           >
@@ -64,7 +65,7 @@
         visible: false,
         <#list propertyColumns as pc>
         <#if pc.uploadable==true>
-        '${pc.property}_fileList': [],
+        '${pc.property}_fileList': [],//用于${pc.label}的文件上传
         </#if>
 		</#list>
         dataForm: {
@@ -113,7 +114,7 @@
 	          if(this.dataForm.${pc.property}){
                 let name=this.getOrginalFileName(this.dataForm.${pc.property});
                 this.${pc.property}_fileList=[];
-                this.${pc.property}_fileList.push({name:name,url:this.dataForm.${pc.property}});
+                this.${pc.property}_fileList.push({name:name,url:this.dataForm.${pc.property},property:'${pc.property}'});
               }
 	          </#if>
 			  </#list>
@@ -154,34 +155,49 @@
         })
       }//dataFormSubmit
       <#if uploadable==true>
-      ,handlePreview(file) {
+      ,handlePreview(file) {//公用，用于的文件上传
         let vm=this;
         this.$http.download('/sys/document/download',file.name,{fullName:file.url},function(result){
           if(result.success==false){
             vm.$message.error(result.msg)
           }
         });
+        //window.open(this.$http.adornUrl(`/sys/document/preview/`+file.url));预览文件的接口
       },
-      handleExceed(files, fileList) {
+      handleExceed(files, fileList) {//公用，用于的文件上传
         this.$message.warning(`当前限制选择 1 个文件，<#noparse>本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件</#noparse>`);
       },
-      handleSuccess(response, file, fileList){
+      beforeUpload(file){//公用，用于的文件上传
+      	//使用 before-upload 限制用户上传的图片格式和大小
+      	//const isJPG = file.type === 'image/jpeg';
+      	//const isLt2M = file.size / 1024 / 1024 < 2;
+      	//if (!isJPG) {
+        //  this.$message.error('上传头像图片只能是 JPG 格式!');
+        //}
+        //if (!isLt2M) {
+        //  this.$message.error('上传头像图片大小不能超过 2MB!');
+        //}
+        //return isJPG && isLt2M;
+        return true;
+      },
+      handleSuccess(response, file, fileList){//公用，用于的文件上传
         if(response.success==true){
           this.$message({
             message: '上传成功',
             type: 'success'
           });
-          this.dataForm.video=response.fullName;
+          this.dataForm[response.property]=response.fullName;
           file.url=response.fullName;
+          file.property=response.property;
         } else {
           this.$message.error("上传失败:"+response.msg)
         }
       },
-      beforeRemove(file, fileList) {
+      beforeRemove(file, fileList) {//公用，用于的文件上传
         return this.$confirm(`<#noparse>确定移除 ${ file.name }？</#noparse>`);
       },
-      handleRemove(file, fileList) {
-         this.dataForm.video=null;
+      handleRemove(file, fileList) {//公用，用于的文件上传
+         this.dataForm[file.property]=null;
       }
       </#if>
     },
@@ -189,12 +205,12 @@
     <#if uploadable==true>
       <#list propertyColumns as pc>
       <#if pc.uploadable==true>
-      ${pc.property}_headers: function () {
-        return {"token":this.$cookie.get("token"),group:"/${entitySimpleClassNameUncap}/${pc.property}"};
+      ${pc.property}_headers: function () {//用于${pc.property}的文件上传
+        return {"token":this.$cookie.get("token"),group:"/${entitySimpleClassNameUncap}/${pc.property}",property:"${pc.property}"};
       },
       </#if>
 	  </#list>
-      upload_action:function(){
+      upload_action:function(){//公用，用于的文件上传
         return this.$http.adornUrl(`/sys/document/upload`);
       }
     </#if>
