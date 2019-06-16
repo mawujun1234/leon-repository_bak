@@ -409,9 +409,9 @@ public class JpaDao {
 		if(isCnd) {
 			Cnd cnd=((Cnd) params);
 			if(cnd.getOres()!=null && ((Cnd) params).getOres().size()>=0) {
-				for(Cnd or:cnd.getOres()) {
-					System.out.println(or.size());
-					Predicate or_p=criteriaBuilder.or(genPredicates(criteriaBuilder,itemRoot,or));
+				for(Map<String,Object> map:cnd.getOres()) {
+					System.out.println(map.size());
+					Predicate or_p=criteriaBuilder.or(genPredicates(criteriaBuilder,itemRoot,map));
 					predicatesList.add(or_p);
 					//predicatesList.add(genPredicates(criteriaBuilder,itemRoot,or));
 				}

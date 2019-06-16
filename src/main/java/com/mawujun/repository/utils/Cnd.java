@@ -588,7 +588,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	}
 	
 	//or构建or的条件====================================================
-	private List<Cnd> ores;
+	private List<Map<String,Object>> ores;
 	/**
 	 * 添加or条件，会自动以()括号括起来。
 	 * cnd.or(Cnd.of().eq(M.Star.id, 1).eq(M.Star.blood, "A"));
@@ -601,14 +601,28 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	public Cnd or(Cnd cnd) {
 		if(cnd!=null && cnd.size()>=0) {
 			if(ores==null) {
-				ores=new ArrayList<Cnd>();
+				ores=new ArrayList<Map<String,Object>>();
+			}
+			ores.add(cnd);
+		}
+		return this;
+	}
+	/**
+	 * 添加or条件，会自动以()括号括起来。这个map里的key，都是以or进行连接，例如(key1=1 or key2=2 or key3=3)
+	 * @param cnd
+	 * @return
+	 */
+	public Cnd or(Map<String,Object> cnd) {
+		if(cnd!=null && cnd.size()>=0) {
+			if(ores==null) {
+				ores=new ArrayList<Map<String,Object>>();
 			}
 			ores.add(cnd);
 		}
 		return this;
 	}
 
-	public List<Cnd> getOres() {
+	public List<Map<String,Object>> getOres() {
 		return ores;
 	}
 	
