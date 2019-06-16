@@ -401,7 +401,7 @@ public class JpaDao {
 		}
 
 		
-		boolean isParams = (params instanceof Cnd);
+		boolean isCnd = (params instanceof Cnd);
 		// Predicate[] predicatesList=new Predicate[params.size()];
 		List<Predicate> predicatesList = new ArrayList<Predicate>();
 		// int i=0;
@@ -418,7 +418,7 @@ public class JpaDao {
 			Path path = itemRoot.get(param.getKey());
 			Class javatype = path.getJavaType();
 			Object value = param.getValue();
-			if (isParams) {//是不是Cnd的查询
+			if (isCnd) {//是不是Cnd的查询
 				OpEnum opEnum = ((Cnd) params).getOpEnum(param.getKey());
 				switch (opEnum) {
 				case eq:
@@ -699,6 +699,7 @@ public class JpaDao {
 					break;
 				}
 			} else {
+				//参数只是普通map的时候，那几木偶人是等于比较符
 				predicatesList.add(criteriaBuilder.equal(itemRoot.get(param.getKey()),
 						Convert.convert(javatype,param.getValue())));
 			}

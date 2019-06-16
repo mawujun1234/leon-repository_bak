@@ -16,70 +16,6 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	
 	//private Map<String,Object> params=new HashMap<String,Object>();	
 	
-//	@Override
-//	public int size() {
-//		// TODO Auto-generated method stub
-//		return super.size();
-//	}
-//
-//	@Override
-//	public boolean isEmpty() {
-//		// TODO Auto-generated method stub
-//		return super.isEmpty();
-//	}
-//
-//	@Override
-//	public boolean containsKey(Object key) {
-//		// TODO Auto-generated method stub
-//		return super.containsKey(key);
-//	}
-//
-//	@Override
-//	public boolean containsValue(Object value) {
-//		// TODO Auto-generated method stub
-//		return super.containsValue(value);
-//	}
-//
-//	@Override
-//	public Object get(Object key) {
-//		// TODO Auto-generated method stub
-//		return super.get(key);
-//	}
-//
-//	
-//
-//	@Override
-//	public Object remove(Object key) {
-//		// TODO Auto-generated method stub
-//		return super.remove(key);
-//	}
-//	
-//	
-//
-//	@Override
-//	public void clear() {
-//		// TODO Auto-generated method stub
-//		super.clear();
-//		
-//	}
-//
-//	@Override
-//	public Set<String> keySet() {
-//		// TODO Auto-generated method stub
-//		return super.keySet();
-//	}
-//
-//	@Override
-//	public Collection<Object> values() {
-//		// TODO Auto-generated method stub
-//		return super.values();
-//	}
-//
-//	@Override
-//	public Set<Entry<String, Object>> entrySet() {
-//		// TODO Auto-generated method stub
-//		return super.entrySet();
-//	}
 	
 	//存放操作符
 	private Map<String,OpEnum> op=new HashMap<String,OpEnum>();
@@ -91,7 +27,7 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 	public final static String start_key="start";
 	public final static String limit_key="limit";
 	public final static String page_key="page";
-	protected boolean isPageCondition=false;
+	protected boolean isPageCondition=false;//是否是分页的条件
 	
 	/**
 	 * 如果不存在，默认是eq
