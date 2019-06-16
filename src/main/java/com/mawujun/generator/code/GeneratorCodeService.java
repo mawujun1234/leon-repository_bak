@@ -7,9 +7,11 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -51,6 +53,19 @@ public class GeneratorCodeService {
 //	 * com.mawujun.service: com.mawujun.repository:
 //	 */
 //	public static final String file_model_one = "file_model_one";
+	
+	/**
+	 * 额外的属性配置
+	 */
+	private static Map<String,Object> extraCfg=new HashMap<String,Object>();
+	/**
+	 * 添加额外的属性配置
+	 * @param key
+	 * @param value
+	 */
+	public static void addExtraCfg(String key,Object value){
+		extraCfg.put(key, value);
+	}
 
 	/**
 	 * 默认的生成的基础包名
@@ -106,6 +121,7 @@ public class GeneratorCodeService {
 
 			List<EntityTable> root = dbTableMetadataService.getTablesInfo(tablenames);
 			for (EntityTable et : root) {
+				et.setExtraCfg(extraCfg);
 				dbTableMetadataService.convertTable2Class(basepackage,et);
 				for (FtlFileInfo ftlFile : ftl_file_manes) {
 					
@@ -155,7 +171,7 @@ public class GeneratorCodeService {
 			for (Class cls : clazzs) {
 				/* 创建数据模型 */
 				EntityTable root = javaEntityMetaDataService.initClassProperty(cls);
-
+				root.setExtraCfg(extraCfg);
 				for (FtlFileInfo ftlFile : ftl_file_manes) {
 					if(ftlFile.getName().equalsIgnoreCase("${entitySimpleClassName}.java.ftl") || ftlFile.getName().equalsIgnoreCase("${entitySimpleClassName}Id.java.ftl")) {
 						continue;

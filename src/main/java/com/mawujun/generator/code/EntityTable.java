@@ -41,10 +41,6 @@ public class EntityTable {
 	private String[] idPropertys;
 	private String idSequenceName;//序列化的时候的名字,如oralce、DB、SAP DB、PostgerSQL、McKoi中的sequence。MySQL这种不支持sequence的数据库则不行（可以使用identity）。
 	
-	private boolean uselombok;
-	
-	
-
 
 	List<PropertyColumn> propertyColumns=new ArrayList<PropertyColumn>();
 	Map<String,PropertyColumn> propertyColumns_map=new HashMap<String,PropertyColumn>();
@@ -56,6 +52,18 @@ public class EntityTable {
 	//存放的是前端的校验规则
 	Map<String,List<AbstractRule>> formRules=new HashMap<String,List<AbstractRule>>();
 	
+	//private boolean uselombok;
+	//用来存放额外的配置
+	private Map<String,Object> extraCfg=new HashMap<String,Object>();
+	
+	/**
+	 * 用来存放额外的配置
+	 * @param key
+	 * @param value
+	 */
+	public void addExtraCfg(String key,Object value){
+		this.extraCfg.put(key, value);
+	}
 	
 	/**
 	 * 增加验证规则
@@ -305,12 +313,7 @@ public class EntityTable {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	public boolean isUselombok() {
-		return uselombok;
-	}
-	public void setUselombok(boolean uselombok) {
-		this.uselombok = uselombok;
-	}
+
 	public boolean isCndable() {
 		return cndable;
 	}
@@ -329,10 +332,13 @@ public class EntityTable {
 		return formRules;
 	}
 
+	public Map<String, Object> getExtraCfg() {
+		return extraCfg;
+	}
 
-
-	
-
+	public void setExtraCfg(Map<String, Object> extraCfg) {
+		this.extraCfg = extraCfg;
+	}
 
 
 

@@ -1,5 +1,6 @@
 package com.mawujun.generator.code;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,8 @@ public class PropertyColumn {
 	private boolean isCompositeId=false;
 	private IDGenEnum idGenEnum=IDGenEnum.none;
 	
+	private boolean isDateProp=false;
+	
 	private boolean isVersion=false;
 	private boolean isLogicDelete=false;
 	
@@ -65,6 +68,12 @@ public class PropertyColumn {
 	//private Boolean isConstantType=false;//判断是不是常数
 	
 	//List<PropertyColumn> propertyColumns=new ArrayList<PropertyColumn>();
+	/**
+	 * 判断这个属性是不是日期类型
+	 */
+	public boolean getIsDateProp() {
+		return isDateProp;
+	}
 	/**
 	 * 增加枚举类型值
 	 * @param key
@@ -132,6 +141,10 @@ public class PropertyColumn {
 		this.basepackage=clazz.getPackage().getName();
 		//System.out.println(javaType);
 		this.simpleClassName=className.substring(className.lastIndexOf('.')+1);
+		this.isDateProp=Date.class.isAssignableFrom(clazz);
+		
+		
+		
 //		//System.out.println(this.javaTypeClassName);
 //		if(jsJavaMapper.get(clazz)==null){
 //			this.jsType="string";

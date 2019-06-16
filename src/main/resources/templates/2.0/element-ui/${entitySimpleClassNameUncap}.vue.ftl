@@ -3,9 +3,26 @@
     <#if cndable==true>
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <#list cndPropertys as pc>
+      <#if pc.isDateProp==true>
+      <el-form-item>
+      <span class="demonstration">${pc.label}:</span>
+      <el-date-picker
+        v-model="dataForm.${pc.property}"
+        type="daterange"
+        align="right"
+        unlink-panels
+        value-format="yyyy-MM-dd"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions">
+      </el-date-picker>
+      </el-form-item>
+      <#else>
       <el-form-item>
         <el-input v-model="dataForm.${pc.property}" placeholder="用户名" clearable></el-input>
       </el-form-item>
+      </#if>
       </#list>
       <el-form-item>
         <el-button v-if="isAuth('${module}:${entitySimpleClassNameUncap}:list')" @click="getDataList()">查询</el-button>
@@ -100,6 +117,37 @@
   export default {
     data () {
       return {
+        <#list cndPropertys as pc>
+        <#if pc.isDateProp==true>
+        pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
+        </#if>
+        </#list>
         dataForm: {
         <#list cndPropertys as pc>
           ${pc.property}: ''<#if pc?has_next >,</#if>
@@ -180,10 +228,10 @@
       },
       // 删除
       deleteHandle (id) {
-        var userIds = id ? [id] : this.dataListSelections.map(item => {
-          return item.userId
+        var ids = id ? [id] : this.dataListSelections.map(item => {
+          return item.id
         })
-        this.$confirm(`<#noparse>确定对[id=${userIds.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?</#noparse>`, '提示', {
+        this.$confirm(`<#noparse>确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?</#noparse>`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -191,7 +239,7 @@
           this.$http({
             url: this.$http.adornUrl('/${module}/${entitySimpleClassNameUncap}/removeByIds'),
             method: 'post',
-            data: this.$http.adornData(userIds, false)
+            data: this.$http.adornData(ids, false)
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({

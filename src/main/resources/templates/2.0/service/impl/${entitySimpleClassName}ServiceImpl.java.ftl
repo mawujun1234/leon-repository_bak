@@ -7,12 +7,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import com.mawujun.service.BaseService;
-import com.mawujun.biz.service.${entitySimpleClassName}Service;
+import com.mawujun.service.BaseServiceImpl;
+import ${basepackage}.service.${entitySimpleClassName}Service;
 
+<#if extraCfg.uselombok?? && extraCfg.uselombok==true>
 import lombok.extern.slf4j.Slf4j;
-
-
+</#if>
 import ${entityClassName};
 import ${basepackage}.repository.${entitySimpleClassName}Repository;
 
@@ -21,7 +21,7 @@ import ${basepackage}.repository.${entitySimpleClassName}Repository;
 
 @Service
 @Transactional(propagation=Propagation.REQUIRED)
-<#if uselombok==true>
+<#if extraCfg.uselombok?? && extraCfg.uselombok==true>
 @Slf4j
 </#if>
 public class ${entitySimpleClassName}ServiceImpl  extends BaseServiceImpl<${entitySimpleClassName}Repository, ${entitySimpleClassName}> implements ${entitySimpleClassName}Service{

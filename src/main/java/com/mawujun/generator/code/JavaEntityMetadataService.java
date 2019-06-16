@@ -553,6 +553,8 @@ public class JavaEntityMetadataService {
 		
 		//root.setPropertyColumns(propertyColumns);
 		//root.setQueryProperties(queryProperties);
+		
+		
 		cache.put(clazz.getName(), root);
 		return root;
 	}

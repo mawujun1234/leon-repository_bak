@@ -395,6 +395,7 @@ public class JpaDao {
 			}
 		}
 
+		
 		boolean isParams = (params instanceof Cnd);
 		// Predicate[] predicatesList=new Predicate[params.size()];
 		List<Predicate> predicatesList = new ArrayList<Predicate>();
@@ -412,7 +413,7 @@ public class JpaDao {
 			Path path = itemRoot.get(param.getKey());
 			Class javatype = path.getJavaType();
 			Object value = param.getValue();
-			if (isParams) {
+			if (isParams) {//是不是Cnd的查询
 				OpEnum opEnum = ((Cnd) params).getOpEnum(param.getKey());
 				switch (opEnum) {
 				case eq:

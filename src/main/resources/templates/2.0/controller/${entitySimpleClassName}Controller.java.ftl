@@ -3,7 +3,7 @@
 package ${basepackage}.controller;
 import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.mawujun.common.utils.M;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +15,10 @@ import com.mawujun.mvc.R;
 import com.mawujun.repository.utils.Page;
 import com.mawujun.repository.utils.Cnd;
 
+<#if extraCfg.uselombok?? && extraCfg.uselombok==true>
+import lombok.extern.slf4j.Slf4j;
+</#if>
+
 import ${entityClassName};
 import ${basepackage}.service.${entitySimpleClassName}Service;
 
@@ -23,14 +27,14 @@ import ${basepackage}.service.${entitySimpleClassName}Service;
 </#if>
 <#include "/java_copyright.include"/>
 
-<#if uselombok==true>
+<#if extraCfg.uselombok?? && extraCfg.uselombok==true>
 @Slf4j
 </#if>
 @Controller
 @RequestMapping("/${module}")
 public class ${entitySimpleClassName}Controller {
 
-	@Resource
+	@Autowired
 	private ${entitySimpleClassName}Service ${simpleClassNameFirstLower}Service;
 
 
@@ -43,8 +47,17 @@ public class ${entitySimpleClassName}Controller {
 //	@RequestMapping("/${simpleClassNameFirstLower}/list")
 //	@ResponseBody
 //	@RequiresPermissions("${module}:${entitySimpleClassNameUncap}:list")
-//	public R list() {//括号里面写参数
-//		Cnd cnd=Cnd.of();//Cnd.of().like(M.${entitySimpleClassName}.name, "test");
+//	public R list(<#list cndPropertys as pc><#if pc.isDateProp==true>String[] ${pc.property}<#else>,${pc.simpleClassName} ${pc.property}</#if><#if pc?has_next>,</#if></#list>) {//括号里面写参数
+//		Cnd cnd=Cnd.of();
+//		<#list cndPropertys as pc>
+//		<#if pc.isDateProp==true>
+//		if(${pc.property}!=null && ${pc.property}.length>0) {
+//			cnd.between(M.${entitySimpleClassName}.${pc.property},${pc.property}[0], ${pc.property}[1]);
+//		}
+//		<#else>
+//		cnd.add(M.${entitySimpleClassName}.${pc.property}, ${pc.property});
+//		</#if>		
+//		</#list>
 //		List<${entitySimpleClassName}> ${simpleClassNameFirstLower}es=${simpleClassNameFirstLower}Service.list(cnd);
 //		return R.ok(${simpleClassNameFirstLower}es);
 //	}
@@ -68,14 +81,21 @@ public class ${entitySimpleClassName}Controller {
 //	@RequestMapping("/${simpleClassNameFirstLower}/page")
 //	@ResponseBody
 //  @RequiresPermissions("${module}:${entitySimpleClassNameUncap}:list")
-//	public R page(Integer start,Integer limit<#list cndPropertys as pc>,${pc.simpleClassName} ${pc.property}<#if pc?has_next>,</#if></#list>) {
-//	//public R list(@RequestParam Map<String, Object> params){
+//	public R page(Integer start,Integer limit<#list cndPropertys as pc><#if pc.isDateProp==true>,String[] ${pc.property}<#else>,${pc.simpleClassName} ${pc.property}</#if></#list>) {
+//	//public R page(@RequestParam Map<String, Object> params){
 //	//	//Page<${entitySimpleClassName}> pager = ${simpleClassNameFirstLower}Service.queryPage(params);
-//		Page<${entitySimpleClassName}> pager=${simpleClassNameFirstLower}Service.page(Cnd.ofStartLimit(start, limit)
-//			<#list cndPropertys as pc>
-//			.add(M.${entitySimpleClassName}.${pc.property}, ${pc.property})
-//			</#list>
-//			);
+//	Cnd cnd=Cnd.ofPageLimit(page, limit);//.add(M.Star.name, name);
+//		<#list cndPropertys as pc>
+//		<#if pc.isDateProp==true>
+//		if(${pc.property}!=null && ${pc.property}.length>0) {
+//			cnd.between(M.${entitySimpleClassName}.${pc.property},${pc.property}[0], ${pc.property}[1]);
+//		}
+//		<#else>
+//		cnd.add(M.${entitySimpleClassName}.${pc.property}, ${pc.property});
+//		</#if>		
+//		</#list>
+//
+//		Page<${entitySimpleClassName}> pager=${simpleClassNameFirstLower}Service.page(cnd);
 //		return R.ok().data(pager);
 //	}
 	/**
@@ -89,12 +109,19 @@ public class ${entitySimpleClassName}Controller {
 	@RequestMapping("/${simpleClassNameFirstLower}/page")
 	@ResponseBody
 	@RequiresPermissions("${module}:${entitySimpleClassNameUncap}:list")
-	public R page(Integer page,Integer limit<#list cndPropertys as pc>,${pc.simpleClassName} ${pc.property}<#if pc?has_next>,</#if></#list>) {
-		Page<${entitySimpleClassName}> pager=${simpleClassNameFirstLower}Service.page(Cnd.ofPageLimit(page, limit)
-			<#list cndPropertys as pc>
-			.add(M.${entitySimpleClassName}.${pc.property}, ${pc.property})
-			</#list>
-			);
+	public R page(Integer page,Integer limit<#list cndPropertys as pc><#if pc.isDateProp==true>,String[] ${pc.property}<#else>,${pc.simpleClassName} ${pc.property}</#if></#list>) {
+		Cnd cnd=Cnd.ofPageLimit(page, limit);//.add(M.Star.name, name);
+		<#list cndPropertys as pc>
+		<#if pc.isDateProp==true>
+		if(${pc.property}!=null && ${pc.property}.length>0) {
+			cnd.between(M.${entitySimpleClassName}.${pc.property},${pc.property}[0], ${pc.property}[1]);
+		}
+		<#else>
+		cnd.add(M.${entitySimpleClassName}.${pc.property}, ${pc.property});
+		</#if>		
+		</#list>
+
+		Page<${entitySimpleClassName}> pager=${simpleClassNameFirstLower}Service.page(cnd);
 		return R.ok().data(pager);
 	}
 
