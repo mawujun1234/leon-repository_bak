@@ -1,7 +1,9 @@
 package com.mawujun.repository.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.util.StringUtils;
@@ -583,6 +585,31 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 
 	public Map<String, String> getOrderbyes() {
 		return orderbyes;
+	}
+	
+	//or构建or的条件====================================================
+	private List<Cnd> ores;
+	/**
+	 * 添加or条件，会自动以()括号括起来。
+	 * cnd.or(Cnd.of().eq(M.Star.id, 1).eq(M.Star.blood, "A"));
+	 * 结果就是：where (star0_.id=1 or star0_.blood=?) and star0_.name=? 。
+	 * 
+	 * 但是如果or里面是同个属性的话，不支持，例如Cnd.of().eq("id",1).eq("id",2)这样暂时不支持。可以使用in替代。
+	 * @param cnd
+	 * @return
+	 */
+	public Cnd or(Cnd cnd) {
+		if(cnd!=null && cnd.size()>=0) {
+			if(ores==null) {
+				ores=new ArrayList<Cnd>();
+			}
+			ores.add(cnd);
+		}
+		return this;
+	}
+
+	public List<Cnd> getOres() {
+		return ores;
 	}
 	
 //	/**

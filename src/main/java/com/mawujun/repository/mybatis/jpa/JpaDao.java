@@ -404,6 +404,22 @@ public class JpaDao {
 		boolean isCnd = (params instanceof Cnd);
 		// Predicate[] predicatesList=new Predicate[params.size()];
 		List<Predicate> predicatesList = new ArrayList<Predicate>();
+		
+		//添加or条件
+		if(isCnd) {
+			Cnd cnd=((Cnd) params);
+			if(cnd.getOres()!=null && ((Cnd) params).getOres().size()>=0) {
+				for(Cnd or:cnd.getOres()) {
+					System.out.println(or.size());
+					Predicate or_p=criteriaBuilder.or(genPredicates(criteriaBuilder,itemRoot,or));
+					predicatesList.add(or_p);
+					//predicatesList.add(genPredicates(criteriaBuilder,itemRoot,or));
+				}
+			}	
+		}
+//		Predicate or=criteriaBuilder.or(criteriaBuilder.equal(itemRoot.get("id"), 1),criteriaBuilder.equal(itemRoot.get("id"), 2));
+//		predicatesList.add(or);
+		
 		// int i=0;
 		for (Entry<String, Object> param : params.entrySet()) {
 			String param_key=param.getKey();
