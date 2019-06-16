@@ -36,12 +36,16 @@ import javax.persistence.metamodel.Metamodel;
 
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
+import org.hibernate.query.criteria.internal.OrderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
@@ -50,6 +54,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mawujun.bean.BeanUtil;
 import com.mawujun.convert.Convert;
+import com.mawujun.exception.BizException;
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
@@ -706,10 +711,13 @@ public class JpaDao {
 //        TypedQuery typedQuery = em.createQuery(query);
 //        return typedQuery;
 	}
+	
+	
 
 	public List listByMap(Class entityClass, Map<String, Object> params) {
 		if (params == null) {
-			return this.listAll(entityClass);
+			//return this.listAll(entityClass);
+			throw new BizException("params参数不能为null");
 		}
 		// TypedQuery typedQuery=genTypedQuery(entityClass,params);
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -718,8 +726,25 @@ public class JpaDao {
 
 		Predicate[] predicatesList = genPredicates(criteriaBuilder, itemRoot, params);
 		query.where(predicatesList);
+		
 		TypedQuery typedQuery = em.createQuery(query);
 		// typedQuery.setParameter("formatStr", "yyyy-MM-dd");
+		if(params instanceof Cnd) {
+			Cnd cnd=(Cnd)params;
+			Map<String, String> orderbys=cnd.getOrderbyes();
+			if(orderbys!=null && orderbys.size()>0) {//设置排序
+				List<javax.persistence.criteria.Order> orders=new ArrayList<javax.persistence.criteria.Order>();
+				for(String key:orderbys.keySet()) {
+					if("desc".equalsIgnoreCase(orderbys.get(key))) {
+						orders.add(new OrderImpl(itemRoot.get(key),false));
+						//Sort sort = new Sort(Direction.DESC, key);
+					} else {
+						orders.add(new OrderImpl(itemRoot.get(key),true));
+					}				
+					query.orderBy(orders);
+				}
+			} 
+		}
 
 		return typedQuery.getResultList();
 
@@ -756,10 +781,12 @@ public class JpaDao {
 
 	private class PageSpecification<T> implements Specification<T> {
 		private Map<String, Object> params;
+		private Map<String, String> orderbys;
 
-		public PageSpecification(Map<String, Object> params) {
+		public PageSpecification(Map<String, Object> params,Map<String, String> orderbys) {
 			super();
 			this.params = params;
+			this.orderbys=orderbys;
 		}
 
 		@Override
@@ -778,6 +805,9 @@ public class JpaDao {
 				predicatesList = genPredicates(cb, root, params);
 
 			}
+			if(orderbys!=null) {
+				setOrderBy(root,query,cb,orderbys);
+			}
 			Predicate p = cb.and(predicatesList);
 			return p;
 
@@ -787,7 +817,7 @@ public class JpaDao {
 	public Page listPageByMap(Class entityClass, Map<String, Object> params, int pageIndex, int limit) {
 		Pageable pageable = PageRequest.of(pageIndex-1, limit);
 
-		PageSpecification spec = new PageSpecification(params);
+		PageSpecification spec = new PageSpecification(params,null);
 		org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(spec, pageable);
 
 		Page pageinfo = new Page();
@@ -799,6 +829,30 @@ public class JpaDao {
 
 		return pageinfo;
 	}
+	/**
+	 * 设置排序
+	 * @param root
+	 * @param query
+	 * @param cb
+	 * @param orderbys
+	 */
+	public void setOrderBy(Root root,CriteriaQuery query, CriteriaBuilder cb,Map<String, String> orderbys) {
+		if(orderbys!=null && orderbys.size()>0) {
+			javax.persistence.criteria.Order list[]=new javax.persistence.criteria.Order[orderbys.size()];
+			int i=0;
+			for(String key:orderbys.keySet()) {
+				if("desc".equalsIgnoreCase(orderbys.get(key))) {//设置排序
+					//query.orderBy(cb.desc(root.get(key)));
+					list[i]=cb.desc(root.get(key));
+				} else {
+					//query.orderBy(cb.asc(root.get(key)));
+					list[i]=cb.asc(root.get(key));
+				}
+				i++;
+			}
+			query.orderBy(list);
+		}
+	}
 
 	public <T> Page<T> listPage(Class<T> entityClass, Cnd pageinfo) {
 		Page<T> result=new Page<T>();
@@ -806,15 +860,35 @@ public class JpaDao {
 		result.setPage(pageinfo.getPage());
 		result.setLimit(pageinfo.getLimit());
 		Object params = pageinfo.getParams();
-		Pageable pageable = PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit());
+		
 		if (params==null || params instanceof Map) {
-			PageSpecification spec = new PageSpecification((Map) params);
+			Pageable pageable = PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit());
+			PageSpecification spec = new PageSpecification((Map) params,pageinfo.getOrderbyes());//排序
 			org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(spec, pageable);
 			result.setTotal((int) page.getTotalElements());
 			result.setRoot(page.getContent());
 		} else {
 			ExampleMatcher matcher = ExampleMatcher.matching();
 			Example example = Example.of(params, matcher);
+			
+			Pageable pageable = null;
+			Map<String, String> orderbys=pageinfo.getOrderbyes();
+			if(orderbys!=null && orderbys.size()>0) {//设置排序
+				List<Order> orders=new ArrayList<Order>();
+				for(String key:orderbys.keySet()) {
+					if("desc".equalsIgnoreCase(orderbys.get(key))) {
+						orders.add(new Order(Direction.DESC,key));
+						//Sort sort = new Sort(Direction.DESC, key);
+					} else {
+						orders.add(new Order(Direction.ASC,key));
+					}				
+					pageable=PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit(),Sort.by(orders));
+				}
+			} else {
+				pageable=PageRequest.of(pageinfo.getPage()-1, pageinfo.getLimit());
+			}
+			
+			
 			org.springframework.data.domain.Page page = getSimpleJpaRepository(entityClass).findAll(example, pageable);
 			result.setTotal((int) page.getTotalElements());
 			result.setRoot(page.getContent());

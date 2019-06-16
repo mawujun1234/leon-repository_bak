@@ -1,7 +1,10 @@
 package com.mawujun.repository.utils;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.springframework.util.StringUtils;
 
 import com.mawujun.util.StringUtil;
 
@@ -608,7 +611,43 @@ public class Cnd extends HashMap<String,Object>  implements ICondition,IUpdate{
 
 
 
+//========================================
+	private Map<String,String> orderbyes=new LinkedHashMap<String,String>();
+	/**
+	 * 每调用一次就增加一个排序属性
+	 * @param prop 排序的属性
+	 * @param dir 排序的方向
+	 */
+	private Cnd orderBy(String prop,String dir) {
+		if(!StringUtils.hasText(prop)) {
+			return this;
+		}
+		if(dir==null) {
+			dir="";
+		}
+		this.orderbyes.put(prop, dir);
+		return this;
+	}
+	/**
+	 * 每调用一次就增加一个排序规则
+	 * @param prop
+	 * @return
+	 */
+	public Cnd asc(String prop) {
+		return orderBy(prop,"asc");
+	}
+	/**
+	 * 每调用一次就增加一个排序规则
+	 * @param prop
+	 * @return
+	 */
+	public Cnd desc(String prop) {
+		return orderBy(prop,"desc");
+	}
 
+	public Map<String, String> getOrderbyes() {
+		return orderbyes;
+	}
 	
 //	/**
 //	 * 会把key相同的值组装成sql中in的形式,'a','b','c'

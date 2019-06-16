@@ -49,15 +49,15 @@ public class ${entitySimpleClassName}Controller {
 //	@RequiresPermissions("${module}:${entitySimpleClassNameUncap}:list")
 //	public R list(<#list cndPropertys as pc><#if pc.isDateProp==true>String[] ${pc.property}<#else>,${pc.simpleClassName} ${pc.property}</#if><#if pc?has_next>,</#if></#list>) {//括号里面写参数
 //		Cnd cnd=Cnd.of();
-//		<#list cndPropertys as pc>
-//		<#if pc.isDateProp==true>
+		<#list cndPropertys as pc>
+		<#if pc.isDateProp==true>
 //		if(${pc.property}!=null && ${pc.property}.length>0) {
 //			cnd.between(M.${entitySimpleClassName}.${pc.property},${pc.property}[0], ${pc.property}[1]);
 //		}
-//		<#else>
+		<#else>
 //		cnd.add(M.${entitySimpleClassName}.${pc.property}, ${pc.property});
-//		</#if>		
-//		</#list>
+		</#if>		
+		</#list>
 //		List<${entitySimpleClassName}> ${simpleClassNameFirstLower}es=${simpleClassNameFirstLower}Service.list(cnd);
 //		return R.ok(${simpleClassNameFirstLower}es);
 //	}
@@ -85,15 +85,15 @@ public class ${entitySimpleClassName}Controller {
 //	//public R page(@RequestParam Map<String, Object> params){
 //	//	//Page<${entitySimpleClassName}> pager = ${simpleClassNameFirstLower}Service.queryPage(params);
 //	Cnd cnd=Cnd.ofPageLimit(page, limit);//.add(M.Star.name, name);
-//		<#list cndPropertys as pc>
-//		<#if pc.isDateProp==true>
+		<#list cndPropertys as pc>
+		<#if pc.isDateProp==true>
 //		if(${pc.property}!=null && ${pc.property}.length>0) {
 //			cnd.between(M.${entitySimpleClassName}.${pc.property},${pc.property}[0], ${pc.property}[1]);
 //		}
-//		<#else>
+		<#else>
 //		cnd.add(M.${entitySimpleClassName}.${pc.property}, ${pc.property});
-//		</#if>		
-//		</#list>
+		</#if>		
+		</#list>
 //
 //		Page<${entitySimpleClassName}> pager=${simpleClassNameFirstLower}Service.page(cnd);
 //		return R.ok().data(pager);
