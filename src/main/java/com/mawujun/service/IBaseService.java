@@ -114,7 +114,7 @@ public interface IBaseService<T> {
 	public List<T> listAll();
 	
 	/**
-	 * 参数不能为null,如果为null，将会返回所有数据，支持Condition
+	 * 参数不能为null,如果为null，将会跑出异常，支持Condition
 	 * @param params
 	 * @return
 	 */

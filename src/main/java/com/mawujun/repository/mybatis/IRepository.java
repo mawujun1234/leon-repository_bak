@@ -127,7 +127,7 @@ public interface IRepository<T> {
 	//public PageInfo<T> listPageByExample(T params, PageInfo<T> pageinfo);
 
 	/**
-	 * 参数不能为null,如果为null，将会返回所有数据
+	 * 参数不能为null,如果为null，将会跑出异常
 	 * ，支持Condition
 	 * @param params
 	 * @return
