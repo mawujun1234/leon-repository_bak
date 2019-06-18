@@ -29,6 +29,17 @@
         </el-option>
       </el-select>
       </el-form-item>
+      <#elseif pc.isFk==true>
+      <el-form-item>
+      <el-select v-model="dataForm.${pc.property}" clearable placeholder="${pc.label}">
+        <el-option
+          v-for="item in ${pc.property}_options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      </el-form-item>
       <#else>
       <el-form-item>
         <el-input v-model="dataForm.${pc.property}" placeholder="${pc.label}" clearable></el-input>
@@ -169,6 +180,8 @@
           </#list>
         </#if>
         ],
+        <#elseif pc.isFk==true && pc.cndable==true>
+        ${pc.property}_options: [],
         </#if>
         </#list>
         dataForm: {
@@ -191,7 +204,34 @@
     activated () {
       this.getDataList()
     },
+    mounted() {
+     <#list cndPropertys as pc>
+     <#if pc.isFk==true && pc.cndable==true>
+    	this.init_${pc.property}_options();
+     </#if>
+     </#list>
+    },
     methods: {
+      <#list cndPropertys as pc>
+      <#if pc.isFk==true && pc.cndable==true>
+      init_${pc.property}_options(){
+      	this.$http({
+          url: this.$http.adornUrl('/${pc.fk_module}/${pc.fk_entitySimpleClassNameUncap}/listAll'),
+          method: 'get'
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.${pc.property}_options = data.data;
+          } else {
+            this.$notify.error({
+              title: '错误',
+              message: "初始化下拉框'${pc.label}'的数据失败!"+data.msg
+            });
+          }
+          this.dataListLoading = false
+        })
+      },
+      </#if>
+      </#list>
       // 获取数据列表
       getDataList () {
       	if(!this.isAuth('${module}:${entitySimpleClassNameUncap}:list')){

@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.Alias;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
@@ -43,6 +45,7 @@ import com.mawujun.generator.rules.RequireRule;
 import com.mawujun.generator.rules.StringRule;
 import com.mawujun.generator.rules.URLRule;
 import com.mawujun.repository.annotation.ColDefine;
+import com.mawujun.repository.annotation.FK;
 import com.mawujun.repository.annotation.LogicDelete;
 import com.mawujun.repository.annotation.TableDefine;
 import com.mawujun.util.PropertiesUtils;
@@ -533,7 +536,7 @@ public class JavaEntityMetadataService {
 				root.addRule(propertyColumn.getProperty(), rule);
 			}
 			
-			
+			assignFK(field,propertyColumn);
 			//propertyColumns.add(propertyColumn);
 			root.addPropertyColumn(propertyColumn);
 			
@@ -558,7 +561,29 @@ public class JavaEntityMetadataService {
 		cache.put(clazz.getName(), root);
 		return root;
 	}
-	
+	/**
+	 * 读取fk的内容
+	 * @param field
+	 * @param propertyColumn
+	 */
+	private void assignFK(Field field,PropertyColumn propertyColumn) {
+		FK fk=field.getAnnotation(FK.class);
+		if(fk!=null) {
+			propertyColumn.setIsFk(true);
+			
+			Class clazz=fk.refEntity();
+
+			String basepackage=clazz.getPackage().getName();
+			//System.out.println(javaType);
+			String simpleClassName=clazz.getName().substring(clazz.getName().lastIndexOf('.')+1);
+			propertyColumn.setFk_entitySimpleClassName(simpleClassName);
+			propertyColumn.setFk_entitySimpleClassNameUncap(StringUtils.uncapitalize(simpleClassName));
+			
+			String[] packages=clazz.getPackage().getName().split("\\.");
+			String module=packages[packages.length-2];//一般实体类是放在entity下面，所以模块就取前一个
+			propertyColumn.setFk_module(module);
+		}
+	}
 	private void assignComment(Field field,PropertyColumn propertyColumn) {
 		ColDefine colDefinition=field.getAnnotation(ColDefine.class);
 		if(colDefinition!=null) {

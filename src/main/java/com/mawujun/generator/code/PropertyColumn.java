@@ -16,7 +16,6 @@ public class PropertyColumn {
 	private String label;//列的中文名，如果没有设置，就使用column
 	private String comment;//注释
 	private String defaultValue;//默认值
-	private boolean cndable;//是否在前端生成查询条件
 
 
 	private Integer length=255;//列的长度,只有当类型为varchar等的时候才有用
@@ -55,11 +54,17 @@ public class PropertyColumn {
 	private boolean isVersion=false;
 	private boolean isLogicDelete=false;
 	
+	//===========================主要用于前端
+	private boolean cndable;//是否在前端生成查询条件
 	private boolean numberValidRule=false;//只用于element-ui的async-validator验证的时候，number属性验证数值范围的时候，需要在vue上加上.number,比如“v-model.number”
 	private boolean uploadable=false;//用于控制前端是否要生成上传的组件
 	private boolean disabled=false;
 	
-	
+	private Boolean isFk=false;//表示这一列的数据，是在表单上通过下拉框获取的
+	private String fk_module;
+	private String fk_entitySimpleClassName;
+	private String fk_entitySimpleClassNameUncap;
+	//private Map<String,Object> fkData=new LinkedHashMap<String,Object>();
 	
 	//private Boolean isIdProperty=false;//是不是属于id的列
 	//private Boolean isComponentType=false;
@@ -442,6 +447,31 @@ public class PropertyColumn {
 	}
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
+	}
+
+	public String getFk_module() {
+		return fk_module;
+	}
+	public void setFk_module(String fk_module) {
+		this.fk_module = fk_module;
+	}
+	public String getFk_entitySimpleClassName() {
+		return fk_entitySimpleClassName;
+	}
+	public void setFk_entitySimpleClassName(String fk_entitySimpleClassName) {
+		this.fk_entitySimpleClassName = fk_entitySimpleClassName;
+	}
+	public Boolean getIsFk() {
+		return isFk;
+	}
+	public void setIsFk(Boolean isFk) {
+		this.isFk = isFk;
+	}
+	public String getFk_entitySimpleClassNameUncap() {
+		return fk_entitySimpleClassNameUncap;
+	}
+	public void setFk_entitySimpleClassNameUncap(String fk_entitySimpleClassNameUncap) {
+		this.fk_entitySimpleClassNameUncap = fk_entitySimpleClassNameUncap;
 	}
 
 

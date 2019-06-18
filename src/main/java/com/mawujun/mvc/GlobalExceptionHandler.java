@@ -28,6 +28,9 @@ public class GlobalExceptionHandler {
     @ResponseBody
     R handleException(Exception e){
     	logger.error(e.getMessage(), e);
+    	if("org.apache.shiro.authz.UnauthorizedException".equals(e.getClass().getName())) {
+    		return R.error("没有权限!");
+    	}
 
         return R.error("未知异常，请稍后重试或联系管理员!");
     }

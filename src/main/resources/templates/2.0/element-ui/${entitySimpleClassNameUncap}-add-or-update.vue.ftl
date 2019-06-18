@@ -44,6 +44,17 @@
           </#if>
         </el-radio-group>
       </el-form-item> 
+      <#elseif pc.isFk==true && pc.cndable==true>
+      <el-form-item label="${pc.label}" size="mini" prop="${pc.property}">
+      <el-select v-model="dataForm.${pc.property}" clearable placeholder="${pc.label}">
+        <el-option
+          v-for="item in ${pc.property}_options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      </el-form-item> 
       <#elseif pc.isDateProp==true>
       <el-form-item label="${pc.label}"  prop="${pc.property}">
         <el-date-picker
@@ -112,6 +123,8 @@
             }
           }]
         },
+        <#elseif pc.isFk==true && pc.cndable==true>
+        ${pc.property}_options: [],
         </#if>
 		</#list>
         dataForm: {
@@ -135,6 +148,13 @@
         </#if>
         }
       }
+    },
+    mounted() {
+     <#list cndPropertys as pc>
+     <#if pc.isFk==true && pc.cndable==true>
+    	this.init_${pc.property}_options();
+     </#if>
+     </#list>
     },
     methods: {
       init (id) {
@@ -168,6 +188,26 @@
           })
         }//
       },
+      <#list cndPropertys as pc>
+      <#if pc.isFk==true && pc.cndable==true>
+      init_${pc.property}_options(){
+      	this.$http({
+          url: this.$http.adornUrl('/${pc.fk_module}/${pc.fk_entitySimpleClassNameUncap}/listAll'),
+          method: 'get'
+        }).then(({data}) => {
+          if (data && data.code === 0) {
+            this.${pc.property}_options = data.data;
+          } else {
+            this.$notify.error({
+              title: '错误',
+              message: "初始化下拉框'${pc.label}'的数据失败!"+data.msg
+            });
+          }
+          this.dataListLoading = false
+        })
+      },
+      </#if>
+      </#list>
       // 表单提交
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
