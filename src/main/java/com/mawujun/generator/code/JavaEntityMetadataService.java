@@ -576,6 +576,7 @@ public class JavaEntityMetadataService {
 			propertyColumn.setCndable(colDefinition.cndable());
 			
 			propertyColumn.setUploadable(colDefinition.uploadable());
+			propertyColumn.setDisabled(colDefinition.disabled());
 		}
 	}
 	

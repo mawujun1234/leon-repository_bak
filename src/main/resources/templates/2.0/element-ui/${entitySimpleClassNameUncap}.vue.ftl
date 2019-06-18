@@ -18,9 +18,20 @@
         :picker-options="pickerOptions">
       </el-date-picker>
       </el-form-item>
+      <#elseif pc.isEnum==true>
+      <el-form-item>
+      <el-select v-model="dataForm.${pc.property}" clearable placeholder="${pc.label}">
+        <el-option
+          v-for="item in ${pc.property}_options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      </el-form-item>
       <#else>
       <el-form-item>
-        <el-input v-model="dataForm.${pc.property}" placeholder="用户名" clearable></el-input>
+        <el-input v-model="dataForm.${pc.property}" placeholder="${pc.label}" clearable></el-input>
       </el-form-item>
       </#if>
       </#list>
@@ -146,6 +157,18 @@
             }
           }]
         },
+        <#elseif pc.isEnum==true>
+        ${pc.property}_options: [//${pc.label}的下拉框数据
+        <#if pc.enumValues??>
+          <#assign  keys=pc.enumValues?keys/>
+          <#list keys as key>
+          {
+            value: '${key}',
+            label: '${pc.enumValues[key]}'
+          }<#if key?has_next >,</#if>
+          </#list>
+        </#if>
+        ],
         </#if>
         </#list>
         dataForm: {

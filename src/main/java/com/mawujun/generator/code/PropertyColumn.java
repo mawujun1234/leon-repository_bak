@@ -57,6 +57,7 @@ public class PropertyColumn {
 	
 	private boolean numberValidRule=false;//只用于element-ui的async-validator验证的时候，number属性验证数值范围的时候，需要在vue上加上.number,比如“v-model.number”
 	private boolean uploadable=false;//用于控制前端是否要生成上传的组件
+	private boolean disabled=false;
 	
 	
 	
@@ -435,6 +436,12 @@ public class PropertyColumn {
 
 	public void setUploadable(boolean uploadable) {
 		this.uploadable = uploadable;
+	}
+	public boolean isDisabled() {
+		return disabled;
+	}
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 
 

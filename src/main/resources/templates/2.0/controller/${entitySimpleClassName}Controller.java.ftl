@@ -18,7 +18,11 @@ import com.mawujun.repository.utils.Cnd;
 <#if extraCfg.uselombok?? && extraCfg.uselombok==true>
 import lombok.extern.slf4j.Slf4j;
 </#if>
-
+<#list cndPropertys as pc>
+<#if pc.isEnum==true>
+import ${pc.className};
+</#if>
+</#list>
 import ${entityClassName};
 import ${basepackage}.service.${entitySimpleClassName}Service;
 

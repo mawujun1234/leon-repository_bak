@@ -38,6 +38,12 @@ public @interface ColDefine {
      * @return
      */
     boolean uploadable() default false;  
+    
+    /**
+     * 设置为true，就表示在前端生成的文本框等内容是不可编辑的
+     * @return
+     */
+    boolean disabled() default false;  
       
   
     

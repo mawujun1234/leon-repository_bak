@@ -6,10 +6,14 @@
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <#list propertyColumns as pc>
+      <#assign disabled = ""/>
+      <#if pc.disabled==true>
+      <#assign disabled = "disabled"/>
+      </#if>
       <#if pc.persistable==true>
       <#if pc.numberValidRule==true>
       <el-form-item label="${pc.label}"  prop="${pc.property}">
-        <el-input v-model.number="dataForm.${pc.property}" placeholder="${pc.label}"></el-input>
+        <el-input v-model.number="dataForm.${pc.property}" placeholder="${pc.label}" ${disabled}></el-input>
       </el-form-item>
       <#elseif pc.uploadable==true>
       <el-form-item label="${pc.label}"  prop="${pc.property}">
@@ -24,14 +28,14 @@
           :on-exceed="handleExceed"
           :before-upload="beforeUpload"
           :on-success="handleSuccess"
-          :file-list="${pc.property}_fileList"
+          :file-list="${pc.property}_fileList"  ${disabled}
           >
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
       </el-form-item>
       <#elseif pc.isEnum==true>
       <el-form-item label="${pc.label}" size="mini" prop="${pc.property}">
-        <el-radio-group v-model="dataForm.${pc.property}">
+        <el-radio-group v-model="dataForm.${pc.property}"  ${disabled}>
           <#if pc.enumValues??>
           <#assign  keys=pc.enumValues?keys/>
           <#list keys as key>
@@ -48,12 +52,12 @@
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="${pc.label}"
-          :picker-options="pickerOptions">
+          :picker-options="pickerOptions"  ${disabled}>
         </el-date-picker>
       </el-form-item>
       <#else>
       <el-form-item label="${pc.label}"  prop="${pc.property}">
-        <el-input v-model="dataForm.${pc.property}" placeholder="${pc.label}"></el-input>
+        <el-input v-model="dataForm.${pc.property}" placeholder="${pc.label}"  ${disabled}></el-input>
       </el-form-item>
       </#if>
       </#if>
