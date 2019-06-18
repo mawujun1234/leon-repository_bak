@@ -136,7 +136,7 @@
         dataForm: {
           <#list propertyColumns as pc>
           <#if pc.persistable==true>
-              '${pc.property}': '',
+              '${pc.property}': null,
           </#if>
 		  </#list>
         },
