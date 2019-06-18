@@ -9,9 +9,9 @@
       <#assign disabled = ""/>
       <#if pc.disabled==true>
       <#assign disabled = "disabled"/>
-      </#if>
-      <#if pc.persistable==true>
-      <#if pc.numberValidRule==true>
+      </#if><#-- 把子段设置为只读-->
+      <#if pc.persistable==true><#-- 只有具有持久化的才会作为表单 -->
+      <#if pc.numberValidRule==true><#-- 如果是数字，那验证规则有点不一样-->
       <el-form-item label="${pc.label}"  prop="${pc.property}">
         <el-input v-model.number="dataForm.${pc.property}" placeholder="${pc.label}" ${disabled}></el-input>
       </el-form-item>
@@ -67,9 +67,15 @@
         </el-date-picker>
       </el-form-item>
       <#else>
+      <#if pc.isId==true || pc.isFk==true><#-- 如果是id和外键的话，就隐藏显示。前面已经判断过是外键同时是查询条件的时候是显示下拉框的 -->
+      <el-form-item label="${pc.label}"  prop="${pc.property}" style="display:none;">
+        <el-input v-model="dataForm.${pc.property}" placeholder="${pc.label}"  ${disabled} ></el-input>
+      </el-form-item>
+      <#else>
       <el-form-item label="${pc.label}"  prop="${pc.property}">
         <el-input v-model="dataForm.${pc.property}" placeholder="${pc.label}"  ${disabled}></el-input>
       </el-form-item>
+      </#if><#-- 如果是id的话，就隐藏显示 -->
       </#if>
       </#if>
       </#list>

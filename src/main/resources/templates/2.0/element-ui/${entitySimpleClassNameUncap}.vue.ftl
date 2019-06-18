@@ -89,6 +89,7 @@
           </#if>
         </template>
       </el-table-column>
+      <#elseif pc.isId==true><#-- 如果是id的话 ，就不显示在表格上了-->
       <#else>
       <el-table-column
         prop="${pc.property}"
@@ -98,18 +99,6 @@
       </el-table-column>
       </#if>
       </#list>
-     <!--
-      <el-table-column
-        prop="status"
-        header-align="center"
-        align="center"
-        label="状态">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0" size="small" type="danger">禁用</el-tag>
-          <el-tag v-else size="small">正常</el-tag>
-        </template>
-      </el-table-column>
-		-->
       <el-table-column
         fixed="right"
         header-align="center"
