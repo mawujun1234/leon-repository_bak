@@ -8,6 +8,7 @@ import javax.persistence.UniqueConstraint;
 @Retention(RetentionPolicy.RUNTIME) 
 public @interface TableDefine {
 	/**
+	 * 一般填入的是表的中文名称
 	 * 表格的注释，也可以使用@org.hibernate.annotations.Table(comment="表注释", appliesTo = "t_city") 
 	 * 达到这个目的
 	 * @return

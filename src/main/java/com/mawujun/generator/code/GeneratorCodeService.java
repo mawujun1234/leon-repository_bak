@@ -173,6 +173,7 @@ public class GeneratorCodeService {
 				EntityTable root = javaEntityMetaDataService.initClassProperty(cls);
 				root.setExtraCfg(extraCfg);
 				for (FtlFileInfo ftlFile : ftl_file_manes) {
+					//根据模型生成的时候，不生产模型类
 					if(ftlFile.getName().equalsIgnoreCase("${entitySimpleClassName}.java.ftl") || ftlFile.getName().equalsIgnoreCase("${entitySimpleClassName}Id.java.ftl")) {
 						continue;
 					}

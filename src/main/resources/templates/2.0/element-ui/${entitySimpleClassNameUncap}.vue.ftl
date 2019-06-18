@@ -1,7 +1,8 @@
 <template>
   <div class="mod-${entitySimpleClassNameUncap}">
-    <#if cndable==true>
+    
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+      <#if cndable==true>
       <#list cndPropertys as pc>
       <#if pc.isDateProp==true>
       <el-form-item>
@@ -46,13 +47,14 @@
       </el-form-item>
       </#if>
       </#list>
+      </#if>
       <el-form-item>
         <el-button v-if="isAuth('${module}:${entitySimpleClassNameUncap}:list')" @click="getDataList()">查询</el-button>
         <el-button v-if="isAuth('${module}:${entitySimpleClassNameUncap}:create')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
         <el-button v-if="isAuth('${module}:${entitySimpleClassNameUncap}:remove')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
-    </#if>
+    
     
     <el-table
       :data="dataList"
