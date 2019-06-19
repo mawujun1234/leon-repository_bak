@@ -254,7 +254,7 @@
             vm.$message.error(result.msg)
           }
         });
-        //window.open(this.$http.adornUrl(`/sys/document/preview/`+file.url));预览文件的接口
+        //window.open(this.$http.adornUrl(file.url));预览文件的接口
       },
       handleExceed(files, fileList) {//公用，用于的文件上传
         this.$message.warning(`当前限制选择 1 个文件，<#noparse>本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件</#noparse>`);
