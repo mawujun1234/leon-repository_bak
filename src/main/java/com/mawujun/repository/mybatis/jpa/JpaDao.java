@@ -273,12 +273,13 @@ public class JpaDao {
 		TypedQuery typedQuery = em.createQuery(query);
 //		// typedQuery.setFirstResult(startPosition)
 //		// typedQuery.setMaxResults(maxResult)
-//		try {
+		//必须要，不然抛出异常
+		try {
 			Object obj= typedQuery.getSingleResult();
 			return obj;
-//		} catch(Exception e) {
-//			return null;
-//		}
+		} catch(Exception e) {
+			return null;
+		}
 
 	}
 
