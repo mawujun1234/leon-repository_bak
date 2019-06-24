@@ -3,6 +3,7 @@
   <el-dialog
     :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
+    @close="clearFormData"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
       <#list propertyColumns as pc>
@@ -134,11 +135,13 @@
         </#if>
 		</#list>
         dataForm: {
+          <#-- 属性不用输出来，就可以自动识别 
           <#list propertyColumns as pc>
           <#if pc.persistable==true>
               '${pc.property}': null,
           </#if>
 		  </#list>
+		  -->
         },
         dataRule: { 
         <#-- <#if formRules?exists && formRules.size>0> <#if formRules??>使用这种方法也可以 -->
@@ -173,11 +176,14 @@
             params: this.$http.adornParams()
         }).then(({data}) => {
            if (data && data.success === true) {
+              <#-- 属性不用输出来，就可以自动识别
               <#list propertyColumns as pc>
               <#if pc.persistable==true>
               this.dataForm.${pc.property} = data.data.${pc.property};
               </#if>
 		      </#list>
+		      -->
+		      this.dataForm=data.data;
 		      
 		      <#list propertyColumns as pc>
 	          <#if pc.uploadable==true>
@@ -192,7 +198,7 @@
 			  </#list>
             }
           })
-        }//
+        } //if
       },
       <#list cndPropertys as pc>
       <#if pc.isFk==true && pc.cndable==true>
@@ -214,6 +220,16 @@
       },
       </#if>
       </#list>
+      clearFormData(){
+	    this.dataForm={};
+        <#list propertyColumns as pc>
+	    <#if pc.uploadable==true>
+	    <#assign uploadable = true>
+	    //清空上传文件的内容
+        this.${pc.property}_fileList=[];
+	    </#if>
+		</#list>
+      },
       // 表单提交
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
@@ -221,13 +237,15 @@
             this.$http({
               url: this.$http.adornUrl(`/${module}/${entitySimpleClassNameUncap}/<#noparse>${!this.dataForm.id ? 'create' : 'update'}</#noparse>`),
               method: 'post',
+              <#-- 属性不用输出来，就可以自动识别
               data: this.$http.adornData({
               <#list propertyColumns as pc>
               <#if pc.persistable==true>
                 '${pc.property}': this.dataForm.${pc.property},
               </#if>
 		      </#list>
-              })
+              })-->
+              data: this.$http.adornData(this.dataForm)
             }).then(({data}) => {
               if (data && data.success === true) {
                 this.$message({
@@ -244,7 +262,7 @@
               }
             })
           }
-        })
+        })// this.$refs['dataForm'].validate((valid) => {
       }//dataFormSubmit
       <#if uploadable==true>
       ,handlePreview(file) {//公用，用于的文件上传

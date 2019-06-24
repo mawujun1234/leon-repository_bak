@@ -72,7 +72,7 @@ public class Document {
 		}
 		fullName=FileUtil.normalize(fullName);
 		this.userOrginalFileName=userOrginalFileName;
-		this.originalFullName= FileUtil.stripStartSlash(FileUtil.stripEndSlash(fullName));;
+		this.originalFullName= FileUtil.addStartSlash(FileUtil.removeEndSlash(fullName));;
 		this.originalFileName=FileUtil.getFileName(fullName);
 		
 		if(userOrginalFileName) {
@@ -104,7 +104,7 @@ public class Document {
 			groupName="";
 		}
 		this.originalFileName=FileUtil.getFileName(filename);
-		this.originalFullName = FileUtil.stripStartSlash(FileUtil.stripEndSlash(FileUtil.combine(groupName, filename)));
+		this.originalFullName = FileUtil.addStartSlash(FileUtil.removeEndSlash(FileUtil.combine(groupName, filename)));
 		
 		if(userOrginalFileName) {
 			this.fileName=this.originalFileName;
