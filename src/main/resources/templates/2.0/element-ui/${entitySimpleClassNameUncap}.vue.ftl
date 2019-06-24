@@ -279,7 +279,7 @@
         this.$nextTick(() => {
           this.$refs.addOrUpdate.init(id)
         })
-      },
+      },//addOrUpdateHandle
       // 删除
       deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
@@ -309,7 +309,7 @@
             }
           })
         }).catch(() => {})
-      }
+      }//deleteHandle
     }
   }
 </script>
