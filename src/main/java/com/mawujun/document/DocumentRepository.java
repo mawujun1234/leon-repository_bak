@@ -53,4 +53,21 @@ public interface DocumentRepository {
 	 * @throws IOException 如果保存文档时失败
 	 */
 	boolean save(Document document) throws IOException;
+	/**
+	 * 保存一个文档，并返回true
+	 * @param group 文件的分组  /aa/bbb这种形式
+	 * @param filename ccc.png这种形式
+	 * @param data
+	 * @return
+	 * @throws IOException
+	 */
+	boolean save(String group,String filename,final byte[] data) throws IOException;
+	/**
+	 *  保存一个文档，并返回true
+	 * @param fullName /aa/bb/cc.png 这种形式
+	 * @param data
+	 * @return
+	 * @throws IOException
+	 */
+	boolean save(String fullName,final byte[] data) throws IOException;
 }

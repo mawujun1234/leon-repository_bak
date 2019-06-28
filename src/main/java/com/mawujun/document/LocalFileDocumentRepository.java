@@ -137,4 +137,21 @@ public class LocalFileDocumentRepository implements DocumentRepository {
 		}
 	}
 
+
+	@Override
+	public boolean save(String group, String filename, byte[] data) throws IOException {
+		Document document = new Document(group,filename);
+		document.write(data);
+		return this.save(document);
+	}
+
+
+	@Override
+	public boolean save(String fullName, byte[] data) throws IOException {
+		Document document = new Document(fullName);
+		document.write(data);
+		// TODO Auto-generated method stub
+		return this.save(document);
+	}
+
 }
