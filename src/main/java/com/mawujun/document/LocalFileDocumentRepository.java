@@ -10,7 +10,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 import com.mawujun.util.StringUtil;
 
 /**

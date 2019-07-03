@@ -11,7 +11,7 @@ import java.util.Date;
 
 import org.springframework.util.StringUtils;
 
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 import com.mawujun.io.FileUtil;
 import com.mawujun.lang.UUID;
 import com.mawujun.util.ArrayUtil;

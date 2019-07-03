@@ -21,7 +21,7 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.Dialect;

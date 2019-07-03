@@ -11,7 +11,7 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.session.SqlSession;
 
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 import com.mawujun.mvc.SpringContextUtils;
 import com.mawujun.repository.utils.Cnd;
 import com.mawujun.repository.utils.Page;

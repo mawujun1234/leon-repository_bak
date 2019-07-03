@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 import com.mawujun.util.StringUtil;
 
 /**

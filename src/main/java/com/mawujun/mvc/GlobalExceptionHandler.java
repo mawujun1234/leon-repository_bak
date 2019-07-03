@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 
 @ControllerAdvice
 //@RestControllerAdvice

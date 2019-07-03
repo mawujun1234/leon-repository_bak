@@ -54,7 +54,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mawujun.bean.BeanUtil;
 import com.mawujun.convert.Convert;
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 import com.mawujun.repository.mybatis.dialect.AbstractDialect;
 import com.mawujun.repository.mybatis.dialect.AutoDialect;
 import com.mawujun.repository.mybatis.dialect.DBAlias;
