@@ -31,7 +31,7 @@ Sybase Anywhere	org.hibernate.dialect.SybaseAnywhereDialect
  *
  */
 public enum DialectEnum {
-	MySQL5InnoDBDialect("org.hibernate.dialect.MySQL5InnoDBDialect"), 
+	MySQL5InnoDBDialect("org.hibernate.dialect.MySQL57Dialect"), 
 	MySQLDialect_mybatis("com.mawujun.repository.mybatis.dialect.MySQLDialect"),
 	
 	Oracle10gDialect("org.hibernate.dialect.Oracle10gDialect"), 
