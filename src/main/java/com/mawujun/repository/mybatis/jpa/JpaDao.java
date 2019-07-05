@@ -248,7 +248,7 @@ public class JpaDao {
 
 	public Object getById(Class entityClass, Object id) {
 		SimpleJpaRepository repository = getSimpleJpaRepository(entityClass);
-
+		//Convert.convert(type, value)
 		Optional optional = repository.findById(id);
 		if (optional.isPresent()) {
 			return optional.get();

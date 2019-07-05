@@ -1,3 +1,9 @@
+<#assign have_upload_field=false>
+<#list propertyColumns as pc>
+<#if pc.uploadable==true>
+	<#assign have_upload_field=pc.uploadable>
+</#if>
+</#list>
 <template>
   <div class="mod-${entitySimpleClassNameUncap}">
     
@@ -89,6 +95,17 @@
           </#if>
         </template>
       </el-table-column>
+      <#elseif pc.uploadable==true>
+      <el-table-column
+        prop="${pc.property}"
+        header-align="center"
+        align="center"
+        width="80" 
+        label="${pc.label}">
+        <template slot-scope="scope">
+          <el-link icon="el-icon-video-camera" v-on:click="video_prevew(scope.row)">预览</el-link>
+        </template> 
+      </el-table-column>
       <#elseif pc.isId==true><#-- 如果是id的话 ，就不显示在表格上了-->
       <#else>
       <el-table-column
@@ -122,6 +139,13 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <#if have_upload_field==true>
+    <el-dialog title="预览" :visible.sync="previewDialogVisible" width="30%">
+      <video width="100%" controls>
+        <source :src="previewDialogVideoSrc" type="video/mp4">您的浏览器不支持 HTML5 video 标签。
+      </video>
+    </el-dialog>
+    </#if>
   </div>
 </template>
 
@@ -186,7 +210,11 @@
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+        <#if have_upload_field==true>
+        previewDialogVisible: false,
+        previewDialogVideoSrc: ""
+        </#if>
       }
     },
     components: {
@@ -309,7 +337,13 @@
             }
           })
         }).catch(() => {})
-      }//deleteHandle
+      },//deleteHandle
+      <#if have_upload_field==true>
+      video_prevew(row) {
+	  	  this.dialogVisible = true;
+	      this.dialogVideoSrc = this.$http.adornUrl("/resources" + row.video);
+	  },
+	  </#if>
     }
   }
 </script>
